@@ -4,7 +4,7 @@
 
 - [x] **Scraper: integrate enrichment automatically** — run `enrich.js` immediately after each listing is saved, so the full pipeline is a single command
 - [x] **Census API integration** — add a Census Bureau API key (free at api.census.gov) for precise 1/3/5-mile radius demographics rather than city-level averages from Areavibes
-- [ ] **Retry logic** — exponential backoff on failed API calls; currently a single failure silently records `{ error: "…" }` in the JSON
+- [x] **Retry logic** — exponential backoff on failed API calls; currently a single failure silently records `{ error: "…" }` in the JSON
 - [ ] **Deduplication** — skip listings whose output file already exists (re-runs currently overwrite without checking)
 
 ---

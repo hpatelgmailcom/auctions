@@ -11,6 +11,8 @@
  *   const data = await fetchCrime({ city: 'vermilion', stateAbbr: 'oh' });
  */
 
+import { withRetry } from './retry.js';
+
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 function areavibesSlug(city, stateAbbr) {
@@ -96,11 +98,17 @@ export async function fetchCrime({ city, stateAbbr }) {
   const slug = areavibesSlug(city, stateAbbr);
   const url  = `https://www.areavibes.com/${slug}/crime/`;
 
-  const res = await fetch(url, {
-    headers: { 'user-agent': UA, 'accept': 'text/html', 'accept-language': 'en-US,en;q=0.9' },
-  });
-
-  if (!res.ok) throw new Error(`Areavibes crime fetch failed: ${res.status} ${url}`);
+  const res = await withRetry(async () => {
+    const r = await fetch(url, {
+      headers: { 'user-agent': UA, 'accept': 'text/html', 'accept-language': 'en-US,en;q=0.9' },
+    });
+    if (!r.ok) {
+      const err = new Error(`Areavibes crime fetch failed: ${r.status} ${url}`);
+      err.status = r.status;
+      throw err;
+    }
+    return r;
+  }, { label: 'areavibes.com/crime' });
 
   const html = await res.text();
   const text = html

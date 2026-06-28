@@ -13,6 +13,7 @@
  */
 
 import puppeteer from 'puppeteer';
+import { withRetry } from './retry.js';
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
@@ -48,7 +49,11 @@ async function scrapeCommercialCafe(city, stateAbbr) {
       Object.defineProperty(navigator, 'webdriver', { get: () => false });
     });
 
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+    await withRetry(
+      () => page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 }),
+      { label: 'commercialcafe.com', maxRetries: 2,
+        shouldRetry: err => /timeout|navigation|net::/i.test(err?.message || '') }
+    );
     await new Promise(r => setTimeout(r, 1500));
 
     const listings = await page.evaluate(() => {

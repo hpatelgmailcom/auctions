@@ -20,7 +20,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
-import { enrich } from './enrichment/enrich.js';
+import { enrich }      from './enrichment/enrich.js';
+import { withRetry }   from './enrichment/retry.js';
 
 // ---------------------------------------------------------------------------
 // Config
@@ -58,12 +59,16 @@ const DEVICE_ID = `$device:${randomUUID()}`;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function apiFetch(url, options = {}) {
-  const res = await fetch(url, { headers: HEADERS, ...options });
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`${res.status} ${res.statusText} — ${url}\n${body.substring(0, 300)}`);
-  }
-  return res.json();
+  return withRetry(async () => {
+    const res = await fetch(url, { headers: HEADERS, ...options });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      const err  = new Error(`${res.status} ${res.statusText} — ${url}\n${body.substring(0, 300)}`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
+  }, { label: 'api.crexi.com' });
 }
 
 /** Strip HTML tags from rich-text fields */

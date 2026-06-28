@@ -16,6 +16,8 @@
  *   const data = await fetchDemographics({ zip: '44089', city: 'vermilion', stateAbbr: 'oh' });
  */
 
+import { withRetry } from './retry.js';
+
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 // ---------------------------------------------------------------------------
@@ -69,10 +71,17 @@ async function fetchCensusZip(zip) {
   if (!key) throw new Error('CENSUS_API_KEY not set');
 
   const url = `https://api.census.gov/data/2023/acs/acs5?get=${CENSUS_VARS}&for=zip%20code%20tabulation%20area:${zip}&key=${key}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Census API HTTP ${res.status}`);
 
-  const text = await res.text();
+  const text = await withRetry(async () => {
+    const res = await fetch(url);
+    if (!res.ok) {
+      const err = new Error(`Census API HTTP ${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.text();
+  }, { label: 'api.census.gov', maxRetries: 2 });
+
   if (text.trim().startsWith('<')) throw new Error('Census API returned HTML — key may not be activated yet');
 
   const [headers, values] = JSON.parse(text);
@@ -202,10 +211,17 @@ function parseDemographicsText(text) {
 async function fetchAreavibes(city, stateAbbr) {
   const slug = areavibesSlug(city, stateAbbr);
   const url  = `https://www.areavibes.com/${slug}/demographics/`;
-  const res  = await fetch(url, {
-    headers: { 'user-agent': UA, 'accept': 'text/html', 'accept-language': 'en-US,en;q=0.9' },
-  });
-  if (!res.ok) throw new Error(`Areavibes HTTP ${res.status} for ${url}`);
+  const res  = await withRetry(async () => {
+    const r = await fetch(url, {
+      headers: { 'user-agent': UA, 'accept': 'text/html', 'accept-language': 'en-US,en;q=0.9' },
+    });
+    if (!r.ok) {
+      const err = new Error(`Areavibes HTTP ${r.status} for ${url}`);
+      err.status = r.status;
+      throw err;
+    }
+    return r;
+  }, { label: 'areavibes.com' });
   const html = await res.text();
   const text = html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
