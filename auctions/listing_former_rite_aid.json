@@ -1,0 +1,186 @@
+{
+  "source": {
+    "platform": "Crexi",
+    "url": "https://www.crexi.com/properties/2492437/ohio-former-rite-aid",
+    "scraped_date": "2026-06-27"
+  },
+  "listing": {
+    "title": "Former Rite Aid",
+    "address": "4580 Liberty Ave, Vermilion, OH 44089",
+    "listed_by": "Hanna Commercial Real Estate Cleveland, Commercial Real Estate Exchange",
+    "listing_type": "Auction",
+    "category": "For Sale"
+  },
+  "auction": {
+    "status": "Reserve met — will sell to the highest bidder",
+    "auction_type": "Reserve",
+    "starting_bid_usd": 275000,
+    "bidding_start": "June 29, 2026 9:00 AM",
+    "participation_deposit_usd": 10000,
+    "earnest_money_deposit": "Greater of $20,000 or 10% of the Purchase Price",
+    "earnest_money_deposit_percent": "10%",
+    "marketing_fee": "5% of the Winning Bid Amount, $20,000 minimum",
+    "minimum_marketing_fee_usd": 20000,
+    "closing_period_days": 30,
+    "non_contingent": true
+  },
+  "property_details": {
+    "apn": "01-20-027-101-007 & 18-02090-000",
+    "property_type": "Retail",
+    "sub_type": "Pharmacy/Drug",
+    "square_footage": 11724,
+    "tenancy": "Vacant",
+    "year_built": 1997,
+    "buildings": 1,
+    "stories": 1,
+    "acreage": 1.64,
+    "zoning": "B-3 Highway Commercial",
+    "zoning_categories": ["Commercial", "Special Commercial", "Highway Commercial"]
+  },
+  "investment_highlights": [
+    "Freestanding 11,724 SF building on 1.64 acres",
+    "Located at a lit intersection with over 14,588 VPD along Liberty Ave",
+    "Average Household income exceeds $127,000 within a 5-mile range",
+    "Prime for potential redevelopment with over 236' of frontage along Liberty Ave",
+    "Site has two full access points, one along Liberty Ave and the other along Salem Drive"
+  ],
+  "description": "Former Rite Aid at 4580 Liberty Ave, Vermilion, OH 44089 offers a standout opportunity to acquire a freestanding 11,724 SF building on 1.64 acres. Surrounded by national and regional retailers, restaurants, and service providers, the location is well suited for owner-users, investors, or redevelopment-focused buyers. Area demographics further strengthen the opportunity, with average household income exceeding $127,000 within a 5-mile radius. Nearby residential density, daytime population, and strong community spending power support a wide range of potential uses. Ideal for retail, medical, service, or adaptive reuse, this former Rite Aid combines scale, access, visibility, and redevelopment potential in a desirable Lake Erie area market.",
+  "contacts": {
+    "crexi_contact": {
+      "name": "Audrey Hanna",
+      "role": "Crexi Contact",
+      "badge": "PRO",
+      "phone": "•••.•••.8581",
+      "brokerage": "Commercial Real Estate Exchange",
+      "profile_url": "https://www.crexi.com/profile/audrey-hanna-audreyhan"
+    },
+    "listing_contact": {
+      "name": "Vincenzo Calabrese",
+      "role": "Listing Contact",
+      "license": "OH SAL.2020004495",
+      "phone": "•••.•••.5286",
+      "brokerage": "Hanna Commercial Real Estate Cleveland",
+      "profile_url": "https://www.crexi.com/profile/vincenzo-calabrese-vincenzoc"
+    },
+    "auctioneer": {
+      "name": "Stephen Dawson",
+      "title": "Auctioneer",
+      "license": "OH 2023000138"
+    }
+  },
+  "media": {
+    "photos": 26,
+    "videos": 1
+  },
+  "market_research": {
+    "radius_note": "3-mile radius data not publicly available at granular level; figures are for ZIP 44089 (closest proxy) and 5-mile radius where noted",
+    "data_sources": [
+      "US Census Bureau American Community Survey 2024 (via city-data.com, demographicsbyradius.com)",
+      "CrimeGrade.org (updated Dec 2025)",
+      "NeighborhoodScout (updated Nov 2025)",
+      "CommercialCafe.com",
+      "LoopNet"
+    ],
+    "socio_demographics": {
+      "geography": "ZIP Code 44089 / Vermilion, OH",
+      "data_year": 2024,
+      "population": {
+        "zip_44089": 15750,
+        "five_mile_radius": 28464,
+        "population_density_per_sq_mi_5mi": 548,
+        "households_5mi": 11940,
+        "trend": "Slight decline (-0.3% annual rate)"
+      },
+      "income": {
+        "median_household_income_zip": 71308,
+        "median_household_income_5mi": 79528,
+        "high_income_pct_over_200k_5mi": "9.6%",
+        "low_income_pct_under_25k_5mi": "13.4%",
+        "ohio_state_median_hh_income": 72212,
+        "note": "Crexi listing cites avg HH income >$127,000 within 5-mile radius (likely uses a different aggregation method)"
+      },
+      "age": {
+        "median_age_zip": 52.4,
+        "ohio_median_age": 39.8,
+        "age_distribution": {
+          "under_15": "13.4%",
+          "15_to_24": "11.1%",
+          "25_to_44": "20.6%",
+          "45_to_64": "29.9%",
+          "65_and_over": "25.0%"
+        },
+        "note": "Significantly older than Ohio and US averages — mature, established community"
+      },
+      "race_ethnicity": {
+        "white": "93.4%",
+        "hispanic_or_latino": "3.5%",
+        "two_or_more_races": "2.3%",
+        "asian": "0.5%",
+        "black_or_african_american": "0.3%"
+      },
+      "education": {
+        "high_school_or_higher": "94.3%",
+        "bachelors_degree_or_higher": "32.6%",
+        "graduate_or_professional_degree": "10.8%"
+      },
+      "housing": {
+        "median_home_value_usd": 235000,
+        "ohio_median_home_value_usd": 239800
+      },
+      "poverty": {
+        "poverty_rate_pct": 6.3,
+        "ohio_poverty_rate_pct": 12.7
+      }
+    },
+    "crime": {
+      "geography": "Vermilion, OH",
+      "data_year": 2024,
+      "source": "FBI UCR data via CrimeGrade.org (released Sep 2025)",
+      "overall_grade": "B+",
+      "safety_percentile": "71st (safer than 71% of US cities)",
+      "rates_per_1000_residents": {
+        "total_crime": 17.90,
+        "violent_crime": 1.964,
+        "property_crime": 9.683,
+        "other_crime": 6.249
+      },
+      "grades": {
+        "violent_crime": "A-",
+        "property_crime": "B",
+        "other_crime": "B"
+      },
+      "crime_cost_per_resident_usd": 283,
+      "national_avg_crime_cost_per_resident_usd": 464,
+      "neighborhood_variation": {
+        "safest_area_victimization_odds": "1 in 98 (southeastern neighborhoods)",
+        "least_safe_area_victimization_odds": "1 in 41 (northern areas)"
+      },
+      "vs_benchmarks": {
+        "safer_than_ohio_average": true,
+        "safer_than_national_average": true
+      }
+    },
+    "retail_market": {
+      "geography": "Vermilion, OH (Liberty Ave corridor) / Erie County, OH",
+      "data_year": 2025,
+      "note": "Vermilion is a thin retail market; very limited comparable lease data available publicly",
+      "vermilion_specific": {
+        "total_retail_inventory_sq_ft": 257587,
+        "retail_listings_for_lease": 2,
+        "retail_sq_ft_available_for_lease": 4412,
+        "avg_retail_space_size_sf": 4271,
+        "largest_space_available_sf": 11724,
+        "smallest_space_available_sf": 945,
+        "sample_asking_rent_per_sf_yr": "$13.00",
+        "sample_property": "Portland Plaza, 4486-4496 Liberty Ave (directly near subject property)"
+      },
+      "regional_proxies": {
+        "cleveland_metro_avg_retail_rent_per_sf_yr": "$16.00",
+        "national_strip_center_nnn_range_per_sf_yr": "$18–$28",
+        "national_anchor_power_center_inline_nnn_per_sf_yr": "$22–$32",
+        "national_tier2_city_retail_nnn_per_sf_yr": "$40–$90"
+      },
+      "market_assessment": "Vermilion is a small lakeside community with a thin commercial market. At $13/SF/YR, rents are well below Cleveland metro and national averages, consistent with a rural/suburban secondary market. The 11,724 SF subject property is the largest retail space in the local market."
+    }
+  }
+}

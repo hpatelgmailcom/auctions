@@ -1,0 +1,108 @@
+/**
+ * enrich.js
+ *
+ * Reads a listing JSON file produced by scraper.js, fetches socio-demographics,
+ * crime, and retail market data for the property's location, then writes the
+ * enriched result back to the same file under a "market_research" key.
+ *
+ * Usage:
+ *   node enrichment/enrich.js <path-to-listing.json> [--radius 3]
+ *
+ *   # Enrich every file in the listings directory:
+ *   for f in auctions/listings/*.json; do node enrichment/enrich.js "$f"; done
+ */
+
+import fs   from 'fs';
+import path from 'path';
+import { fetchDemographics } from './demographics.js';
+import { fetchCrime }        from './crime.js';
+import { fetchRetailMarket } from './retail_market.js';
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const argv      = process.argv.slice(2);
+const filePath  = argv.find(a => !a.startsWith('--'));
+const radiusArg = argv.indexOf('--radius');
+const RADIUS    = radiusArg !== -1 ? parseFloat(argv[radiusArg + 1]) : 3;
+
+/** US state abbreviation lookup (name → abbr) */
+const STATE_ABBR = {
+  alabama:'al',alaska:'ak',arizona:'az',arkansas:'ar',california:'ca',colorado:'co',
+  connecticut:'ct',delaware:'de',florida:'fl',georgia:'ga',hawaii:'hi',idaho:'id',
+  illinois:'il',indiana:'in',iowa:'ia',kansas:'ks',kentucky:'ky',louisiana:'la',
+  maine:'me',maryland:'md',massachusetts:'ma',michigan:'mi',minnesota:'mn',
+  mississippi:'ms',missouri:'mo',montana:'mt',nebraska:'ne',nevada:'nv',
+  'new hampshire':'nh','new jersey':'nj','new mexico':'nm','new york':'ny',
+  'north carolina':'nc','north dakota':'nd',ohio:'oh',oklahoma:'ok',oregon:'or',
+  pennsylvania:'pa','rhode island':'ri','south carolina':'sc','south dakota':'sd',
+  tennessee:'tn',texas:'tx',utah:'ut',vermont:'vt',virginia:'va',washington:'wa',
+  'west virginia':'wv',wisconsin:'wi',wyoming:'wy',
+};
+
+function stateToAbbr(stateName) {
+  if (!stateName) return null;
+  const lower = stateName.toLowerCase().trim();
+  return STATE_ABBR[lower] || lower.substring(0, 2); // fallback: first 2 chars
+}
+
+/** Extract city, state-abbr, lat, lng from a listing record */
+function locationFrom(record) {
+  const { city, state, latitude, longitude } = record.listing ?? {};
+  if (!city || !state) throw new Error('Listing is missing city or state');
+  if (!latitude || !longitude) throw new Error('Listing is missing coordinates');
+  return {
+    city,
+    stateAbbr: stateToAbbr(state),
+    lat: latitude,
+    lng: longitude,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
+async function enrich(jsonPath) {
+  if (!jsonPath) {
+    console.error('Usage: node enrichment/enrich.js <path-to-listing.json> [--radius N]');
+    process.exit(1);
+  }
+
+  const absPath = path.resolve(jsonPath);
+  if (!fs.existsSync(absPath)) {
+    console.error(`File not found: ${absPath}`);
+    process.exit(1);
+  }
+
+  const record = JSON.parse(fs.readFileSync(absPath, 'utf8'));
+  const { city, stateAbbr, lat, lng } = locationFrom(record);
+
+  console.log(`\nEnriching: ${record.listing?.address}`);
+  console.log(`  City: ${city}, ${stateAbbr.toUpperCase()}  |  Coords: ${lat}, ${lng}  |  Radius: ${RADIUS} mi\n`);
+
+  const results = { radius_miles: RADIUS, enriched_at: new Date().toISOString() };
+  const steps   = [
+    ['demographics',  () => fetchDemographics({ city, stateAbbr })],
+    ['crime',         () => fetchCrime({ city, stateAbbr })],
+    ['retail_market', () => fetchRetailMarket({ city, stateAbbr })],
+  ];
+
+  for (const [key, fn] of steps) {
+    process.stdout.write(`  Fetching ${key}… `);
+    try {
+      results[key] = await fn();
+      console.log('✓');
+    } catch (err) {
+      results[key] = { error: err.message };
+      console.log(`✗  ${err.message.split('\n')[0]}`);
+    }
+  }
+
+  record.market_research = results;
+  fs.writeFileSync(absPath, JSON.stringify(record, null, 2));
+  console.log(`\n  Saved → ${absPath}`);
+}
+
+enrich(filePath).catch(err => { console.error('Fatal:', err.message); process.exit(1); });

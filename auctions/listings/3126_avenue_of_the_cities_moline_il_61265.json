@@ -1,0 +1,58 @@
+{
+  "scraped_at": "2026-06-27T16:30:14.219Z",
+  "url": "https://www.crexi.com/properties/2487945/illinois-former-dollar-store",
+  "listing": {
+    "id": 2487945,
+    "title": "Former Dollar Store",
+    "address": "3126 Avenue of the Cities, Moline, Rock Island County, IL 61265",
+    "city": "Moline",
+    "state": "Illinois",
+    "zip": "61265",
+    "latitude": 41.4916405,
+    "longitude": -90.4932175,
+    "brokerage": null,
+    "listed_on": "2026-05-21T19:06:03.027Z"
+  },
+  "auction": {
+    "status": "BidderRegistration",
+    "auction_type": "Reserve",
+    "starting_bid_usd": 25000,
+    "bidding_starts": "2026-06-29T16:00:00Z",
+    "bidding_ends": "2026-07-01T16:20:00Z",
+    "reserve_met": false,
+    "bid_increment_usd": 10000,
+    "participation_deposit": null,
+    "earnest_money_deposit": "10%",
+    "earnest_money_min_usd": null,
+    "marketing_fee_pct": "5%",
+    "minimum_marketing_fee_usd": 20000,
+    "closing_period_days": 30,
+    "non_contingent": true
+  },
+  "property": {
+    "apn": null,
+    "property_types": [
+      "Retail"
+    ],
+    "sub_types": [
+      "Storefront"
+    ],
+    "square_footage": null,
+    "tenancy": null,
+    "year_built": null,
+    "buildings": null,
+    "stories": null,
+    "acreage": null,
+    "zoning": null,
+    "investment_type": null,
+    "opportunity_zone": false
+  },
+  "description": "For registration requirements and regulations, please review here or contact Alex Orth | 949.500.9409 | jorth@crexi.​com.​ 3126 Avenue of the Cities at 3126 Avenue of the Cities, Moline, IL 61265 offers a prime owner-user or investment opportunity in a highly visible corridor location.​ Positioned at the southwest corner of Avenue of the Cities and 31st Street A, this 8,219 SF retail/commercial building features an open floor plan that can easily accommodate a variety of retail, showroom, service, or specialty commercial uses.​ Surrounded by a densely populated neighborhood and benefiting from strong daily traffic counts of approximately 18,300 vehicles per day, the property delivers excellent exposure and convenient customer access.​ Large storefront windows enhance street presence, while parking to the east adds everyday functionality for customers and staff.​ Its prominent corner positioning along a well-traveled thoroughfare places the property near established residential areas and offers quick connectivity to the greater Moline market.​ With 2024 property taxes at $8,445.08, this is a compelling opportunity to acquire a well-located commercial asset with strong visibility, flexible layout, and built-in neighborhood demand! ​ Non-Contingent ​ Earnest Money Deposit is Greater of $20,000 or 10% of the Purchase Price ​ Marketing Fee: 5% of the Winning Bid Amount, $20,000 minimum ​ $10,000 Participation Deposit 3126 Avenue of the Cities, Moline, IL 61265",
+  "investment_highlights": "​2024 Property Taxes: $8,445.08 ​Located At Southwest Corner Of Ave Of The Cities & 31st St A ​Open Floor Plan ​Parking To The East ​Densely Populated Neighborhood ​18,300 VPD",
+  "media": {
+    "photos": null,
+    "videos": 0,
+    "has_virtual_tour": false,
+    "has_om": true
+  }
+}

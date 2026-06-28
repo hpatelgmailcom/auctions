@@ -1,0 +1,56 @@
+{
+  "scraped_at": "2026-06-27T16:30:13.536Z",
+  "url": "https://www.crexi.com/properties/2464903/indiana-4517-sf-vacant-land",
+  "listing": {
+    "id": 2464903,
+    "title": "4,517 SF Vacant Land",
+    "address": "133 Halsted St, Lowell, Lake County, IN 46356",
+    "city": "Lowell",
+    "state": "Indiana",
+    "zip": "46356",
+    "latitude": 41.2924151,
+    "longitude": -87.4226982,
+    "brokerage": null,
+    "listed_on": "2026-05-22T21:36:38.492Z"
+  },
+  "auction": {
+    "status": "BidderRegistration",
+    "auction_type": "Absolute sale",
+    "starting_bid_usd": 1,
+    "bidding_starts": "2026-06-29T16:00:00Z",
+    "bidding_ends": "2026-07-01T16:00:00Z",
+    "reserve_met": null,
+    "bid_increment_usd": 25000,
+    "participation_deposit": null,
+    "earnest_money_deposit": "10%",
+    "earnest_money_min_usd": null,
+    "marketing_fee_pct": "5%",
+    "minimum_marketing_fee_usd": 20000,
+    "closing_period_days": 30,
+    "non_contingent": true
+  },
+  "property": {
+    "apn": null,
+    "property_types": [
+      "Land"
+    ],
+    "sub_types": null,
+    "square_footage": null,
+    "tenancy": null,
+    "year_built": null,
+    "buildings": null,
+    "stories": null,
+    "acreage": null,
+    "zoning": null,
+    "investment_type": null,
+    "opportunity_zone": false
+  },
+  "description": "ABSOLUTE SALE For registration requirements and regulations, please review here or contact Hannah Ladenheim | 936-274-1332 | hladenheim@crexi.​com.​ 133 N Halstead St.​ at 133 N Halstead St, Lowell, IN 46356 presents a compelling opportunity to acquire vacant land in the heart of Lowell.​ Positioned within walking distance to downtown, this 4,517 SF site offers strong potential for investors, developers, and owner-users seeking a well-located infill development or redevelopment opportunity.​ Zoned TC (Town Center), the property is ideally suited for users looking to capitalize on a central location with convenient access to Lowell’s downtown amenities, local businesses, and community activity.​ Its setting in the town core makes it an attractive option for a variety of future uses, subject to local approvals.​ Whether you are planning a new development, pursuing a strategic land hold, or targeting a redevelopment play in an established area, this site stands out for its location and flexibility.​ Opportunities to secure vacant land in Lowell’s downtown-adjacent area are limited, making this parcel a rare chance to invest in the continued growth and revitalization of the community! ​ Non-Contingent ​ Earnest Money Deposit is Greater of $20,000 or 10% of the Purchase Price ​ Marketing Fee: 5% of the Winning Bid Amount, $20,000 minimum ​ $10,000 Participation Deposit 133 Halsted St, Lowell, IN 46356",
+  "investment_highlights": "IN Auctioneer: Stephen Dawson, AU12500067 Crexi Technologies, AC32500016 ​Heart of Lowell Location ​Development Opportunity ​Walking Distance to Downtown ​Strong Redevelopment Opportunity",
+  "media": {
+    "photos": null,
+    "videos": 0,
+    "has_virtual_tour": false,
+    "has_om": true
+  }
+}

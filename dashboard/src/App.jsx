@@ -1,0 +1,107 @@
+import { Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import clsx from 'clsx';
+import {
+  LayoutGrid, TableProperties, BarChart3, Bell, Building2,
+  RefreshCw, ChevronRight
+} from 'lucide-react';
+import { api } from './api/client.js';
+
+import ScreeningPage  from './pages/Screening.jsx';
+import PipelinePage   from './pages/Pipeline.jsx';
+import PropertyDetail from './pages/PropertyDetail.jsx';
+import AnalyticsPage  from './pages/Analytics.jsx';
+import AlertsPage     from './pages/Alerts.jsx';
+
+const NAV = [
+  { to: '/',          label: 'Pipeline',  icon: LayoutGrid },
+  { to: '/screening', label: 'Screening', icon: TableProperties },
+  { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { to: '/alerts',    label: 'Alerts',    icon: Bell },
+];
+
+export default function App() {
+  const [unseenAlerts, setUnseenAlerts] = useState(0);
+  const [scraping,     setScraping]     = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    api.alerts.count().then(d => setUnseenAlerts(d.unseen)).catch(() => {});
+    const t = setInterval(() => {
+      api.alerts.count().then(d => setUnseenAlerts(d.unseen)).catch(() => {});
+    }, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  async function handleScrape() {
+    setScraping(true);
+    try { await api.scrape({ max_price: 300001, max_listings: 50 }); }
+    finally { setTimeout(() => setScraping(false), 2000); }
+  }
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <aside className="w-56 shrink-0 bg-surface-card border-r border-surface-border flex flex-col">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 px-5 py-5 border-b border-surface-border">
+          <div className="w-7 h-7 rounded-lg bg-brand flex items-center justify-center shrink-0">
+            <Building2 size={15} className="text-white" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-ink leading-tight">Crexi Intel</p>
+            <p className="text-[10px] text-ink-subtle">Auction Intelligence</p>
+          </div>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-0.5">
+          {NAV.map(({ to, label, icon: Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) => clsx(
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
+                isActive
+                  ? 'bg-brand/10 text-brand font-medium'
+                  : 'text-ink-muted hover:text-ink hover:bg-surface-hover'
+              )}
+            >
+              <Icon size={16} />
+              <span>{label}</span>
+              {label === 'Alerts' && unseenAlerts > 0 && (
+                <span className="ml-auto bg-brand text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                  {unseenAlerts > 99 ? '99+' : unseenAlerts}
+                </span>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* Run scraper */}
+        <div className="p-3 border-t border-surface-border">
+          <button
+            onClick={handleScrape}
+            disabled={scraping}
+            className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <RefreshCw size={13} className={scraping ? 'animate-spin' : ''} />
+            {scraping ? 'Running…' : 'Run Scraper'}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto bg-surface">
+        <Routes>
+          <Route path="/"             element={<PipelinePage />} />
+          <Route path="/screening"    element={<ScreeningPage />} />
+          <Route path="/analytics"    element={<AnalyticsPage />} />
+          <Route path="/alerts"       element={<AlertsPage onSeenChange={setUnseenAlerts} />} />
+          <Route path="/listing/:id"  element={<PropertyDetail />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}

@@ -1,0 +1,803 @@
+{
+  "scraped_at": "2026-06-27T16:30:14.926Z",
+  "url": "https://www.crexi.com/properties/2476994/iowa-9936-sf-building-with-i74-exposure",
+  "listing": {
+    "id": 2476994,
+    "title": "9,936 SF Building with I-74 Exposure",
+    "address": "3326 E Kimberly Rd, Davenport, Scott County, IA 52807",
+    "city": "Davenport",
+    "state": "Iowa",
+    "zip": "52807",
+    "latitude": 41.552783,
+    "longitude": -90.523698,
+    "brokerage": null,
+    "listed_on": "2026-05-07T19:48:30.456Z"
+  },
+  "auction": {
+    "status": "BidderRegistration",
+    "auction_type": "Reserve",
+    "starting_bid_usd": 175000,
+    "bidding_starts": "2026-06-29T16:00:00Z",
+    "bidding_ends": "2026-07-01T17:00:00Z",
+    "reserve_met": false,
+    "bid_increment_usd": 50000,
+    "participation_deposit": null,
+    "earnest_money_deposit": "10%",
+    "earnest_money_min_usd": null,
+    "marketing_fee_pct": "5%",
+    "minimum_marketing_fee_usd": 20000,
+    "closing_period_days": 30,
+    "non_contingent": true
+  },
+  "property": {
+    "apn": null,
+    "property_types": [
+      "Office",
+      "Mixed Use",
+      "Special Purpose"
+    ],
+    "sub_types": [
+      "Creative Office",
+      "Telecom/Data Center"
+    ],
+    "square_footage": null,
+    "tenancy": null,
+    "year_built": null,
+    "buildings": null,
+    "stories": null,
+    "acreage": null,
+    "zoning": null,
+    "investment_type": null,
+    "opportunity_zone": false
+  },
+  "description": "For registration requirements and regulations, please review here or contact Audrey Hanna | 518-625-8581 | ahanna@crexi.​com.​ Property tours are available on 6/9 & 6/18 by appointment only only.​ Please contact the listing broker to schedule a tour.​ Conference Center at 3326 Kimberly Road, Davenport, IA 52807 offers a compelling value-add opportunity in one of the Quad Cities’ most accessible commercial corridors.​ Positioned just off I-74 with immediate connectivity to I-80 and US Highway 6, the property benefits from strong visibility, convenient regional access, and proximity to Downtown Davenport, Moline, and Quad City International Airport.​ Built in 1995, the approximately 9,936 SF C-3 zoned asset sits on 0.78 acres and includes approximately 3,000 SF of conference space, 5,544 SF of warehouse area, one 12’ x 14’ overhead door, and a 1,242 SF open mezzanine.​ The conference component features multiple meeting rooms, an executive board room, and atrium space, creating flexible potential for event, office, industrial, or mixed-use applications.​ Surrounded by durable lodging, corporate, logistics, medical, sports tourism, and entertainment demand, this location is well positioned to capitalize on continued growth throughout the Davenport market.​ Nearby attractions and economic drivers include the expanding TBK Bank Sports Complex, major regional employers, and ongoing public and private investment across the Quad Cities.​ You also may be interested in the LaQuinta Inn & Suites (Parcel A): Click HERE ​ Non-Contingent ​ Earnest Money Deposit: Greater of $20,000 or 10% of the Purchase Price ​ Marketing Fee: 5% of the Winning Bid Amount, $20,000 minimum ​ $10,000 Participation Deposit 3326 E Kimberly Rd, Davenport, IA 52807",
+  "investment_highlights": "​9,936 SF Building ​3,000 SF conference space ​5,544 SF warehouse space ​One 12’ x 14’ overhead door ​1,242 SF open mezzanine. ​Zoned C-3 on 0.78 acres ​Located off I-74 and US Highway 6 ​Six miles from the Quad City International Airport",
+  "media": {
+    "photos": null,
+    "videos": 0,
+    "has_virtual_tour": false,
+    "has_om": true
+  },
+  "market_research": {
+    "radius_miles": 3,
+    "enriched_at": "2026-06-28T15:48:42.561Z",
+    "demographics": {
+      "url": "https://www.areavibes.com/davenport-ia/demographics/",
+      "source": "Areavibes",
+      "data_year": 2024,
+      "population": 105320,
+      "population_density_per_sq_mi": 1658,
+      "median_age": 37,
+      "married_pct": "50%",
+      "families_with_kids_pct": "42%",
+      "income": {
+        "pct_households_below_25k": null,
+        "pct_households_above_150k": "13%"
+      },
+      "race_ethnicity": {
+        "white": "79.9%",
+        "black_or_african_american": "11%",
+        "asian": "2.5%",
+        "american_indian": "0.4%",
+        "native_hawaiian": "0%",
+        "hispanic_or_latino": "8.9%"
+      },
+      "language": {
+        "english_only_pct": null,
+        "spanish_only_pct": "4.4%"
+      },
+      "foreign_born_pct": null,
+      "livability_score": 79
+    },
+    "crime": {
+      "url": "https://www.areavibes.com/davenport-ia/crime/",
+      "source": "Areavibes (FBI UCR)",
+      "data_year": 2024,
+      "overall_grade": "F",
+      "pct_below_national_avg": {
+        "total_crime": "95%",
+        "violent_crime": null,
+        "property_crime": null
+      },
+      "crime_rate_summary": null,
+      "incidents_per_100k": {
+        "total_crime": {
+          "city_incidents": 4119,
+          "city_per_100k": 4122,
+          "state_per_100k": 1540,
+          "national_per_100k": 2119
+        },
+        "violent_crime": {
+          "city_incidents": 581,
+          "city_per_100k": 581,
+          "state_per_100k": 243,
+          "national_per_100k": 359
+        },
+        "property_crime": {
+          "city_incidents": 3538,
+          "city_per_100k": 3541,
+          "state_per_100k": 1297,
+          "national_per_100k": 1760
+        },
+        "murder": {
+          "city_incidents": 8,
+          "city_per_100k": 8,
+          "state_per_100k": 2.1,
+          "national_per_100k": 5
+        },
+        "rape": {
+          "city_incidents": 108,
+          "city_per_100k": 108.1,
+          "state_per_100k": 35.2,
+          "national_per_100k": 37.5
+        },
+        "robbery": {
+          "city_incidents": 65,
+          "city_per_100k": 65,
+          "state_per_100k": 18.7,
+          "national_per_100k": 60.6
+        },
+        "assault": {
+          "city_incidents": 400,
+          "city_per_100k": 400.3,
+          "state_per_100k": 187.2,
+          "national_per_100k": 256.1
+        },
+        "burglary": {
+          "city_incidents": 653,
+          "city_per_100k": 653.5,
+          "state_per_100k": 199.1,
+          "national_per_100k": 229.2
+        },
+        "theft": {
+          "city_incidents": 2554,
+          "city_per_100k": 2555.9,
+          "state_per_100k": 962.6,
+          "national_per_100k": 1272.1
+        },
+        "vehicle_theft": {
+          "city_incidents": 331,
+          "city_per_100k": 331.2,
+          "state_per_100k": 135.1,
+          "national_per_100k": 258.8
+        }
+      }
+    },
+    "retail_market": {
+      "source": "CommercialCafe.com",
+      "url": "https://www.commercialcafe.com/commercial-real-estate/us/ia/davenport/",
+      "total_listings": 54,
+      "retail_leases_with_price": 7,
+      "retail_asking_rent": {
+        "avg_per_sf_yr": 16.14,
+        "min_per_sf_yr": 5.5,
+        "max_per_sf_yr": 20
+      },
+      "all_priced_leases": [
+        {
+          "address": "5175 Utica Ridge Road, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "2,726"
+        },
+        {
+          "address": "3385 Dexter Court, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office, Retail",
+          "price_raw": "$18.00/SF/YR",
+          "asking_per_sf_yr": 18,
+          "sale_price": null,
+          "size_sf_range": "1,863-5,380"
+        },
+        {
+          "address": "4862 Utica Ridge Rd, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$19.00/SF/YR",
+          "asking_per_sf_yr": 19,
+          "sale_price": null,
+          "size_sf_range": "1,505"
+        },
+        {
+          "address": "2028 E. 38th St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "1,900"
+        },
+        {
+          "address": "4435 E 53rd Street, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$27.00 - $29.00/SF/YR",
+          "asking_per_sf_yr": 29,
+          "sale_price": null,
+          "size_sf_range": "1,690-6,955"
+        },
+        {
+          "address": "3400 Dexter Court, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$18.00/SF/YR",
+          "asking_per_sf_yr": 18,
+          "sale_price": null,
+          "size_sf_range": "820-2,442"
+        },
+        {
+          "address": "1010 E KIMBERLY ROAD, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$5.50/SF/YR",
+          "asking_per_sf_yr": 5.5,
+          "sale_price": null,
+          "size_sf_range": "19,948"
+        },
+        {
+          "address": "2140 W Kimberly Road, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$14.00 - $20.00/SF/YR",
+          "asking_per_sf_yr": 20,
+          "sale_price": null,
+          "size_sf_range": "1,280-5,587"
+        },
+        {
+          "address": "7620 Louis Rich Ct, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$9.00 - $9.50/SF/YR",
+          "asking_per_sf_yr": 9.5,
+          "sale_price": null,
+          "size_sf_range": "1,500-3,000"
+        },
+        {
+          "address": "1706 N Brady Street #107, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "735-1,966"
+        },
+        {
+          "address": "1216-1218 E 37th St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$8.22 - $10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "1,001-2,432"
+        },
+        {
+          "address": "5252 Utica Ridge Rd, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$19.50/SF/YR",
+          "asking_per_sf_yr": 19.5,
+          "sale_price": null,
+          "size_sf_range": "1,413"
+        },
+        {
+          "address": "3875 Elmore Avenue , Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$17.00/SF/YR",
+          "asking_per_sf_yr": 17,
+          "sale_price": null,
+          "size_sf_range": "1,600"
+        },
+        {
+          "address": "5357 EASTERN AVENUE, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "3,094"
+        },
+        {
+          "address": "5217 & 5231 Grand Avenue, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$10.00 - $10.50/SF/YR",
+          "asking_per_sf_yr": 10.5,
+          "sale_price": null,
+          "size_sf_range": "1,836-5,054"
+        }
+      ],
+      "all_listings": [
+        {
+          "address": "Davenport, IA Commercial Real Estate for Lease and Sale",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$950,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 950000,
+          "size_sf_range": "36,035"
+        },
+        {
+          "address": "1320 W Kimberly Rd, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$224,900",
+          "asking_per_sf_yr": null,
+          "sale_price": 224900,
+          "size_sf_range": "19,473"
+        },
+        {
+          "address": "320 West Kimberly Road, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "60-4,108"
+        },
+        {
+          "address": "1301 Harrison St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$225,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 225000,
+          "size_sf_range": "14,374"
+        },
+        {
+          "address": "SWQ W 76th St , Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$955,155",
+          "asking_per_sf_yr": null,
+          "sale_price": 955155,
+          "size_sf_range": null
+        },
+        {
+          "address": "5175 Utica Ridge Road, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "2,726"
+        },
+        {
+          "address": "0 E 56th St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$3,027,420",
+          "asking_per_sf_yr": null,
+          "sale_price": 3027420,
+          "size_sf_range": null
+        },
+        {
+          "address": "3833 Division St., Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "1,356"
+        },
+        {
+          "address": "3385 Dexter Court, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office, Retail",
+          "price_raw": "$18.00/SF/YR",
+          "asking_per_sf_yr": 18,
+          "sale_price": null,
+          "size_sf_range": "1,863-5,380"
+        },
+        {
+          "address": "4862 Utica Ridge Rd, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$19.00/SF/YR",
+          "asking_per_sf_yr": 19,
+          "sale_price": null,
+          "size_sf_range": "1,505"
+        },
+        {
+          "address": "1706 N Brady St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$860,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 860000,
+          "size_sf_range": "47,705"
+        },
+        {
+          "address": "2028 E. 38th St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "1,900"
+        },
+        {
+          "address": "908 W 35th St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$5,500,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 5500000,
+          "size_sf_range": "20,836"
+        },
+        {
+          "address": "4435 E 53rd Street, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$27.00 - $29.00/SF/YR",
+          "asking_per_sf_yr": 29,
+          "sale_price": null,
+          "size_sf_range": "1,690-6,955"
+        },
+        {
+          "address": "2751 W. 72nd Street, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$625,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 625000,
+          "size_sf_range": "24,829"
+        },
+        {
+          "address": "2402 E. 53rd St., Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "4,713"
+        },
+        {
+          "address": "937 E 53rd Street, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "7,500-15,225"
+        },
+        {
+          "address": "5086 N Pine St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$818,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 818000,
+          "size_sf_range": null
+        },
+        {
+          "address": "4751 Progress Drive, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$2,250,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 2250000,
+          "size_sf_range": "36,373"
+        },
+        {
+          "address": "3900 W Locust Street, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$59,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 59000,
+          "size_sf_range": null
+        },
+        {
+          "address": "813 W 2nd Street, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$250,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 250000,
+          "size_sf_range": "5,106"
+        },
+        {
+          "address": "2010 East 38th Street Suite 103, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "1202 W. 3rd St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$275,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 275000,
+          "size_sf_range": "8,150"
+        },
+        {
+          "address": "102 East 2nd Street, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$40/day",
+          "asking_per_sf_yr": null,
+          "sale_price": 40,
+          "size_sf_range": null
+        },
+        {
+          "address": "1601 Rockingham Rd, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$117,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 117000,
+          "size_sf_range": "9,514"
+        },
+        {
+          "address": "332 North Harrison Street, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$369/month",
+          "asking_per_sf_yr": null,
+          "sale_price": 369,
+          "size_sf_range": null
+        },
+        {
+          "address": "3400 Dexter Court, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$18.00/SF/YR",
+          "asking_per_sf_yr": 18,
+          "sale_price": null,
+          "size_sf_range": "820-2,442"
+        },
+        {
+          "address": "SEQ W 76th Street, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$2,021,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 2021000,
+          "size_sf_range": null
+        },
+        {
+          "address": "1010 E KIMBERLY ROAD, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$5.50/SF/YR",
+          "asking_per_sf_yr": 5.5,
+          "sale_price": null,
+          "size_sf_range": "19,948"
+        },
+        {
+          "address": "3019 Rockingham Rd, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "35,152"
+        },
+        {
+          "address": "2444 E Kimberly Rd, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$825,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 825000,
+          "size_sf_range": "43,479"
+        },
+        {
+          "address": "4509 North Brady Street 1st Floor, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$554/month",
+          "asking_per_sf_yr": null,
+          "sale_price": 554,
+          "size_sf_range": null
+        },
+        {
+          "address": "2140 W Kimberly Road, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$14.00 - $20.00/SF/YR",
+          "asking_per_sf_yr": 20,
+          "sale_price": null,
+          "size_sf_range": "1,280-5,587"
+        },
+        {
+          "address": "7620 Louis Rich Ct, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$9.00 - $9.50/SF/YR",
+          "asking_per_sf_yr": 9.5,
+          "sale_price": null,
+          "size_sf_range": "1,500-3,000"
+        },
+        {
+          "address": "0 Grand Avenue, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$104,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 104000,
+          "size_sf_range": null
+        },
+        {
+          "address": "1706 N Brady Street #107, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "735-1,966"
+        },
+        {
+          "address": "1216-1218 E 37th St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$8.22 - $10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "1,001-2,432"
+        },
+        {
+          "address": "0 E 56th Street, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$2,435,004",
+          "asking_per_sf_yr": null,
+          "sale_price": 2435004,
+          "size_sf_range": null
+        },
+        {
+          "address": "104 E Kimberly Road, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$275,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 275000,
+          "size_sf_range": null
+        },
+        {
+          "address": "4620 East 53rd Street #200, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$639/month",
+          "asking_per_sf_yr": null,
+          "sale_price": 639,
+          "size_sf_range": null
+        },
+        {
+          "address": "4007 E 53rd St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "2501 Blackhawk Rd, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "7,100"
+        },
+        {
+          "address": "4751 Progress Dr, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "4007 E 53rd St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "5252 Utica Ridge Rd, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$19.50/SF/YR",
+          "asking_per_sf_yr": 19.5,
+          "sale_price": null,
+          "size_sf_range": "1,413"
+        },
+        {
+          "address": "3875 Elmore Avenue , Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$17.00/SF/YR",
+          "asking_per_sf_yr": 17,
+          "sale_price": null,
+          "size_sf_range": "1,600"
+        },
+        {
+          "address": "1040 W 4th St, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "5357 EASTERN AVENUE, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "3,094"
+        },
+        {
+          "address": "3812 N Harrison St, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$1,100,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1100000,
+          "size_sf_range": "35,192"
+        },
+        {
+          "address": "3523 EASTERN AVENUE, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "5,579"
+        },
+        {
+          "address": "2825 Rockingham Rd, Davenport, IA",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$900,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 900000,
+          "size_sf_range": "14,860"
+        },
+        {
+          "address": "5217 & 5231 Grand Avenue, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$10.00 - $10.50/SF/YR",
+          "asking_per_sf_yr": 10.5,
+          "sale_price": null,
+          "size_sf_range": "1,836-5,054"
+        },
+        {
+          "address": "4436 Brady Street, Davenport, IA",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "What are the main commercial real estate types available in Davenport, IA?",
+          "listing_type": "For Lease",
+          "property_type": "Office Space: The market includes 224,604 square feet of office spaces in addition to 37 coworking locations.",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        }
+      ]
+    }
+  }
+}
