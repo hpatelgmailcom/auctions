@@ -5,7 +5,6 @@ import {
   getFilteredRowModel, flexRender,
 } from '@tanstack/react-table';
 import { ChevronUp, ChevronDown, ExternalLink, Filter } from 'lucide-react';
-import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
@@ -13,6 +12,39 @@ import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyS
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtSF = v => v != null ? `${Number(v).toLocaleString()} SF` : '—';
+
+// Custom sort orders — lower number = better rank
+const GRADE_RANK = { 'A+':1,'A':2,'A-':3,'B+':4,'B':5,'B-':6,'C+':7,'C':8,'C-':9,'D+':10,'D':11,'D-':12,'F':13 };
+const REC_RANK   = { 'BID':1,'CONDITIONAL':2,'NO BID':3 };
+const nullLast   = (a, b, asc) => {
+  if (a == null && b == null) return 0;
+  if (a == null) return asc ? 1 : -1;
+  if (b == null) return asc ? -1 : 1;
+  return 0;
+};
+
+const gradeSortFn = (rowA, rowB, colId) => {
+  const a = rowA.getValue(colId), b = rowB.getValue(colId);
+  const nl = nullLast(a, b, true);
+  if (nl !== 0) return nl;
+  return (GRADE_RANK[a] ?? 99) - (GRADE_RANK[b] ?? 99);
+};
+
+const recSortFn = (rowA, rowB, colId) => {
+  const a = rowA.getValue(colId), b = rowB.getValue(colId);
+  const nl = nullLast(a, b, true);
+  if (nl !== 0) return nl;
+  return (REC_RANK[a] ?? 99) - (REC_RANK[b] ?? 99);
+};
+
+const numSortFn = (rowA, rowB, colId) => {
+  const a = rowA.getValue(colId), b = rowB.getValue(colId);
+  const nl = nullLast(a, b, true);
+  if (nl !== 0) return nl;
+  return Number(a) - Number(b);
+};
+
+const PROPERTY_TYPES = ['Retail','Office','Industrial','Multifamily','Land','Mixed Use','Hospitality','Healthcare','Flex','Special Purpose'];
 
 function FilterBar({ filters, onChange }) {
   return (
@@ -27,6 +59,19 @@ function FilterBar({ filters, onChange }) {
         <option value="BID">BID</option>
         <option value="NO BID">NO BID</option>
         <option value="CONDITIONAL">CONDITIONAL</option>
+      </select>
+      <select className="input text-xs py-1.5"
+        value={filters.auction_type}
+        onChange={e => onChange('auction_type', e.target.value)}>
+        <option value="">Any Auction Type</option>
+        <option value="Reserve">Reserve</option>
+        <option value="Absolute">Absolute</option>
+      </select>
+      <select className="input text-xs py-1.5"
+        value={filters.property_type}
+        onChange={e => onChange('property_type', e.target.value)}>
+        <option value="">Any Property Type</option>
+        {PROPERTY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
       </select>
       <input className="input text-xs py-1.5 w-28" placeholder="State (e.g. OH)"
         value={filters.state} onChange={e => onChange('state', e.target.value.toUpperCase())} />
@@ -63,17 +108,18 @@ export default function ScreeningPage() {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState([{ id: 'bidding_starts', desc: false }]);
   const [filters, setFilters] = useState({
-    recommendation: '', state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
+    recommendation: '', auction_type: '', property_type: '',
+    state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
   });
 
+  // Only filters drive API re-fetches; sorting is done client-side
   const queryParams = useMemo(() => {
-    const p = { limit: 100, sort: sorting[0]?.id || 'bidding_starts', dir: sorting[0]?.desc ? 'desc' : 'asc' };
+    const p = { limit: 200 };
     Object.entries(filters).forEach(([k, v]) => { if (v) p[k] = v; });
     return p;
-  }, [filters, sorting]);
+  }, [filters]);
 
   const { data, loading } = useFetch(() => api.listings.list(queryParams), [JSON.stringify(queryParams)]);
-
   const rows = data?.data || [];
 
   const columns = useMemo(() => [
@@ -81,6 +127,7 @@ export default function ScreeningPage() {
       id: 'address',
       header: 'Property',
       accessorKey: 'address',
+      sortingFn: 'alphanumeric',
       cell: ({ row }) => (
         <div>
           <p className="text-sm text-ink font-medium truncate max-w-[220px]">{row.original.address || '—'}</p>
@@ -92,47 +139,53 @@ export default function ScreeningPage() {
       id: 'starting_bid_usd',
       header: 'Starting Bid',
       accessorKey: 'starting_bid_usd',
+      sortingFn: numSortFn,
       cell: ({ getValue }) => <span className="font-mono text-sm text-ink">{fmt$(getValue())}</span>,
     },
     {
       id: 'max_bid_usd',
       header: 'Max Bid',
       accessorKey: 'max_bid_usd',
+      sortingFn: numSortFn,
       cell: ({ getValue }) => <span className="font-mono text-sm text-ink-muted">{fmt$(getValue())}</span>,
     },
     {
       id: 'headroom',
       header: 'Headroom',
       accessorFn: r => (r.max_bid_usd != null && r.starting_bid_usd != null) ? r.max_bid_usd - r.starting_bid_usd : null,
+      sortingFn: numSortFn,
       cell: ({ getValue }) => {
         const v = getValue();
         if (v == null) return <span className="text-ink-subtle text-xs">—</span>;
         return <span className={clsx('font-mono text-sm font-medium', v >= 0 ? 'text-bid' : 'text-nobid')}>{fmt$(v)}</span>;
       },
-      enableSorting: false,
     },
     {
       id: 'bidding_starts',
       header: 'Auction',
       accessorKey: 'bidding_starts',
+      sortingFn: 'datetime',
       cell: ({ getValue }) => <AuctionCountdown date={getValue()} compact />,
     },
     {
       id: 'square_footage',
       header: 'Size',
       accessorKey: 'square_footage',
+      sortingFn: numSortFn,
       cell: ({ getValue }) => <span className="text-xs text-ink-muted">{fmtSF(getValue())}</span>,
     },
     {
       id: 'crime_grade',
       header: 'Crime',
       accessorKey: 'crime_grade',
+      sortingFn: gradeSortFn,
       cell: ({ getValue }) => <CrimeGradeBadge grade={getValue()} />,
     },
     {
       id: 'avg_retail_rent',
       header: 'Retail $/SF',
       accessorKey: 'avg_retail_rent',
+      sortingFn: numSortFn,
       cell: ({ getValue }) => (
         <span className="text-xs text-ink-muted font-mono">
           {getValue() != null ? `$${Number(getValue()).toFixed(2)}` : '—'}
@@ -143,6 +196,7 @@ export default function ScreeningPage() {
       id: 'disposition_score',
       header: 'Disp.',
       accessorKey: 'disposition_score',
+      sortingFn: numSortFn,
       cell: ({ getValue }) => {
         const v = getValue();
         const color = v >= 7 ? 'text-bid' : v >= 5 ? 'text-conditional' : v != null ? 'text-nobid' : 'text-ink-subtle';
@@ -153,18 +207,19 @@ export default function ScreeningPage() {
       id: 'recommendation',
       header: 'Decision',
       accessorKey: 'recommendation',
+      sortingFn: recSortFn,
       cell: ({ getValue }) => <RecommendationBadge value={getValue()} />,
     },
     {
       id: 'actions',
       header: '',
+      enableSorting: false,
       cell: ({ row }) => (
-        <button onClick={() => navigate(`/listing/${row.original.id}`)}
+        <button onClick={e => { e.stopPropagation(); navigate(`/listing/${row.original.id}`); }}
           className="p-1.5 rounded hover:bg-surface-hover text-ink-subtle hover:text-brand transition-colors">
           <ExternalLink size={14} />
         </button>
       ),
-      enableSorting: false,
     },
   ], [navigate]);
 
@@ -176,7 +231,7 @@ export default function ScreeningPage() {
     getCoreRowModel:     getCoreRowModel(),
     getSortedRowModel:   getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    manualSorting: true,
+    // Client-side sorting — custom sortingFns handle nulls and grade rank correctly
   });
 
   const setFilter = (k, v) => setFilters(f => ({ ...f, [k]: v }));

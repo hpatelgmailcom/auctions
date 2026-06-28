@@ -14,7 +14,9 @@ Items specific to the dashboard and reporting interface.
 
 ## Medium Priority
 
-*(none yet)*
+- [x] **Screening page: fix column sorting** — crime grade column sorts alphabetically (A- before A before A+) instead of by grade rank; recommendation column has no meaningful sort order; all other columns audited and fixed to sort correctly
+- [x] **Screening page: add Auction Type and Property Type filters** — filter bar missing Auction Type (Reserve / Absolute) and Property Type (Retail / Office / Industrial / Multifamily / Land / Mixed Use / Hospitality) dropdowns; both must wire through to the API and update the table on change
+- [x] **Property Detail: Google Maps and Google Earth links on address rows** — in the Market Intelligence tab, each row in the Retail Market comps table and Sold Comps table should have small icon buttons that open the address in Google Maps and Google Earth in a new tab
 
 ---
 

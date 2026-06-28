@@ -7,8 +7,9 @@ export default async function listingsRoutes(fastify) {
     const db = getDb();
     const {
       page = 1, limit = 50,
-      state, type, recommendation, min_price, max_price,
+      state, recommendation, min_price, max_price,
       max_days_to_auction, crime_grade, opportunity_zone,
+      auction_type, property_type,
       sort = 'bidding_starts', dir = 'asc',
     } = req.query;
 
@@ -19,12 +20,14 @@ export default async function listingsRoutes(fastify) {
     const conditions = [];
     const params     = {};
 
-    if (state)            { conditions.push('state = @state');               params.state = state; }
-    if (recommendation)   { conditions.push('recommendation = @rec');         params.rec = recommendation; }
-    if (min_price)        { conditions.push('starting_bid_usd >= @min');      params.min = Number(min_price); }
-    if (max_price)        { conditions.push('starting_bid_usd <= @max');      params.max = Number(max_price); }
-    if (crime_grade)      { conditions.push('crime_grade = @cg');             params.cg = crime_grade; }
+    if (state)            { conditions.push('state = @state');                          params.state = state; }
+    if (recommendation)   { conditions.push('recommendation = @rec');                    params.rec = recommendation; }
+    if (min_price)        { conditions.push('starting_bid_usd >= @min');                 params.min = Number(min_price); }
+    if (max_price)        { conditions.push('starting_bid_usd <= @max');                 params.max = Number(max_price); }
+    if (crime_grade)      { conditions.push('crime_grade = @cg');                        params.cg = crime_grade; }
     if (opportunity_zone) { conditions.push('opportunity_zone = 1'); }
+    if (auction_type)     { conditions.push('auction_type = @at');                       params.at = auction_type; }
+    if (property_type)    { conditions.push("property_types LIKE @pt");                  params.pt = `%${property_type}%`; }
     if (max_days_to_auction) {
       const cutoff = new Date(Date.now() + Number(max_days_to_auction) * 86400000).toISOString();
       conditions.push("bidding_starts <= @cutoff AND bidding_starts >= datetime('now')");

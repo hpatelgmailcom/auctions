@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2, Globe } from 'lucide-react';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
@@ -10,6 +10,29 @@ import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tool
 
 const fmt$  = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtPct = v => v != null ? `${v}%` : '—';
+
+function MapLinks({ address }) {
+  if (!address) return null;
+  const q = encodeURIComponent(address);
+  return (
+    <div className="flex items-center gap-1">
+      <a href={`https://www.google.com/maps/search/?api=1&query=${q}`}
+        target="_blank" rel="noreferrer"
+        onClick={e => e.stopPropagation()}
+        title="Open in Google Maps"
+        className="p-1 rounded text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors">
+        <MapPin size={11} />
+      </a>
+      <a href={`https://earth.google.com/web/search/${q}`}
+        target="_blank" rel="noreferrer"
+        onClick={e => e.stopPropagation()}
+        title="Open in Google Earth"
+        className="p-1 rounded text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors">
+        <Globe size={11} />
+      </a>
+    </div>
+  );
+}
 const row   = (label, value) => (
   <div key={label} className="flex justify-between items-start py-2 border-b border-surface-border/50 last:border-0 gap-4">
     <span className="text-xs text-ink-subtle shrink-0">{label}</span>
@@ -372,6 +395,7 @@ export default function PropertyDetail() {
                               <th className="text-right py-2 font-medium">$/SF/yr</th>
                               <th className="text-right py-2 font-medium">Size</th>
                               <th className="text-right py-2 font-medium">Type</th>
+                              <th className="py-2 font-medium w-12"></th>
                             </tr>
                           </thead>
                           <tbody>
@@ -381,6 +405,7 @@ export default function PropertyDetail() {
                                 <td className="text-right font-mono text-bid">${c.asking_per_sf_yr?.toFixed(2)}</td>
                                 <td className="text-right text-ink-muted">{c.size_sf_range} SF</td>
                                 <td className="text-right text-ink-subtle">{c.property_type}</td>
+                                <td className="py-1.5"><MapLinks address={c.address} /></td>
                               </tr>
                             ))}
                           </tbody>
@@ -505,6 +530,7 @@ export default function PropertyDetail() {
                             <th className="text-right py-2 font-medium">Sale Price</th>
                             <th className="text-right py-2 font-medium">SF</th>
                             <th className="text-right py-2 font-medium">Dist.</th>
+                            <th className="py-2 font-medium w-12"></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -514,6 +540,7 @@ export default function PropertyDetail() {
                               <td className="text-right font-mono text-bid">{fmt$(c.sale_price)}</td>
                               <td className="text-right text-ink-muted">{c.sq_footage ? `${Number(c.sq_footage).toLocaleString()} SF` : '—'}</td>
                               <td className="text-right text-ink-subtle">{c.distance_mi}mi</td>
+                              <td className="py-1.5"><MapLinks address={c.address} /></td>
                             </tr>
                           ))}
                         </tbody>
