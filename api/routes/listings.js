@@ -26,7 +26,7 @@ export default async function listingsRoutes(fastify) {
     if (max_price)        { conditions.push('starting_bid_usd <= @max');                 params.max = Number(max_price); }
     if (crime_grade)      { conditions.push('crime_grade = @cg');                        params.cg = crime_grade; }
     if (opportunity_zone) { conditions.push('opportunity_zone = 1'); }
-    if (auction_type)     { conditions.push('auction_type = @at');                       params.at = auction_type; }
+    if (auction_type)     { conditions.push('auction_type LIKE @at');                     params.at = `${auction_type}%`; }
     if (property_type)    { conditions.push("property_types LIKE @pt");                  params.pt = `%${property_type}%`; }
     if (max_days_to_auction) {
       const cutoff = new Date(Date.now() + Number(max_days_to_auction) * 86400000).toISOString();
