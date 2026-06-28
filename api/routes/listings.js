@@ -65,6 +65,10 @@ export default async function listingsRoutes(fastify) {
       enrichment_demographics: safeJson(row.enrichment_demographics),
       enrichment_crime:        safeJson(row.enrichment_crime),
       enrichment_retail:       safeJson(row.enrichment_retail),
+      enrichment_sold_comps:   safeJson(row.enrichment_sold_comps),
+      enrichment_walk_score:   safeJson(row.enrichment_walk_score),
+      enrichment_schools:      safeJson(row.enrichment_schools),
+      enrichment_flood_risk:   safeJson(row.enrichment_flood_risk),
       due_diligence:           safeJson(row.due_diligence),
       compliance_review:       safeJson(row.compliance_review),
     };

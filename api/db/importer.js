@@ -34,6 +34,10 @@ function toRow(raw) {
   const demo   = mr.demographics  || {};
   const crime  = mr.crime         || {};
   const retail = mr.retail_market || {};
+  const sold   = mr.sold_comps    || null;
+  const walk   = mr.walk_score    || null;
+  const sch    = mr.schools       || null;
+  const flood  = mr.flood_risk    || null;
 
   return {
     id:                    l.id,
@@ -77,6 +81,10 @@ function toRow(raw) {
     enrichment_demographics: JSON.stringify(demo),
     enrichment_crime:        JSON.stringify(crime),
     enrichment_retail:       JSON.stringify(retail),
+    enrichment_sold_comps:   JSON.stringify(sold),
+    enrichment_walk_score:   JSON.stringify(walk),
+    enrichment_schools:      JSON.stringify(sch),
+    enrichment_flood_risk:   JSON.stringify(flood),
     due_diligence:           JSON.stringify(dd),
     compliance_review:       JSON.stringify(cr),
 

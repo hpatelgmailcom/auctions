@@ -17,6 +17,10 @@ import path from 'path';
 import { fetchDemographics } from './demographics.js';
 import { fetchCrime }        from './crime.js';
 import { fetchRetailMarket } from './retail_market.js';
+import { fetchSoldComps }    from './sold_comps.js';
+import { fetchWalkScore }    from './walk_score.js';
+import { fetchSchools }      from './schools.js';
+import { fetchFloodRisk }    from './flood_risk.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -86,11 +90,18 @@ export async function enrich(jsonPath, { radius = RADIUS, silent = false } = {})
     console.log(`    City: ${city}, ${stateAbbr.toUpperCase()}${county ? `  County: ${county}` : ''}${zip ? `  ZIP: ${zip}` : ''}  |  Radius: ${radius} mi`);
   }
 
+  const address    = record.listing?.address ?? '';
+  const assetTypes = record.property?.property_types ?? ['Retail'];
+
   const results = { radius_miles: radius, enriched_at: new Date().toISOString() };
   const steps   = [
     ['demographics',  () => fetchDemographics({ zip, city, stateAbbr })],
     ['crime',         () => fetchCrime({ city, stateAbbr })],
     ['retail_market', () => fetchRetailMarket({ city, stateAbbr, county })],
+    ['sold_comps',    () => fetchSoldComps({ lat, lng, assetTypes, stateCode: stateAbbr?.toUpperCase(), radiusMiles: 25 })],
+    ['walk_score',    () => fetchWalkScore({ lat, lng, address })],
+    ['schools',       () => fetchSchools({ city, stateAbbr })],
+    ['flood_risk',    () => fetchFloodRisk({ lat, lng })],
   ];
 
   for (const [key, fn] of steps) {

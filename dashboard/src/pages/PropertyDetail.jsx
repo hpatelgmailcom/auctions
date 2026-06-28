@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2 } from 'lucide-react';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
@@ -39,6 +39,10 @@ export default function PropertyDetail() {
   const demo   = listing.enrichment_demographics || {};
   const crime  = listing.enrichment_crime        || {};
   const retail = listing.enrichment_retail       || {};
+  const sold   = listing.enrichment_sold_comps   || null;
+  const walk   = listing.enrichment_walk_score   || null;
+  const school = listing.enrichment_schools      || null;
+  const flood  = listing.enrichment_flood_risk   || null;
   const dd     = listing.due_diligence           || null;
   const cr     = listing.compliance_review       || null;
 
@@ -348,6 +352,138 @@ export default function PropertyDetail() {
                         </table>
                       </div>
                     )}
+                  </div>
+                )}
+            </div>
+
+            {/* Walk Score */}
+            <div className="card p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Footprints size={14} className="text-brand" />
+                <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider">Walkability</h3>
+                {walk?.status === 'key_required' && <span className="text-[10px] text-conditional ml-auto">API key required</span>}
+              </div>
+              {!walk ? <p className="text-sm text-ink-subtle">Not yet enriched.</p>
+                : walk.status === 'key_required' ? <p className="text-sm text-ink-subtle">{walk.message}</p>
+                : (
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      ['Walk Score', walk.walk_score, walk.walk_label],
+                      ['Transit Score', walk.transit_score, walk.transit_label],
+                      ['Bike Score', walk.bike_score, walk.bike_label],
+                    ].map(([label, score, desc]) => (
+                      <div key={label} className="bg-surface-hover rounded-lg p-3">
+                        <p className="text-[10px] text-ink-subtle uppercase tracking-wider mb-1">{label}</p>
+                        <p className={clsx('text-2xl font-bold font-mono',
+                          score >= 70 ? 'text-bid' : score >= 50 ? 'text-conditional' : score != null ? 'text-nobid' : 'text-ink-subtle')}>
+                          {score ?? '—'}
+                        </p>
+                        {desc && <p className="text-[10px] text-ink-subtle mt-1">{desc}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+            </div>
+
+            {/* Schools */}
+            <div className="card p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <GraduationCap size={14} className="text-brand" />
+                <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider">Schools</h3>
+                {school?.source && <span className="text-[10px] text-ink-subtle ml-auto">{school.source}</span>}
+              </div>
+              {!school ? <p className="text-sm text-ink-subtle">Not yet enriched.</p> : (
+                <div className="grid grid-cols-2 gap-x-8">
+                  <div>
+                    {row('District Grade', school.grade)}
+                    {row('Avg Test Scores (city)', school.test_scores?.city_percentile != null ? `${school.test_scores.city_percentile}th percentile` : null)}
+                    {row('Avg Test Scores (national)', school.test_scores?.national_avg_pct != null ? `${school.test_scores.national_avg_pct}th percentile` : null)}
+                    {row('Student/Teacher Ratio', school.student_teacher_ratio?.city)}
+                  </div>
+                  <div>
+                    {row('Public Schools', school.school_counts?.public)}
+                    {row('Private Schools', school.school_counts?.private)}
+                    {row('Post-Secondary', school.school_counts?.post_secondary ?? 'n/a')}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Flood & Climate Risk */}
+            <div className="card p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <CloudRain size={14} className="text-brand" />
+                <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider">Flood & Climate Risk</h3>
+                {flood?.source && <span className="text-[10px] text-ink-subtle ml-auto">{flood.source}</span>}
+              </div>
+              {!flood ? <p className="text-sm text-ink-subtle">Not yet enriched.</p> : (
+                <div>
+                  <div className={clsx('flex items-center gap-3 rounded-lg px-3 py-2 mb-4 text-sm',
+                    flood.flood_zone?.risk_level === 'Minimal' ? 'bg-bid-bg text-bid' :
+                    flood.flood_zone?.risk_level === 'Moderate' ? 'bg-conditional-bg text-conditional' :
+                    flood.flood_zone?.risk_level === 'High' || flood.flood_zone?.risk_level === 'Very High' ? 'bg-nobid-bg text-nobid' :
+                    'bg-surface-hover text-ink-muted')}>
+                    <CloudRain size={14} />
+                    <span>
+                      <strong>Zone {flood.flood_zone?.zone ?? '—'}</strong> — {flood.flood_zone?.description ?? 'Unknown'}
+                    </span>
+                  </div>
+                  {row('In Special Flood Hazard Area', flood.flood_zone?.in_special_flood_hazard_area ? 'Yes — insurance required' : 'No')}
+                  {row('Risk Level', flood.flood_zone?.risk_level)}
+                  {row('Zone Subtype', flood.flood_zone?.zone_subtype)}
+                  {flood.flood_zone?.base_flood_elevation && row('Base Flood Elevation', `${flood.flood_zone.base_flood_elevation} ft`)}
+                  {flood.climate_info && row('NWS Forecast Zone', flood.climate_info.forecast_zone)}
+                  {flood.climate_info && row('Radar Station', flood.climate_info.radar_station)}
+                  {flood.insurance_note && <p className="text-xs text-ink-subtle mt-3 italic">{flood.insurance_note}</p>}
+                </div>
+              )}
+            </div>
+
+            {/* Sold Comps */}
+            <div className="card p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart2 size={14} className="text-brand" />
+                <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider">Sold Comps</h3>
+                {sold?.scope && <span className="text-[10px] text-ink-subtle ml-auto">{sold.scope}</span>}
+              </div>
+              {!sold ? <p className="text-sm text-ink-subtle">Not yet enriched.</p>
+                : sold.total_comps === 0 ? <p className="text-sm text-ink-subtle">No sold comps found in Crexi's database for this area and property type.</p>
+                : (
+                  <div>
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      {[
+                        ['Avg Sale Price', fmt$(sold.avg_sale_price)],
+                        ['Min Sale Price', fmt$(sold.min_sale_price)],
+                        ['Max Sale Price', fmt$(sold.max_sale_price)],
+                      ].map(([l, v]) => (
+                        <div key={l} className="bg-surface-hover rounded-lg p-3">
+                          <p className="text-[10px] text-ink-subtle uppercase tracking-wider mb-1">{l}</p>
+                          <p className="text-lg font-bold font-mono text-ink">{v}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="border-b border-surface-border text-ink-subtle">
+                            <th className="text-left py-2 font-medium">Address</th>
+                            <th className="text-right py-2 font-medium">Sale Price</th>
+                            <th className="text-right py-2 font-medium">SF</th>
+                            <th className="text-right py-2 font-medium">Dist.</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sold.comps.map((c, i) => (
+                            <tr key={i} className="border-b border-surface-border/40">
+                              <td className="py-1.5 text-ink max-w-[200px] truncate">{c.address}</td>
+                              <td className="text-right font-mono text-bid">{fmt$(c.sale_price)}</td>
+                              <td className="text-right text-ink-muted">{c.sq_footage ? `${Number(c.sq_footage).toLocaleString()} SF` : '—'}</td>
+                              <td className="text-right text-ink-subtle">{c.distance_mi}mi</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 )}
             </div>

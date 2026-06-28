@@ -44,6 +44,10 @@ CREATE TABLE IF NOT EXISTS listings (
   enrichment_demographics TEXT,
   enrichment_crime        TEXT,
   enrichment_retail       TEXT,
+  enrichment_sold_comps   TEXT,
+  enrichment_walk_score   TEXT,
+  enrichment_schools      TEXT,
+  enrichment_flood_risk   TEXT,
   due_diligence           TEXT,
   compliance_review       TEXT,
 

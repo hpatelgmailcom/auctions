@@ -21,10 +21,10 @@
 
 ## Low Priority / Future
 
-- [ ] **Comparable sales (sold comps)** — pull closed auction results from Crexi's sale comp API for actual transacted prices, not just asking prices
-- [ ] **Walk score / transit score** — walkscore.com has a free API (key required) for walkability, transit, and bike scores
-- [ ] **School ratings** — GreatSchools.org API or Niche.com scrape for nearby school quality
-- [ ] **Flood/climate risk** — FEMA flood zone data or First Street Foundation API for climate risk scores
+- [x] **Comparable sales (sold comps)** — pull closed auction results from Crexi's sale comp API for actual transacted prices, not just asking prices
+- [x] **Walk score / transit score** — walkscore.com has a free API (key required) for walkability, transit, and bike scores
+- [x] **School ratings** — GreatSchools.org API or Niche.com scrape for nearby school quality
+- [x] **Flood/climate risk** — FEMA flood zone data or First Street Foundation API for climate risk scores
 - [ ] **Export to CSV** — `scripts/to_csv.js` that flattens all listing JSONs into a single spreadsheet for analysis
 - [ ] **Automated scheduling** — cron job to run the full pipeline nightly and alert on new listings under the price threshold
 - [ ] **New business formation tracker** — fetch recently registered businesses within the property's city/zip from state Secretary of State APIs or the SBA's business formation dataset; high new-business velocity signals a growing local economy and stronger retail demand; flag areas where formation rate is accelerating year-over-year as a positive indicator in the disposition score
