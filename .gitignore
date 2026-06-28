@@ -5,3 +5,4 @@ api/db/crexi.db
 dashboard/node_modules/
 dashboard/dist/
 auctions/results_test.json
+auctions/listings/
