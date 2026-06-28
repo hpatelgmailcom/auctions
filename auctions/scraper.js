@@ -33,7 +33,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const argv = process.argv.slice(2);
 const getArg = (flag, def) => { const i = argv.indexOf(flag); return i !== -1 ? argv[i + 1] : def; };
 
-const MAX_PRICE    = parseInt(getArg('--max-price',    '300001'), 10);
+const MAX_PRICE    = parseInt(getArg('--max-price',    '30000000'), 10);
 const MAX_LISTINGS = parseInt(getArg('--max-listings', '10'),     10);
 const OUT_DIR      = getArg('--out-dir', path.join(__dirname, 'listings'));
 const NO_ENRICH    = argv.includes('--no-enrich');
