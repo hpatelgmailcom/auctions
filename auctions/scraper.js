@@ -13,12 +13,14 @@
  *   --max-price     Starting bid ceiling in USD (default: 300001)
  *   --max-listings  Max listings to save        (default: 10)
  *   --out-dir       Directory for per-listing JSON files (default: auctions/listings)
+ *   --no-enrich     Skip automatic enrichment after each listing is saved
  */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
+import { enrich } from './enrichment/enrich.js';
 
 // ---------------------------------------------------------------------------
 // Config
@@ -32,6 +34,7 @@ const getArg = (flag, def) => { const i = argv.indexOf(flag); return i !== -1 ? 
 const MAX_PRICE    = parseInt(getArg('--max-price',    '300001'), 10);
 const MAX_LISTINGS = parseInt(getArg('--max-listings', '10'),     10);
 const OUT_DIR      = getArg('--out-dir', path.join(__dirname, 'listings'));
+const NO_ENRICH    = argv.includes('--no-enrich');
 const PAGE_SIZE    = 60;   // Crexi's max per request
 const PAUSE_MS     = 600;  // polite delay between API calls
 
@@ -217,7 +220,8 @@ async function main() {
   console.log('\nCrexi Auction Scraper (API mode — no browser)');
   console.log(`  Max price:    $${MAX_PRICE.toLocaleString()}`);
   console.log(`  Max listings: ${MAX_LISTINGS}`);
-  console.log(`  Output dir:   ${OUT_DIR}\n`);
+  console.log(`  Output dir:   ${OUT_DIR}`);
+  console.log(`  Enrichment:   ${NO_ENRICH ? 'disabled (--no-enrich)' : 'enabled'}\n`);
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -245,6 +249,15 @@ async function main() {
       fs.writeFileSync(outPath, JSON.stringify(record, null, 2));
       saved++;
       console.log(`     ✓ ${filename}`);
+
+      if (!NO_ENRICH) {
+        try {
+          await enrich(outPath);
+        } catch (err) {
+          console.error(`     ✗ enrichment failed: ${err.message.split('\n')[0]}`);
+        }
+      }
+
       await sleep(PAUSE_MS);
     } catch (err) {
       console.error(`     ✗ failed: ${err.message.split('\n')[0]}`);

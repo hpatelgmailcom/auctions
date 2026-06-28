@@ -2,8 +2,8 @@
 
 ## High Priority
 
-- [ ] **Scraper: integrate enrichment automatically** — run `enrich.js` immediately after each listing is saved, so the full pipeline is a single command
-- [ ] **Census API integration** — add a Census Bureau API key (free at api.census.gov) for precise 1/3/5-mile radius demographics rather than city-level averages from Areavibes
+- [x] **Scraper: integrate enrichment automatically** — run `enrich.js` immediately after each listing is saved, so the full pipeline is a single command
+- [x] **Census API integration** — add a Census Bureau API key (free at api.census.gov) for precise 1/3/5-mile radius demographics rather than city-level averages from Areavibes
 - [ ] **Retry logic** — exponential backoff on failed API calls; currently a single failure silently records `{ error: "…" }` in the JSON
 - [ ] **Deduplication** — skip listings whose output file already exists (re-runs currently overwrite without checking)
 
@@ -14,7 +14,7 @@
 - [ ] **Price filter on search results page** — currently all auction listings are fetched and filtered client-side; add a `maxPrice` parameter to the Crexi search API body if/when they expose it
 - [ ] **Retail market fallback** — when CommercialCafe has fewer than 3 priced comps, automatically widen search to the next major city or use LoopNet as a secondary source
 - [ ] **Hispanic/Latino demographics** — Areavibes reports this figure in a different sentence structure; parser handles the common case but misses some city pages
-- [ ] **Median household income** — Areavibes puts this behind a paywall on some pages; fall back to city-data.com or Census API
+- [x] **Median household income** — Areavibes puts this behind a paywall on some pages; fall back to city-data.com or Census API
 - [ ] **Auction status filter** — option to scrape only active (`BidderRegistration`) or upcoming auctions, excluding closed ones
 
 ---

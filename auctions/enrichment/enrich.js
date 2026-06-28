@@ -47,16 +47,17 @@ function stateToAbbr(stateName) {
   return STATE_ABBR[lower] || lower.substring(0, 2); // fallback: first 2 chars
 }
 
-/** Extract city, state-abbr, lat, lng from a listing record */
+/** Extract city, state-abbr, zip, lat, lng from a listing record */
 function locationFrom(record) {
-  const { city, state, latitude, longitude } = record.listing ?? {};
+  const { city, state, zip, latitude, longitude } = record.listing ?? {};
   if (!city || !state) throw new Error('Listing is missing city or state');
   if (!latitude || !longitude) throw new Error('Listing is missing coordinates');
   return {
     city,
     stateAbbr: stateToAbbr(state),
-    lat: latitude,
-    lng: longitude,
+    zip:       zip ?? null,
+    lat:       latitude,
+    lng:       longitude,
   };
 }
 
@@ -64,45 +65,46 @@ function locationFrom(record) {
 // Main
 // ---------------------------------------------------------------------------
 
-async function enrich(jsonPath) {
-  if (!jsonPath) {
-    console.error('Usage: node enrichment/enrich.js <path-to-listing.json> [--radius N]');
-    process.exit(1);
-  }
-
+export async function enrich(jsonPath, { radius = RADIUS, silent = false } = {}) {
   const absPath = path.resolve(jsonPath);
-  if (!fs.existsSync(absPath)) {
-    console.error(`File not found: ${absPath}`);
-    process.exit(1);
-  }
+  if (!fs.existsSync(absPath)) throw new Error(`File not found: ${absPath}`);
 
   const record = JSON.parse(fs.readFileSync(absPath, 'utf8'));
-  const { city, stateAbbr, lat, lng } = locationFrom(record);
+  const { city, stateAbbr, zip, lat, lng } = locationFrom(record);
 
-  console.log(`\nEnriching: ${record.listing?.address}`);
-  console.log(`  City: ${city}, ${stateAbbr.toUpperCase()}  |  Coords: ${lat}, ${lng}  |  Radius: ${RADIUS} mi\n`);
+  if (!silent) {
+    console.log(`\n  Enriching: ${record.listing?.address}`);
+    console.log(`    City: ${city}, ${stateAbbr.toUpperCase()}${zip ? `  ZIP: ${zip}` : ''}  |  Radius: ${radius} mi`);
+  }
 
-  const results = { radius_miles: RADIUS, enriched_at: new Date().toISOString() };
+  const results = { radius_miles: radius, enriched_at: new Date().toISOString() };
   const steps   = [
-    ['demographics',  () => fetchDemographics({ city, stateAbbr })],
+    ['demographics',  () => fetchDemographics({ zip, city, stateAbbr })],
     ['crime',         () => fetchCrime({ city, stateAbbr })],
     ['retail_market', () => fetchRetailMarket({ city, stateAbbr })],
   ];
 
   for (const [key, fn] of steps) {
-    process.stdout.write(`  Fetching ${key}… `);
+    if (!silent) process.stdout.write(`    ${key}… `);
     try {
       results[key] = await fn();
-      console.log('✓');
+      if (!silent) console.log('✓');
     } catch (err) {
       results[key] = { error: err.message };
-      console.log(`✗  ${err.message.split('\n')[0]}`);
+      if (!silent) console.log(`✗  ${err.message.split('\n')[0]}`);
     }
   }
 
   record.market_research = results;
   fs.writeFileSync(absPath, JSON.stringify(record, null, 2));
-  console.log(`\n  Saved → ${absPath}`);
+  if (!silent) console.log(`    Saved → ${absPath}`);
 }
 
-enrich(filePath).catch(err => { console.error('Fatal:', err.message); process.exit(1); });
+// Run as CLI script
+if (process.argv[1].endsWith('enrich.js')) {
+  if (!filePath) {
+    console.error('Usage: node enrichment/enrich.js <path-to-listing.json> [--radius N]');
+    process.exit(1);
+  }
+  enrich(filePath).catch(err => { console.error('Fatal:', err.message); process.exit(1); });
+}

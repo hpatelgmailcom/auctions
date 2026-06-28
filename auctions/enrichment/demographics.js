@@ -1,62 +1,167 @@
 /**
  * demographics.js
  *
- * Fetches socio-demographic stats for a US city from Areavibes.
+ * Fetches socio-demographic stats for a property location.
+ *
+ * Primary source:  US Census Bureau ACS 5-Year Estimates API (zip/ZCTA level)
+ *                  Requires CENSUS_API_KEY env var.
+ * Fallback source: Areavibes.com (city level, plain fetch — no key needed)
  *
  * Usage (standalone):
- *   node enrichment/demographics.js "vermilion" "oh"
+ *   node enrichment/demographics.js --zip 44089
+ *   node enrichment/demographics.js --city vermilion --state oh
  *
  * API:
  *   import { fetchDemographics } from './enrichment/demographics.js';
- *   const data = await fetchDemographics({ city: 'vermilion', stateAbbr: 'oh' });
+ *   const data = await fetchDemographics({ zip: '44089', city: 'vermilion', stateAbbr: 'oh' });
  */
 
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
-/** Build the Areavibes demographics URL slug from city + state abbr */
+// ---------------------------------------------------------------------------
+// Census ACS API
+// ---------------------------------------------------------------------------
+
+// ACS 5-year variable codes
+const CENSUS_VARS = [
+  'NAME',
+  'B01003_001E',   // Total population
+  'B19013_001E',   // Median household income
+  'B01002_001E',   // Median age (total)
+  'B01002_002E',   // Median age (male)
+  'B01002_003E',   // Median age (female)
+  'B17001_002E',   // Population below poverty level
+  'B17001_001E',   // Total (poverty universe)
+  'B25077_001E',   // Median home value
+  'B11001_001E',   // Total households
+  'B23025_004E',   // Employed civilian population 16+
+  'B23025_005E',   // Unemployed
+  'B23025_003E',   // Civilian labor force
+  'B02001_001E',   // Total race (universe)
+  'B02001_002E',   // White alone
+  'B02001_003E',   // Black or African American alone
+  'B02001_004E',   // American Indian alone
+  'B02001_005E',   // Asian alone
+  'B02001_008E',   // Two or more races
+  'B03001_001E',   // Hispanic/Latino universe
+  'B03001_003E',   // Hispanic or Latino
+  'B15003_001E',   // Total population 25+ (education universe)
+  'B15003_017E',   // High school diploma
+  'B15003_022E',   // Bachelor's degree
+  'B15003_023E',   // Master's degree
+  'B15003_024E',   // Professional degree
+  'B15003_025E',   // Doctorate degree
+  'B19001_002E',   // HH income <$10k
+  'B19001_014E',   // HH income $100k–$124,999
+  'B19001_015E',   // HH income $125k–$149,999
+  'B19001_016E',   // HH income $150k–$199,999
+  'B19001_017E',   // HH income $200k+
+  'B19001_001E',   // Total HH (income universe)
+].join(',');
+
+function pct(num, denom) {
+  if (num == null || denom == null || denom === 0) return null;
+  return `${((num / denom) * 100).toFixed(1)}%`;
+}
+
+async function fetchCensusZip(zip) {
+  const key = process.env.CENSUS_API_KEY;
+  if (!key) throw new Error('CENSUS_API_KEY not set');
+
+  const url = `https://api.census.gov/data/2023/acs/acs5?get=${CENSUS_VARS}&for=zip%20code%20tabulation%20area:${zip}&key=${key}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Census API HTTP ${res.status}`);
+
+  const text = await res.text();
+  if (text.trim().startsWith('<')) throw new Error('Census API returned HTML — key may not be activated yet');
+
+  const [headers, values] = JSON.parse(text);
+  const row = Object.fromEntries(headers.map((h, i) => [h, values[i]]));
+
+  const n = k => { const v = parseInt(row[k]); return isNaN(v) || v < 0 ? null : v; };
+  const f = k => { const v = parseFloat(row[k]); return isNaN(v) || v < 0 ? null : v; };
+
+  const totalPop    = n('B01003_001E');
+  const totalRace   = n('B02001_001E');
+  const totalHispUniverse = n('B03001_001E');
+  const totalEdu    = n('B15003_001E');
+  const totalHH     = n('B19001_001E');
+  const laborForce  = n('B23025_003E');
+  const povertyUni  = n('B17001_001E');
+
+  const hsGrads     = [n('B15003_017E'), n('B15003_022E'), n('B15003_023E'), n('B15003_024E'), n('B15003_025E')].filter(v => v != null);
+  const hsOrHigher  = hsGrads.reduce((s, v) => s + v, 0);
+  const bachelors   = [n('B15003_022E'), n('B15003_023E'), n('B15003_024E'), n('B15003_025E')].filter(v => v != null).reduce((s, v) => s + v, 0);
+
+  const hhOver100k  = [n('B19001_014E'), n('B19001_015E'), n('B19001_016E'), n('B19001_017E')].filter(v => v != null).reduce((s, v) => s + v, 0);
+  const hhOver200k  = n('B19001_017E');
+
+  return {
+    source:    'US Census Bureau ACS 5-Year Estimates 2023',
+    geography: `ZIP Code Tabulation Area ${zip}`,
+    data_year: 2023,
+    population: {
+      total:                totalPop,
+      households:           n('B11001_001E'),
+    },
+    median_age: {
+      total:  f('B01002_001E'),
+      male:   f('B01002_002E'),
+      female: f('B01002_003E'),
+    },
+    income: {
+      median_household_usd:       n('B19013_001E'),
+      pct_households_above_100k:  pct(hhOver100k, totalHH),
+      pct_households_above_200k:  pct(hhOver200k, totalHH),
+    },
+    poverty: {
+      population_below_poverty:   n('B17001_002E'),
+      poverty_rate:               pct(n('B17001_002E'), povertyUni),
+    },
+    housing: {
+      median_home_value_usd: n('B25077_001E'),
+    },
+    employment: {
+      civilian_labor_force:  laborForce,
+      employed:              n('B23025_004E'),
+      unemployed:            n('B23025_005E'),
+      unemployment_rate:     pct(n('B23025_005E'), laborForce),
+    },
+    race_ethnicity: {
+      white_alone:                  pct(n('B02001_002E'), totalRace),
+      black_or_african_american:    pct(n('B02001_003E'), totalRace),
+      american_indian:              pct(n('B02001_004E'), totalRace),
+      asian:                        pct(n('B02001_005E'), totalRace),
+      two_or_more_races:            pct(n('B02001_008E'), totalRace),
+      hispanic_or_latino:           pct(n('B03001_003E'), totalHispUniverse),
+    },
+    education: {
+      universe_25_plus:          totalEdu,
+      high_school_or_higher_pct: pct(hsOrHigher, totalEdu),
+      bachelors_or_higher_pct:   pct(bachelors,  totalEdu),
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Areavibes fallback (city-level, no key required)
+// ---------------------------------------------------------------------------
+
 function areavibesSlug(city, stateAbbr) {
   return city.toLowerCase().replace(/\s+/g, '-') + '-' + stateAbbr.toLowerCase();
 }
 
-/** Extract a numeric or percentage value using a keyword pattern in plain text */
-function extract(text, ...keywords) {
-  // Build a pattern that finds the keywords (in order, ignoring HTML artefacts)
-  // then captures the next number/percentage
-  const escaped = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const re = new RegExp(escaped.join('[\\s\\S]{0,60}') + '[\\s\\S]{0,40}?([$\\d][\\d,%.]+)', 'i');
-  const m = text.match(re);
-  return m ? m[1].trim() : null;
-}
-
-/** Parse the clean text body of the Areavibes demographics page */
-function parseDemographics(text) {
-  // Normalise — collapse runs of whitespace
+function parseDemographicsText(text) {
   const t = text.replace(/\s+/g, ' ');
 
-  // Helper: grab value between a label and the next known delimiter
-  const grab = (label, unit = '') => {
-    const re = new RegExp(label + '\\s+([\\d,.%]+' + unit + ')', 'i');
-    return t.match(re)?.[1] ?? null;
-  };
-
-  // Core table: "Statistic  Vermilion  Ohio  National"
-  // e.g. "Population 10,808 12,145,682 336,919,644"
-  const tableSection = t.match(/Population\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)/i);
-  const population   = tableSection?.[1]?.replace(/,/g, '') ?? null;
-
+  const tableMatch  = t.match(/Population\s+([\d,]+)\s+([\d,]+)\s+([\d,]+)/i);
+  const population  = tableMatch?.[1]?.replace(/,/g, '') ?? null;
   const densityMatch = t.match(/Population density \(sq mi\)\s+([\d,]+)/i);
-  const density      = densityMatch?.[1]?.replace(/,/g, '') ?? null;
-
   const ageMatch     = t.match(/Median age\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/i);
-  const medianAge    = ageMatch?.[1] ?? null;
-
   const marriedMatch = t.match(/Married \(15yrs & older\)\s+(\d+%)/i);
-  const married      = marriedMatch?.[1] ?? null;
-
   const familiesMatch = t.match(/Families w\/ Kids under 18\s+(\d+%)/i);
-  const familiesWithKids = familiesMatch?.[1] ?? null;
+  const livability   = t.match(/Livability\s+(\d+)/i)?.[1] ?? null;
 
-  // Race/ethnicity — text reads "99.2% White, 0.1% Black…", so % comes BEFORE label
   const race = {};
   for (const [key, label] of [
     ['white',                     'White'],
@@ -67,70 +172,68 @@ function parseDemographics(text) {
     ['hispanic_or_latino',        'Hispanic or Latino'],
   ]) {
     const esc = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Primary: "99.2% White"  |  Fallback: "3% of the population identifying as Hispanic or Latino"
-    const m = t.match(new RegExp('([\\d.]+%)\\s+' + esc, 'i'))
-           || t.match(new RegExp('([\\d.]+%)\\s+of the population identifying as\\s+' + esc, 'i'));
+    const m   = t.match(new RegExp('([\\d.]+%)\\s+' + esc, 'i'))
+             || t.match(new RegExp('([\\d.]+%)\\s+of the population identifying as\\s+' + esc, 'i'));
     race[key] = m?.[1] ?? null;
   }
 
-  // Foreign-born
-  const foreignBorn  = t.match(/([\d.]+%)\s+of residents were classified as foreign-born/i)?.[1] ?? null;
-
-  // Income brackets (from the overview paragraph)
-  const incBelow25k  = t.match(/(\d+%)\s+of households have a median income below \$25,000/i)?.[1] ?? null;
-  const incOver150k  = t.match(/(\d+%)\s+report an income exceeding \$150,000/i)?.[1] ?? null;
-
-  // Language
-  const englishOnly  = t.match(/([\d.]+%)\s+reported speaking English only/i)?.[1] ?? null;
-  const spanishOnly  = t.match(/([\d.]+%)\s+reported speaking Spanish only/i)?.[1] ?? null;
-
-  // Livability score (e.g. "Livability 81")
-  const livability   = t.match(/Livability\s+(\d+)/i)?.[1] ?? null;
-
   return {
-    source:     'Areavibes',
-    data_year:  2024,
-    population: population ? parseInt(population) : null,
-    population_density_per_sq_mi: density ? parseInt(density) : null,
-    median_age: medianAge ? parseFloat(medianAge) : null,
-    married_pct: married,
-    families_with_kids_pct: familiesWithKids,
-    income: {
-      pct_households_below_25k: incBelow25k,
-      pct_households_above_150k: incOver150k,
-    },
+    source:       'Areavibes (city-level fallback)',
+    data_year:    2024,
+    population:   { total: population ? parseInt(population) : null,
+                    density_per_sq_mi: densityMatch?.[1]?.replace(/,/g,'') ? parseInt(densityMatch[1].replace(/,/g,'')) : null },
+    median_age:   { total: ageMatch?.[1] ? parseFloat(ageMatch[1]) : null },
+    household:    { married_pct: marriedMatch?.[1] ?? null,
+                    families_with_kids_pct: familiesMatch?.[1] ?? null },
     race_ethnicity: race,
-    language: {
-      english_only_pct: englishOnly,
-      spanish_only_pct: spanishOnly,
+    income: {
+      pct_households_below_25k:  t.match(/(\d+%)\s+of households have a median income below \$25,000/i)?.[1] ?? null,
+      pct_households_above_150k: t.match(/(\d+%)\s+report an income exceeding \$150,000/i)?.[1]           ?? null,
     },
-    foreign_born_pct: foreignBorn,
+    language: {
+      english_only_pct: t.match(/([\d.]+%)\s+reported speaking English only/i)?.[1] ?? null,
+      spanish_only_pct: t.match(/([\d.]+%)\s+reported speaking Spanish only/i)?.[1]  ?? null,
+    },
+    foreign_born_pct: t.match(/([\d.]+%)\s+of residents were classified as foreign-born/i)?.[1] ?? null,
     livability_score: livability ? parseInt(livability) : null,
   };
 }
 
-export async function fetchDemographics({ city, stateAbbr }) {
+async function fetchAreavibes(city, stateAbbr) {
   const slug = areavibesSlug(city, stateAbbr);
   const url  = `https://www.areavibes.com/${slug}/demographics/`;
-
-  const res = await fetch(url, {
+  const res  = await fetch(url, {
     headers: { 'user-agent': UA, 'accept': 'text/html', 'accept-language': 'en-US,en;q=0.9' },
   });
-
-  if (!res.ok) throw new Error(`Areavibes demographics fetch failed: ${res.status} ${url}`);
-
+  if (!res.ok) throw new Error(`Areavibes HTTP ${res.status} for ${url}`);
   const html = await res.text();
   const text = html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/&amp;/g, '&')
-    .replace(/&gt;/g, '>')
-    .replace(/&lt;/g, '<')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+    .replace(/&amp;/g, '&').replace(/&gt;/g, '>').replace(/&lt;/g, '<')
+    .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  return { url, ...parseDemographicsText(text) };
+}
 
-  return { url, ...parseDemographics(text) };
+// ---------------------------------------------------------------------------
+// Public API — Census primary, Areavibes fallback
+// ---------------------------------------------------------------------------
+
+export async function fetchDemographics({ zip, city, stateAbbr }) {
+  // Try Census first (needs zip + active key)
+  if (zip && process.env.CENSUS_API_KEY) {
+    try {
+      const data = await fetchCensusZip(zip.toString().padStart(5, '0'));
+      return data;
+    } catch (err) {
+      const reason = err.message.includes('HTML') ? 'key not yet activated' : err.message;
+      console.warn(`    [demographics] Census API unavailable (${reason}), falling back to Areavibes`);
+    }
+  }
+
+  // Fallback: Areavibes (city-level)
+  if (!city || !stateAbbr) throw new Error('Need city + stateAbbr for Areavibes fallback');
+  return fetchAreavibes(city, stateAbbr);
 }
 
 // ---------------------------------------------------------------------------
@@ -138,10 +241,14 @@ export async function fetchDemographics({ city, stateAbbr }) {
 // ---------------------------------------------------------------------------
 
 if (process.argv[1].endsWith('demographics.js')) {
-  const city      = process.argv[2] || 'vermilion';
-  const stateAbbr = process.argv[3] || 'oh';
-  console.log(`Fetching demographics for ${city}, ${stateAbbr.toUpperCase()}…`);
-  fetchDemographics({ city, stateAbbr })
+  const argv    = process.argv.slice(2);
+  const getArg  = flag => { const i = argv.indexOf(flag); return i !== -1 ? argv[i + 1] : null; };
+  const zip     = getArg('--zip');
+  const city    = getArg('--city') || 'vermilion';
+  const state   = getArg('--state') || 'oh';
+
+  console.log(`Fetching demographics${zip ? ` for ZIP ${zip}` : ` for ${city}, ${state.toUpperCase()}`}…`);
+  fetchDemographics({ zip, city, stateAbbr: state })
     .then(d => console.log(JSON.stringify(d, null, 2)))
     .catch(e => { console.error(e.message); process.exit(1); });
 }

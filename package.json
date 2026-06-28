@@ -4,10 +4,11 @@
   "description": "Crexi auction listing scraper",
   "type": "module",
   "scripts": {
-    "scrape":     "node auctions/scraper.js",
-    "api":        "cd api && node server.js",
-    "dashboard":  "cd dashboard && npm run dev",
-    "dev":        "node -e \"const {execSync}=require('child_process'); require('child_process').spawn('node',['server.js'],{cwd:'api',stdio:'inherit',detached:true}).unref(); require('child_process').spawnSync('npm',['run','dev'],{cwd:'dashboard',stdio:'inherit'})\""
+    "scrape":    "node --env-file=.env auctions/scraper.js",
+    "enrich":    "node --env-file=.env auctions/enrichment/enrich.js",
+    "api":       "cd api && node --env-file=../.env server.js",
+    "dashboard": "cd dashboard && npm run dev",
+    "dev":       "node -e \"require('child_process').spawn('node',['--env-file=.env','server.js'],{cwd:'api',stdio:'inherit',detached:true}).unref(); require('child_process').spawnSync('npm',['run','dev'],{cwd:'dashboard',stdio:'inherit'})\""
   },
   "dependencies": {
     "puppeteer": "^22.0.0",
