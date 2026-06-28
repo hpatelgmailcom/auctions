@@ -109,7 +109,9 @@ export function importListings() {
       marketing_fee_pct, minimum_marketing_fee_usd, closing_period_days, non_contingent,
       property_types, sub_types, square_footage, tenancy, year_built, acreage, zoning, opportunity_zone,
       pipeline_stage,
-      enrichment_demographics, enrichment_crime, enrichment_retail, due_diligence, compliance_review,
+      enrichment_demographics, enrichment_crime, enrichment_retail,
+      enrichment_sold_comps, enrichment_walk_score, enrichment_schools, enrichment_flood_risk,
+      due_diligence, compliance_review,
       crime_grade, disposition_score, recommendation, max_bid_usd, avg_retail_rent,
       compliance_status, enriched_at
     ) VALUES (
@@ -119,7 +121,9 @@ export function importListings() {
       @marketing_fee_pct, @minimum_marketing_fee_usd, @closing_period_days, @non_contingent,
       @property_types, @sub_types, @square_footage, @tenancy, @year_built, @acreage, @zoning, @opportunity_zone,
       @pipeline_stage,
-      @enrichment_demographics, @enrichment_crime, @enrichment_retail, @due_diligence, @compliance_review,
+      @enrichment_demographics, @enrichment_crime, @enrichment_retail,
+      @enrichment_sold_comps, @enrichment_walk_score, @enrichment_schools, @enrichment_flood_risk,
+      @due_diligence, @compliance_review,
       @crime_grade, @disposition_score, @recommendation, @max_bid_usd, @avg_retail_rent,
       @compliance_status, @enriched_at
     )
