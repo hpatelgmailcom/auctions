@@ -181,8 +181,12 @@ function parseDemographicsText(text) {
     ['hispanic_or_latino',        'Hispanic or Latino'],
   ]) {
     const esc = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Primary:  "99.2% White"  (percentage precedes label)
+    // Fallback: "with 3% of the population identifying as Hispanic or Latino"
+    //           "- 44.6% of the population identify as Hispanic or Latino"
+    //           (identif\w+ covers both "identifying" and "identify")
     const m   = t.match(new RegExp('([\\d.]+%)\\s+' + esc, 'i'))
-             || t.match(new RegExp('([\\d.]+%)\\s+of the population identifying as\\s+' + esc, 'i'));
+             || t.match(new RegExp('([\\d.]+%)\\s+of the population identif\\w+ as\\s+' + esc, 'i'));
     race[key] = m?.[1] ?? null;
   }
 
