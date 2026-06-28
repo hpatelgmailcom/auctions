@@ -222,27 +222,62 @@ export default function PropertyDetail() {
               </div>
               {Object.keys(demo).length === 0
                 ? <p className="text-sm text-ink-subtle">Not yet enriched. Click Re-enrich above.</p>
-                : (
-                  <div className="grid grid-cols-2 gap-x-8">
-                    <div>
-                      {row('Population',       demo.population?.toLocaleString())}
-                      {row('Population Density', demo.population_density_per_sq_mi ? `${demo.population_density_per_sq_mi}/sq mi` : null)}
-                      {row('Median Age',       demo.median_age)}
-                      {row('Married',          demo.married_pct)}
-                      {row('Families w/ Kids', demo.families_with_kids_pct)}
-                      {row('Livability Score', demo.livability_score)}
-                    </div>
-                    <div>
-                      {row('White',                 demo.race_ethnicity?.white)}
-                      {row('Black / African Am.',   demo.race_ethnicity?.black_or_african_american)}
-                      {row('Hispanic / Latino',     demo.race_ethnicity?.hispanic_or_latino)}
-                      {row('Asian',                 demo.race_ethnicity?.asian)}
-                      {row('HH Below $25k',         demo.income?.pct_households_below_25k)}
-                      {row('HH Above $150k',        demo.income?.pct_households_above_150k)}
-                      {row('Foreign Born',          demo.foreign_born_pct)}
-                    </div>
-                  </div>
-                )}
+                : (() => {
+                    // Normalize across Census (zip-level) and Areavibes (city-level) schemas
+                    const isCensus  = demo.source?.includes('Census');
+                    const pop       = demo.population?.total ?? demo.population;
+                    const density   = demo.population?.density_per_sq_mi ?? demo.population_density_per_sq_mi;
+                    const medAge    = demo.median_age?.total ?? demo.median_age;
+                    const medAgeM   = demo.median_age?.male;
+                    const medAgeF   = demo.median_age?.female;
+                    const married   = demo.household?.married_pct   ?? demo.married_pct;
+                    const families  = demo.household?.families_with_kids_pct ?? demo.families_with_kids_pct;
+                    const race      = demo.race_ethnicity || {};
+                    const white     = race.white_alone    ?? race.white;
+                    const black     = race.black_or_african_american;
+                    const hispanic  = race.hispanic_or_latino;
+                    const asian     = race.asian_alone    ?? race.asian;
+                    const medIncome = demo.income?.median_household_usd;
+                    const below25k  = demo.income?.pct_households_below_25k;
+                    const above100k = demo.income?.pct_households_above_100k;
+                    const above200k = demo.income?.pct_households_above_200k;
+                    const povRate   = demo.poverty?.poverty_rate;
+                    const unemp     = demo.employment?.unemployment_rate;
+                    const hsPlus    = demo.education?.high_school_or_higher_pct;
+                    const bachPlus  = demo.education?.bachelors_or_higher_pct;
+                    const foreign   = demo.foreign_born_pct;
+                    const medHome   = demo.housing?.median_home_value_usd;
+                    const livability = demo.livability_score;
+
+                    return (
+                      <div className="grid grid-cols-2 gap-x-8">
+                        <div>
+                          {row('Population',       pop?.toLocaleString())}
+                          {density && row('Pop. Density', `${Number(density).toLocaleString()}/sq mi`)}
+                          {row('Median Age',       medAge != null ? `${medAge}${medAgeM ? ` (M: ${medAgeM} / F: ${medAgeF})` : ''}` : null)}
+                          {married    && row('Married (15+)',     married)}
+                          {families   && row('Families w/ Kids',  families)}
+                          {medIncome  && row('Median HH Income',  `$${Number(medIncome).toLocaleString()}`)}
+                          {medHome    && row('Median Home Value',  `$${Number(medHome).toLocaleString()}`)}
+                          {povRate    && row('Poverty Rate',       povRate)}
+                          {unemp      && row('Unemployment',       unemp)}
+                          {livability && row('Livability Score',   livability)}
+                        </div>
+                        <div>
+                          {white    && row('White',               white)}
+                          {black    && row('Black / African Am.', black)}
+                          {hispanic && row('Hispanic / Latino',   hispanic)}
+                          {asian    && row('Asian',               asian)}
+                          {below25k  && row('HH Below $25k',      below25k)}
+                          {above100k && row('HH Above $100k',     above100k)}
+                          {above200k && row('HH Above $200k',     above200k)}
+                          {hsPlus    && row('HS or Higher',        hsPlus)}
+                          {bachPlus  && row("Bachelor's+",         bachPlus)}
+                          {foreign   && row('Foreign Born',        foreign)}
+                        </div>
+                      </div>
+                    );
+                  })()}
             </div>
 
             {/* Crime */}
