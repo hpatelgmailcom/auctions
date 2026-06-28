@@ -49,6 +49,10 @@ const CENSUS_VARS = [
   'B03001_003E',   // Hispanic or Latino
   'B15003_001E',   // Total population 25+ (education universe)
   'B15003_017E',   // High school diploma
+  'B15003_018E',   // GED or alternative credential
+  'B15003_019E',   // Some college, less than 1 year
+  'B15003_020E',   // Some college, 1 or more years, no degree
+  'B15003_021E',   // Associate's degree
   'B15003_022E',   // Bachelor's degree
   'B15003_023E',   // Master's degree
   'B15003_024E',   // Professional degree
@@ -98,7 +102,17 @@ async function fetchCensusZip(zip) {
   const laborForce  = n('B23025_003E');
   const povertyUni  = n('B17001_001E');
 
-  const hsGrads     = [n('B15003_017E'), n('B15003_022E'), n('B15003_023E'), n('B15003_024E'), n('B15003_025E')].filter(v => v != null);
+  const hsGrads     = [
+    n('B15003_017E'), // HS diploma
+    n('B15003_018E'), // GED
+    n('B15003_019E'), // Some college <1yr
+    n('B15003_020E'), // Some college ≥1yr
+    n('B15003_021E'), // Associate's
+    n('B15003_022E'), // Bachelor's
+    n('B15003_023E'), // Master's
+    n('B15003_024E'), // Professional
+    n('B15003_025E'), // Doctorate
+  ].filter(v => v != null);
   const hsOrHigher  = hsGrads.reduce((s, v) => s + v, 0);
   const bachelors   = [n('B15003_022E'), n('B15003_023E'), n('B15003_024E'), n('B15003_025E')].filter(v => v != null).reduce((s, v) => s + v, 0);
 
