@@ -14,6 +14,7 @@
  *   --max-listings  Max listings to save        (default: 10)
  *   --out-dir       Directory for per-listing JSON files (default: auctions/listings)
  *   --no-enrich     Skip automatic enrichment after each listing is saved
+ *   --force         Overwrite existing listing files (default: skip them)
  */
 
 import fs from 'fs';
@@ -36,6 +37,7 @@ const MAX_PRICE    = parseInt(getArg('--max-price',    '300001'), 10);
 const MAX_LISTINGS = parseInt(getArg('--max-listings', '10'),     10);
 const OUT_DIR      = getArg('--out-dir', path.join(__dirname, 'listings'));
 const NO_ENRICH    = argv.includes('--no-enrich');
+const FORCE        = argv.includes('--force');
 const PAGE_SIZE    = 60;   // Crexi's max per request
 const PAUSE_MS     = 600;  // polite delay between API calls
 
@@ -226,7 +228,8 @@ async function main() {
   console.log(`  Max price:    $${MAX_PRICE.toLocaleString()}`);
   console.log(`  Max listings: ${MAX_LISTINGS}`);
   console.log(`  Output dir:   ${OUT_DIR}`);
-  console.log(`  Enrichment:   ${NO_ENRICH ? 'disabled (--no-enrich)' : 'enabled'}\n`);
+  console.log(`  Enrichment:   ${NO_ENRICH ? 'disabled (--no-enrich)' : 'enabled'}`);
+  console.log(`  Dedup:        ${FORCE ? 'off (--force)' : 'on — existing files skipped'}\n`);
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 
@@ -238,9 +241,22 @@ async function main() {
   // Phase 2
   console.log('Phase 2: fetching details…');
   let saved = 0;
+  let skipped = 0;
 
   for (const summary of listings) {
-    console.log(`  → [${saved + 1}/${listings.length}] $${summary.askingPrice?.toLocaleString() ?? '?'} | ${summary.name}`);
+    console.log(`  → [${saved + skipped + 1}/${listings.length}] $${summary.askingPrice?.toLocaleString() ?? '?'} | ${summary.name}`);
+
+    // --- Deduplication: resolve filename from address in the summary first.
+    // For listings we haven't fetched yet we approximate from the summary address;
+    // if a file already exists with that name we skip the API calls entirely.
+    const candidateFilename = addressToFilename(summary.address || summary.name);
+    const candidatePath     = path.join(OUT_DIR, candidateFilename);
+
+    if (!FORCE && fs.existsSync(candidatePath)) {
+      console.log(`     ↷ skipped (already exists): ${candidateFilename}`);
+      skipped++;
+      continue;
+    }
 
     try {
       const [asset, auction] = await Promise.all([
@@ -248,9 +264,18 @@ async function main() {
         fetchAuctionDetail(summary.id),
       ]);
 
-      const record = buildRecord(summary, asset, auction);
+      const record   = buildRecord(summary, asset, auction);
       const filename = addressToFilename(record.listing.address);
       const outPath  = path.join(OUT_DIR, filename);
+
+      // Final dedup check using the canonical address from the API response
+      // (may differ slightly from the summary address used above)
+      if (!FORCE && fs.existsSync(outPath) && outPath !== candidatePath) {
+        console.log(`     ↷ skipped (already exists): ${filename}`);
+        skipped++;
+        continue;
+      }
+
       fs.writeFileSync(outPath, JSON.stringify(record, null, 2));
       saved++;
       console.log(`     ✓ ${filename}`);
@@ -269,7 +294,9 @@ async function main() {
     }
   }
 
-  console.log(`\nDone. ${saved} listing(s) saved → ${OUT_DIR}/`);
+  const summary_line = [`${saved} saved`];
+  if (skipped) summary_line.push(`${skipped} skipped (already existed)`);
+  console.log(`\nDone. ${summary_line.join(', ')} → ${OUT_DIR}/`);
 }
 
 main().catch(err => { console.error('Fatal:', err.message); process.exit(1); });
