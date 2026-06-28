@@ -108,7 +108,7 @@ export default function AlertsPage({ onSeenChange }) {
                   </div>
                 </div>
                 <p className="text-[10px] text-ink-subtle mt-1.5">
-                  {alert.created_at ? format(new Date(alert.created_at), 'MMM d, h:mm a') : ''}
+                  {alert.created_at ? format(new Date(alert.created_at.replace(' ', 'T')), 'MMM d, h:mm a') : ''}
                 </p>
               </div>
             </div>
