@@ -212,6 +212,57 @@ function parseDemographicsText(text) {
   };
 }
 
+// State abbreviation → full name for city-data.com URL construction
+const STATE_NAMES = {
+  al:'Alabama',ak:'Alaska',az:'Arizona',ar:'Arkansas',ca:'California',
+  co:'Colorado',ct:'Connecticut',de:'Delaware',fl:'Florida',ga:'Georgia',
+  hi:'Hawaii',id:'Idaho',il:'Illinois',in:'Indiana',ia:'Iowa',ks:'Kansas',
+  ky:'Kentucky',la:'Louisiana',me:'Maine',md:'Maryland',ma:'Massachusetts',
+  mi:'Michigan',mn:'Minnesota',ms:'Mississippi',mo:'Missouri',mt:'Montana',
+  ne:'Nebraska',nv:'Nevada',nh:'New-Hampshire',nj:'New-Jersey',nm:'New-Mexico',
+  ny:'New-York',nc:'North-Carolina',nd:'North-Dakota',oh:'Ohio',ok:'Oklahoma',
+  or:'Oregon',pa:'Pennsylvania',ri:'Rhode-Island',sc:'South-Carolina',
+  sd:'South-Dakota',tn:'Tennessee',tx:'Texas',ut:'Utah',vt:'Vermont',
+  va:'Virginia',wa:'Washington',wv:'West-Virginia',wi:'Wisconsin',wy:'Wyoming',
+};
+
+/**
+ * Fetch median household income from city-data.com.
+ * Returns the integer value (e.g. 70972) or null if unavailable.
+ */
+async function fetchCityDataIncome(city, stateAbbr) {
+  const stateName = STATE_NAMES[stateAbbr?.toLowerCase()];
+  if (!stateName) return null;
+
+  const citySlug = city.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('-');
+  const url      = `https://www.city-data.com/city/${citySlug}-${stateName}.html`;
+
+  try {
+    const res = await withRetry(async () => {
+      const r = await fetch(url, {
+        headers: { 'user-agent': UA, 'accept': 'text/html', 'accept-language': 'en-US,en;q=0.9' },
+      });
+      if (!r.ok) {
+        const err = new Error(`city-data.com HTTP ${r.status}`);
+        err.status = r.status;
+        throw err;
+      }
+      return r;
+    }, { label: 'city-data.com', maxRetries: 2 });
+
+    const text = (await res.text())
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&#[0-9]+;/g, c => String.fromCharCode(parseInt(c.slice(2, -1))))
+      .replace(/&amp;/g, '&').replace(/\s+/g, ' ');
+
+    // "median household income in 2024: $70,972"
+    const m = text.match(/median household income in \d{4}:\s*\$([\d,]+)/i);
+    return m ? parseInt(m[1].replace(/,/g, ''), 10) : null;
+  } catch {
+    return null;  // non-critical — silently skip
+  }
+}
+
 async function fetchAreavibes(city, stateAbbr) {
   const slug = areavibesSlug(city, stateAbbr);
   const url  = `https://www.areavibes.com/${slug}/demographics/`;
@@ -232,7 +283,14 @@ async function fetchAreavibes(city, stateAbbr) {
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/&amp;/g, '&').replace(/&gt;/g, '>').replace(/&lt;/g, '<')
     .replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  return { url, ...parseDemographicsText(text) };
+
+  const result = { url, ...parseDemographicsText(text) };
+
+  // Areavibes paywalls the exact median — backfill from city-data.com
+  const median = await fetchCityDataIncome(city, stateAbbr);
+  if (median) result.income.median_household_usd = median;
+
+  return result;
 }
 
 // ---------------------------------------------------------------------------
