@@ -12,7 +12,7 @@
 ## Medium Priority
 
 - [ ] **Price filter on search results page** — currently all auction listings are fetched and filtered client-side; add a `maxPrice` parameter to the Crexi search API body if/when they expose it
-- [ ] **Retail market fallback** — when CommercialCafe has fewer than 3 priced comps, automatically widen search to the next major city or use LoopNet as a secondary source
+- [x] **Retail market fallback** — when CommercialCafe has fewer than 3 priced comps, automatically widen search to the next major city or use LoopNet as a secondary source
 - [ ] **Hispanic/Latino demographics** — Areavibes reports this figure in a different sentence structure; parser handles the common case but misses some city pages
 - [x] **Median household income** — Areavibes puts this behind a paywall on some pages; fall back to city-data.com or Census API
 - [ ] **Auction status filter** — option to scrape only active (`BidderRegistration`) or upcoming auctions, excluding closed ones

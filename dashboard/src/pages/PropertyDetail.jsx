@@ -295,6 +295,23 @@ export default function PropertyDetail() {
                 ? <p className="text-sm text-ink-subtle">Not yet enriched.</p>
                 : (
                   <div>
+                    {/* Data tier badge */}
+                    {retail.search_tier_label && (
+                      <div className={clsx(
+                        'flex items-center gap-2 rounded-lg px-3 py-2 mb-4 text-xs',
+                        retail.search_tier === 1
+                          ? 'bg-bid-bg text-bid'
+                          : retail.search_tier === 2
+                            ? 'bg-sky-900/40 text-sky-400'
+                            : 'bg-conditional-bg text-conditional'
+                      )}>
+                        <AlertTriangle size={11} className={retail.search_tier === 1 ? 'hidden' : ''} />
+                        <span>
+                          <strong>Tier {retail.search_tier} data</strong> — {retail.search_tier_label}
+                          {retail.search_tier > 1 && ' (local market too thin; wider area used as proxy)'}
+                        </span>
+                      </div>
+                    )}
                     <div className="grid grid-cols-3 gap-3 mb-4">
                       {[
                         ['Avg $/SF/yr', retail.retail_asking_rent?.avg_per_sf_yr != null ? `$${Number(retail.retail_asking_rent.avg_per_sf_yr).toFixed(2)}` : '—'],

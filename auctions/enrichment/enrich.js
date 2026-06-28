@@ -47,14 +47,23 @@ function stateToAbbr(stateName) {
   return STATE_ABBR[lower] || lower.substring(0, 2); // fallback: first 2 chars
 }
 
-/** Extract city, state-abbr, zip, lat, lng from a listing record */
+/** Extract county name from a full address string.
+ *  "133 Halsted St, Lowell, Lake County, IN 46356" → "lake"
+ */
+function countyFrom(address) {
+  const m = address?.match(/,\s+([\w\s]+?)\s+County,/i);
+  return m ? m[1].trim().toLowerCase() : null;
+}
+
+/** Extract city, state-abbr, county, zip, lat, lng from a listing record */
 function locationFrom(record) {
-  const { city, state, zip, latitude, longitude } = record.listing ?? {};
+  const { city, state, zip, latitude, longitude, address } = record.listing ?? {};
   if (!city || !state) throw new Error('Listing is missing city or state');
   if (!latitude || !longitude) throw new Error('Listing is missing coordinates');
   return {
     city,
     stateAbbr: stateToAbbr(state),
+    county:    countyFrom(address),
     zip:       zip ?? null,
     lat:       latitude,
     lng:       longitude,
@@ -70,18 +79,18 @@ export async function enrich(jsonPath, { radius = RADIUS, silent = false } = {})
   if (!fs.existsSync(absPath)) throw new Error(`File not found: ${absPath}`);
 
   const record = JSON.parse(fs.readFileSync(absPath, 'utf8'));
-  const { city, stateAbbr, zip, lat, lng } = locationFrom(record);
+  const { city, stateAbbr, county, zip, lat, lng } = locationFrom(record);
 
   if (!silent) {
     console.log(`\n  Enriching: ${record.listing?.address}`);
-    console.log(`    City: ${city}, ${stateAbbr.toUpperCase()}${zip ? `  ZIP: ${zip}` : ''}  |  Radius: ${radius} mi`);
+    console.log(`    City: ${city}, ${stateAbbr.toUpperCase()}${county ? `  County: ${county}` : ''}${zip ? `  ZIP: ${zip}` : ''}  |  Radius: ${radius} mi`);
   }
 
   const results = { radius_miles: radius, enriched_at: new Date().toISOString() };
   const steps   = [
     ['demographics',  () => fetchDemographics({ zip, city, stateAbbr })],
     ['crime',         () => fetchCrime({ city, stateAbbr })],
-    ['retail_market', () => fetchRetailMarket({ city, stateAbbr })],
+    ['retail_market', () => fetchRetailMarket({ city, stateAbbr, county })],
   ];
 
   for (const [key, fn] of steps) {

@@ -264,9 +264,9 @@ async function main() {
         fetchAuctionDetail(summary.id),
       ]);
 
-      const record   = buildRecord(summary, asset, auction);
+      const record = buildRecord(summary, asset, auction);
       const filename = addressToFilename(record.listing.address);
-      const outPath  = path.join(OUT_DIR, filename);
+      const outPath = path.join(OUT_DIR, filename);
 
       // Final dedup check using the canonical address from the API response
       // (may differ slightly from the summary address used above)
