@@ -2,6 +2,8 @@
 node_modules/
 api/node_modules/
 api/db/crexi.db
+api/db/crexi.db-shm
+api/db/crexi.db-wal
 dashboard/node_modules/
 dashboard/dist/
 auctions/results_test.json
