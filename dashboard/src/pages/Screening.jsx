@@ -8,7 +8,7 @@ import { ChevronUp, ChevronDown, ExternalLink, Filter } from 'lucide-react';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtSF = v => v != null ? `${Number(v).toLocaleString()} SF` : '—';
@@ -130,7 +130,10 @@ export default function ScreeningPage() {
       sortingFn: 'alphanumeric',
       cell: ({ row }) => (
         <div>
-          <p className="text-sm text-ink font-medium truncate max-w-[220px]">{row.original.address || '—'}</p>
+          <div className="flex items-center gap-1">
+            <p className="text-sm text-ink font-medium truncate max-w-[200px]">{row.original.address || '—'}</p>
+            <MapLinks address={row.original.address} />
+          </div>
           <p className="text-xs text-ink-subtle">{row.original.city}, {row.original.state}</p>
         </div>
       ),

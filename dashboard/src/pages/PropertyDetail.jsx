@@ -1,38 +1,17 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2, Globe } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2 } from 'lucide-react';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, MapLinks } from '../components/index.js';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 
 const fmt$  = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtPct = v => v != null ? `${v}%` : '—';
 
-function MapLinks({ address }) {
-  if (!address) return null;
-  const q = encodeURIComponent(address);
-  return (
-    <div className="flex items-center gap-1">
-      <a href={`https://www.google.com/maps/search/?api=1&query=${q}`}
-        target="_blank" rel="noreferrer"
-        onClick={e => e.stopPropagation()}
-        title="Open in Google Maps"
-        className="p-1 rounded text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors">
-        <MapPin size={11} />
-      </a>
-      <a href={`https://earth.google.com/web/search/${q}`}
-        target="_blank" rel="noreferrer"
-        onClick={e => e.stopPropagation()}
-        title="Open in Google Earth"
-        className="p-1 rounded text-ink-subtle hover:text-brand hover:bg-surface-hover transition-colors">
-        <Globe size={11} />
-      </a>
-    </div>
-  );
-}
+// MapLinks imported from components/MapLinks.jsx
 const row   = (label, value) => (
   <div key={label} className="flex justify-between items-start py-2 border-b border-surface-border/50 last:border-0 gap-4">
     <span className="text-xs text-ink-subtle shrink-0">{label}</span>
