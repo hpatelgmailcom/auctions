@@ -32,4 +32,5 @@ export const api = {
     seenAll: ()       => req('/alerts/seen-all', { method: 'PATCH' }),
   },
   scrape: (opts) => req('/scrape', { method: 'POST', body: JSON.stringify(opts) }),
+  import: ()     => req('/import', { method: 'POST' }),
 };

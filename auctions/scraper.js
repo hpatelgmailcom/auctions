@@ -297,6 +297,16 @@ async function main() {
   const summary_line = [`${saved} saved`];
   if (skipped) summary_line.push(`${skipped} skipped (already existed)`);
   console.log(`\nDone. ${summary_line.join(', ')} → ${OUT_DIR}/`);
+
+  // Notify the API to re-sync its DB from the listing files on disk.
+  // Fire-and-forget — silently skipped if the API server isn't running.
+  if (saved > 0) {
+    fetch('http://localhost:3001/api/import', { method: 'POST' })
+      .then(r => r.json())
+      .then(d => console.log(`  DB synced: ${d.imported} listing(s) imported.`))
+      .catch(() => {});
+    await sleep(500); // give the fetch a moment to complete before process exits
+  }
 }
 
 main().catch(err => { console.error('Fatal:', err.message); process.exit(1); });

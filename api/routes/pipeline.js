@@ -20,6 +20,13 @@ export default async function pipelineRoutes(fastify) {
       .catch(e => console.error('Scrape failed:', e.message));
   });
 
+  // POST /api/import — re-sync DB from all listing JSON files on disk
+  fastify.post('/import', async () => {
+    const count = importListings();
+    seedAlerts();
+    return { ok: true, imported: count };
+  });
+
   // GET /api/pipeline — all listings grouped by stage
   fastify.get('/pipeline', async () => {
     const db = getDb();

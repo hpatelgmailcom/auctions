@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import {
   LayoutGrid, TableProperties, BarChart3, Bell, Building2,
-  RefreshCw, ChevronRight
+  RefreshCw, Database
 } from 'lucide-react';
 import { api } from './api/client.js';
 
@@ -33,10 +33,18 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
+  const [syncing, setSyncing] = useState(false);
+
   async function handleScrape() {
     setScraping(true);
-    try { await api.scrape({ max_price: 300001, max_listings: 50 }); }
+    try { await api.scrape({ max_price: 30000000, max_listings: 50 }); }
     finally { setTimeout(() => setScraping(false), 2000); }
+  }
+
+  async function handleSync() {
+    setSyncing(true);
+    try { await api.import(); }
+    finally { setSyncing(false); }
   }
 
   return (
@@ -79,8 +87,8 @@ export default function App() {
           ))}
         </nav>
 
-        {/* Run scraper */}
-        <div className="p-3 border-t border-surface-border">
+        {/* Actions */}
+        <div className="p-3 border-t border-surface-border space-y-2">
           <button
             onClick={handleScrape}
             disabled={scraping}
@@ -88,6 +96,14 @@ export default function App() {
           >
             <RefreshCw size={13} className={scraping ? 'animate-spin' : ''} />
             {scraping ? 'Running…' : 'Run Scraper'}
+          </button>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="w-full flex items-center justify-center gap-2 btn-ghost text-xs disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Database size={12} className={syncing ? 'animate-pulse' : ''} />
+            {syncing ? 'Syncing…' : 'Sync DB from Files'}
           </button>
         </div>
       </aside>
