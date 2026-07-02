@@ -12,6 +12,11 @@ import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyS
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtSF = v => v != null ? `${Number(v).toLocaleString()} SF` : '—';
+const fmtDate = iso => {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return `${d.getMonth() + 1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
+};
 
 // Custom sort orders — lower number = better rank
 const GRADE_RANK = { 'A+':1,'A':2,'A-':3,'B+':4,'B':5,'B-':6,'C+':7,'C':8,'C-':9,'D+':10,'D':11,'D-':12,'F':13 };
@@ -168,7 +173,19 @@ export default function ScreeningPage() {
       header: 'Auction',
       accessorKey: 'bidding_starts',
       sortingFn: 'datetime',
-      cell: ({ getValue }) => <AuctionCountdown date={getValue()} compact />,
+      cell: ({ row }) => {
+        const starts = row.original.bidding_starts;
+        const ends   = row.original.bidding_ends;
+        return (
+          <div className="space-y-1">
+            <AuctionCountdown date={starts} endDate={ends} compact />
+            <div className="text-[10px] text-ink-subtle font-mono space-y-0.5">
+              {starts && <div>S: {fmtDate(starts)}</div>}
+              {ends   && <div>E: {fmtDate(ends)}</div>}
+            </div>
+          </div>
+        );
+      },
     },
     {
       id: 'square_footage',

@@ -18,7 +18,20 @@ const STAGE_COLORS = {
   'Closed':       'border-t-slate-400',
 };
 
+function fmtDate(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  return `${d.getMonth() + 1}/${d.getDate()}/${String(d.getFullYear()).slice(2)}`;
+}
+
+function isLiveNow(starts, ends) {
+  if (!starts) return false;
+  const now = Date.now();
+  return now >= new Date(starts).getTime() && (!ends || now <= new Date(ends).getTime());
+}
+
 function ListingCard({ listing, onClick }) {
+  const live = isLiveNow(listing.bidding_starts, listing.bidding_ends);
   return (
     <div onClick={onClick}
       className="bg-surface-card border border-surface-border rounded-xl p-3.5 cursor-pointer hover:border-brand/40 hover:bg-surface-hover transition-all space-y-2">
@@ -32,7 +45,21 @@ function ListingCard({ listing, onClick }) {
       </div>
       <div className="flex items-center justify-between">
         <CrimeGradeBadge grade={listing.crime_grade} />
-        <AuctionCountdown date={listing.bidding_starts} compact />
+        <AuctionCountdown date={listing.bidding_starts} endDate={listing.bidding_ends} compact />
+      </div>
+      <div className="text-[10px] text-ink-subtle space-y-0.5 border-t border-surface-border pt-1.5">
+        {listing.bidding_starts && (
+          <div className="flex justify-between">
+            <span className="text-ink-subtle">Start</span>
+            <span className="font-mono">{fmtDate(listing.bidding_starts)}</span>
+          </div>
+        )}
+        {listing.bidding_ends && (
+          <div className="flex justify-between">
+            <span className={live ? 'text-emerald-400' : 'text-ink-subtle'}>End</span>
+            <span className={`font-mono ${live ? 'text-emerald-400 font-semibold' : ''}`}>{fmtDate(listing.bidding_ends)}</span>
+          </div>
+        )}
       </div>
       {listing.disposition_score != null && (
         <div className="flex items-center gap-1.5">
