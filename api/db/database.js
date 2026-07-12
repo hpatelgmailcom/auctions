@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH   = join(__dirname, 'crexi.db');
+const DB_PATH   = join(__dirname, 'hammerdown.db');
 
 let _db;
 

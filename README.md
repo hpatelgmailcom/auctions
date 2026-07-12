@@ -1,4 +1,4 @@
-# Deal Intel — Auction Intelligence
+# Hammerdown — Auction Intelligence
 
 Scrapes real estate auction listings from multiple providers (**Crexi** — commercial, **Auction.com** — residential/REO) into one canonical schema, enriches each with socio-demographic, crime, schools, and (for commercial) retail-market data, and surfaces them in a unified dashboard with separate **Commercial** and **Residential** sections. Each listing is saved as an individual JSON file named after the property address.
 

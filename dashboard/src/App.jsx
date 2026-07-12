@@ -60,7 +60,7 @@ export default function App() {
             <Building2 size={15} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-ink leading-tight">Deal Intel</p>
+            <p className="text-sm font-semibold text-ink leading-tight">Hammerdown</p>
             <p className="text-[10px] text-ink-subtle">Auction Intelligence</p>
           </div>
         </div>
