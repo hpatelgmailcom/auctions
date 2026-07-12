@@ -1,5 +1,5 @@
 {
-  "scraped_at": "2026-06-27T16:30:13.536Z",
+  "scraped_at": "2026-06-28T20:49:51.250Z",
   "url": "https://www.crexi.com/properties/2464903/indiana-4517-sf-vacant-land",
   "listing": {
     "id": 2464903,
@@ -52,5 +52,974 @@
     "videos": 0,
     "has_virtual_tour": false,
     "has_om": true
+  },
+  "market_research": {
+    "radius_miles": 3,
+    "enriched_at": "2026-06-28T22:30:09.018Z",
+    "demographics": {
+      "source": "US Census Bureau ACS 5-Year Estimates 2023",
+      "geography": "ZIP Code Tabulation Area 46356",
+      "data_year": 2023,
+      "population": {
+        "total": 19396,
+        "households": 6974
+      },
+      "median_age": {
+        "total": 40,
+        "male": 39.2,
+        "female": 41.7
+      },
+      "income": {
+        "median_household_usd": 87535,
+        "pct_households_above_100k": "44.7%",
+        "pct_households_above_200k": "11.9%"
+      },
+      "poverty": {
+        "population_below_poverty": 1262,
+        "poverty_rate": "6.6%"
+      },
+      "housing": {
+        "median_home_value_usd": 256300
+      },
+      "employment": {
+        "civilian_labor_force": 9946,
+        "employed": 9317,
+        "unemployed": 629,
+        "unemployment_rate": "6.3%"
+      },
+      "race_ethnicity": {
+        "white_alone": "90.3%",
+        "black_or_african_american": "0.1%",
+        "american_indian": "0.4%",
+        "asian": "0.0%",
+        "two_or_more_races": "6.1%",
+        "hispanic_or_latino": "9.4%"
+      },
+      "education": {
+        "universe_25_plus": 13119,
+        "high_school_or_higher_pct": "96.2%",
+        "bachelors_or_higher_pct": "20.1%"
+      }
+    },
+    "crime": {
+      "url": "https://www.areavibes.com/lowell-in/crime/",
+      "source": "Areavibes (FBI UCR)",
+      "data_year": 2024,
+      "overall_grade": "A+",
+      "pct_below_national_avg": {
+        "total_crime": "89%",
+        "violent_crime": null,
+        "property_crime": null
+      },
+      "crime_rate_summary": null,
+      "incidents_per_100k": {
+        "total_crime": {
+          "city_incidents": 26,
+          "city_per_100k": 228,
+          "state_per_100k": 1692,
+          "national_per_100k": 2119
+        },
+        "violent_crime": {
+          "city_incidents": 3,
+          "city_per_100k": 26,
+          "state_per_100k": 313,
+          "national_per_100k": 359
+        },
+        "property_crime": {
+          "city_incidents": 23,
+          "city_per_100k": 201,
+          "state_per_100k": 1379,
+          "national_per_100k": 1760
+        },
+        "murder": {
+          "city_incidents": 0,
+          "city_per_100k": 0,
+          "state_per_100k": 5.5,
+          "national_per_100k": 5
+        },
+        "rape": {
+          "city_incidents": 0,
+          "city_per_100k": 0,
+          "state_per_100k": 33.5,
+          "national_per_100k": 37.5
+        },
+        "robbery": {
+          "city_incidents": 0,
+          "city_per_100k": 0,
+          "state_per_100k": 34.5,
+          "national_per_100k": 60.6
+        },
+        "assault": {
+          "city_incidents": 3,
+          "city_per_100k": 26.3,
+          "state_per_100k": 239.4,
+          "national_per_100k": 256.1
+        },
+        "burglary": {
+          "city_incidents": 1,
+          "city_per_100k": 8.8,
+          "state_per_100k": 176.8,
+          "national_per_100k": 229.2
+        },
+        "theft": {
+          "city_incidents": 21,
+          "city_per_100k": 183.9,
+          "state_per_100k": 988.8,
+          "national_per_100k": 1272.1
+        },
+        "vehicle_theft": {
+          "city_incidents": 1,
+          "city_per_100k": 8.8,
+          "state_per_100k": 213,
+          "national_per_100k": 258.8
+        }
+      }
+    },
+    "retail_market": {
+      "source": "CommercialCafe.com",
+      "url": "https://www.commercialcafe.com/commercial-real-estate/us/in/lake-county/",
+      "search_tier": 2,
+      "search_tier_label": "lake County, IN (county)",
+      "total_listings": 54,
+      "retail_leases_with_price": 4,
+      "thin_market": false,
+      "retail_asking_rent": {
+        "avg_per_sf_yr": 24.04,
+        "min_per_sf_yr": 15,
+        "max_per_sf_yr": 41.14
+      },
+      "all_priced_leases": [
+        {
+          "address": "Lake County, IN Commercial Real Estate for Lease and Sale",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "12,000"
+        },
+        {
+          "address": "5401 - 5443 Broadway , Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "1,000"
+        },
+        {
+          "address": "8963-8973 Broadway , Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$19.00/SF/YR",
+          "asking_per_sf_yr": 19,
+          "sale_price": null,
+          "size_sf_range": "1,534-1,550"
+        },
+        {
+          "address": "620 Progress Ave, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "3,031"
+        },
+        {
+          "address": "2611 Highway Ave, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "2,817"
+        },
+        {
+          "address": "8146 Calumet Ave, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "1,200"
+        },
+        {
+          "address": "9725 Prairie Avenue, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$16.00/SF/YR",
+          "asking_per_sf_yr": 16,
+          "sale_price": null,
+          "size_sf_range": "2,784"
+        },
+        {
+          "address": "9410 Calumet Avenue #204, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$24.00/SF/YR",
+          "asking_per_sf_yr": 24,
+          "sale_price": null,
+          "size_sf_range": "1,500"
+        },
+        {
+          "address": "221 N Broad St, Griffith, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$24.00/SF/YR",
+          "asking_per_sf_yr": 24,
+          "sale_price": null,
+          "size_sf_range": "600"
+        },
+        {
+          "address": "1690 Porter Street, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "7,360"
+        },
+        {
+          "address": "8000 Broadway, Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "12,765"
+        },
+        {
+          "address": "1514 119th St., Whiting, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "1,586-4,640"
+        },
+        {
+          "address": "6823-39 Grand Avenue, Hessville, Hammond, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$16.00/SF/YR",
+          "asking_per_sf_yr": 16,
+          "sale_price": null,
+          "size_sf_range": "900"
+        },
+        {
+          "address": "9228 Indianapolis Blvd, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$18.00 - $41.14/SF/YR",
+          "asking_per_sf_yr": 41.14,
+          "sale_price": null,
+          "size_sf_range": "175-1,904"
+        },
+        {
+          "address": "501 112th Avenue, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "12,000"
+        },
+        {
+          "address": "1171 Erie Ct, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$16.00/SF/YR",
+          "asking_per_sf_yr": 16,
+          "sale_price": null,
+          "size_sf_range": "1,500"
+        },
+        {
+          "address": "131 Ridge Rd., Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$18.00/SF/YR",
+          "asking_per_sf_yr": 18,
+          "sale_price": null,
+          "size_sf_range": "500"
+        },
+        {
+          "address": "200 E North St, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$20.00/SF/YR",
+          "asking_per_sf_yr": 20,
+          "sale_price": null,
+          "size_sf_range": "9,475"
+        },
+        {
+          "address": "5194 E. 81st Avenue, Merrillville, Hobart, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$15.00/SF/YR",
+          "asking_per_sf_yr": 15,
+          "sale_price": null,
+          "size_sf_range": "1,600-4,825"
+        }
+      ],
+      "all_listings": [
+        {
+          "address": "Lake County, IN Commercial Real Estate for Lease and Sale",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "12,000"
+        },
+        {
+          "address": "5401 - 5443 Broadway , Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "1,000"
+        },
+        {
+          "address": "940 West Taft Street, Tolleston, Gary, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "8679-8695 Connecticut Street, Merrillville, IN",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$2,350,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 2350000,
+          "size_sf_range": "17,220"
+        },
+        {
+          "address": "8690 Broadway , Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$250,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 250000,
+          "size_sf_range": null
+        },
+        {
+          "address": "275-425 Joliet Street, Dyer, IN",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$20,350,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 20350000,
+          "size_sf_range": "92,500"
+        },
+        {
+          "address": "8963-8973 Broadway , Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$19.00/SF/YR",
+          "asking_per_sf_yr": 19,
+          "sale_price": null,
+          "size_sf_range": "1,534-1,550"
+        },
+        {
+          "address": "9601 North Centennial Drive 2nd Floor, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": null,
+          "price_raw": "$549/month",
+          "asking_per_sf_yr": null,
+          "sale_price": 549,
+          "size_sf_range": null
+        },
+        {
+          "address": "10033 Wicker Ave, Saint John, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "988"
+        },
+        {
+          "address": "917-955 Eagle Ridge Drive, Schererville, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$1,100,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1100000,
+          "size_sf_range": null
+        },
+        {
+          "address": "620 Progress Ave, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "3,031"
+        },
+        {
+          "address": "8200-8400 Grant Street, Merrillville, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$944,450",
+          "asking_per_sf_yr": null,
+          "sale_price": 944450,
+          "size_sf_range": null
+        },
+        {
+          "address": "I-65 and Broadway, Merrillville, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$1,306,822.5",
+          "asking_per_sf_yr": null,
+          "sale_price": 1306822,
+          "size_sf_range": null
+        },
+        {
+          "address": "141 141st Street, North Hammond, Hammond, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "66,000"
+        },
+        {
+          "address": "2611 Highway Ave, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "2,817"
+        },
+        {
+          "address": "8146 Calumet Ave, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "1,200"
+        },
+        {
+          "address": "9725 Prairie Avenue, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$16.00/SF/YR",
+          "asking_per_sf_yr": 16,
+          "sale_price": null,
+          "size_sf_range": "2,784"
+        },
+        {
+          "address": "1257 Arbogast Street, Griffith, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$990,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 990000,
+          "size_sf_range": null
+        },
+        {
+          "address": "2320 Michigan Street, Woodmar, Hammond, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "16,827-22,194"
+        },
+        {
+          "address": "9410 Calumet Avenue #204, Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$24.00/SF/YR",
+          "asking_per_sf_yr": 24,
+          "sale_price": null,
+          "size_sf_range": "1,500"
+        },
+        {
+          "address": "1027 Sheffield Avenue, Dyer, IN",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$1,099,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1099000,
+          "size_sf_range": "9,849"
+        },
+        {
+          "address": "1500 Colfax Street, West Side Gary, Gary, IN",
+          "listing_type": "For Lease",
+          "property_type": "Land",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "315,810"
+        },
+        {
+          "address": "1300 Sheffield Ave, Dyer, IN",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$355,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 355000,
+          "size_sf_range": "2,547"
+        },
+        {
+          "address": "221 N Broad St, Griffith, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$24.00/SF/YR",
+          "asking_per_sf_yr": 24,
+          "sale_price": null,
+          "size_sf_range": "600"
+        },
+        {
+          "address": "10300 Indianapolis Blvd, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "1,269-36,592"
+        },
+        {
+          "address": "7033 E 109th Ave, Winfield, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$2,900,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 2900000,
+          "size_sf_range": null
+        },
+        {
+          "address": "1541 South Court Street, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "3,960"
+        },
+        {
+          "address": "1817 North Indianapolis Boulevard, Whiting, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "2,860"
+        },
+        {
+          "address": "2910-20 Highway Avenue, Highland, IN",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$820,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 820000,
+          "size_sf_range": "8,280"
+        },
+        {
+          "address": "4822 Kennedy Ave, Calumet, East Chicago, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$375,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 375000,
+          "size_sf_range": "10,524"
+        },
+        {
+          "address": "1690 Porter Street, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "7,360"
+        },
+        {
+          "address": "2111 W Lincoln Hwy, Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "2,400"
+        },
+        {
+          "address": "5521 West Lincoln Highway, Schererville, IN",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "51,841"
+        },
+        {
+          "address": "8000 Broadway, Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "12,765"
+        },
+        {
+          "address": "1514 119th St., Whiting, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "1,586-4,640"
+        },
+        {
+          "address": "6823-39 Grand Avenue, Hessville, Hammond, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$16.00/SF/YR",
+          "asking_per_sf_yr": 16,
+          "sale_price": null,
+          "size_sf_range": "900"
+        },
+        {
+          "address": "12531 Cedar Lake Road, Crown Point, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$279,900",
+          "asking_per_sf_yr": null,
+          "sale_price": 279900,
+          "size_sf_range": null
+        },
+        {
+          "address": "200 Main Street, Hobart, IN",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$2,300,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 2300000,
+          "size_sf_range": "6,500"
+        },
+        {
+          "address": "1995 Southlake Mall, Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail, Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "10,000-30,000"
+        },
+        {
+          "address": "115 Sibley Street, Central Hammond, Hammond, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "432"
+        },
+        {
+          "address": "7725 Taft St, Merrillville, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$500.00/MO",
+          "asking_per_sf_yr": null,
+          "sale_price": 500,
+          "size_sf_range": "100"
+        },
+        {
+          "address": "9228 Indianapolis Blvd, Highland, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$18.00 - $41.14/SF/YR",
+          "asking_per_sf_yr": 41.14,
+          "sale_price": null,
+          "size_sf_range": "175-1,904"
+        },
+        {
+          "address": "17980-9 Brandywine Drive, Lowell, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "1,885-1,950"
+        },
+        {
+          "address": "8205 Broadway, Merrillville, IN",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$3,289,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 3289000,
+          "size_sf_range": "21,550"
+        },
+        {
+          "address": "501 112th Avenue, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Industrial",
+          "price_raw": "$14.00/SF/YR",
+          "asking_per_sf_yr": 14,
+          "sale_price": null,
+          "size_sf_range": "12,000"
+        },
+        {
+          "address": "1171 Erie Ct, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$16.00/SF/YR",
+          "asking_per_sf_yr": 16,
+          "sale_price": null,
+          "size_sf_range": "1,500"
+        },
+        {
+          "address": "7855 E 108th Ave, Winfield, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Flex Space",
+          "price_raw": "$1,800.00/MO",
+          "asking_per_sf_yr": null,
+          "sale_price": 1800,
+          "size_sf_range": "1,500"
+        },
+        {
+          "address": "11107-11131 Thiel Street, Saint John, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$499,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 499000,
+          "size_sf_range": "5,200"
+        },
+        {
+          "address": "2800 E Dunes Hwy, Aetna, Gary, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "131 Ridge Rd., Munster, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$18.00/SF/YR",
+          "asking_per_sf_yr": 18,
+          "sale_price": null,
+          "size_sf_range": "500"
+        },
+        {
+          "address": "200 E North St, Crown Point, IN",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$20.00/SF/YR",
+          "asking_per_sf_yr": 20,
+          "sale_price": null,
+          "size_sf_range": "9,475"
+        },
+        {
+          "address": "11040 Broadway, Crown Point, IN",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$1,900,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1900000,
+          "size_sf_range": "11,200"
+        },
+        {
+          "address": "5194 E. 81st Avenue, Merrillville, Hobart, IN",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$15.00/SF/YR",
+          "asking_per_sf_yr": 15,
+          "sale_price": null,
+          "size_sf_range": "1,600-4,825"
+        },
+        {
+          "address": "Lake County, IN Commercial Space Listings",
+          "listing_type": "For Lease",
+          "property_type": "Office\t64\t456,686",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        }
+      ]
+    },
+    "sold_comps": {
+      "source": "Crexi SoldComps API",
+      "search_center": {
+        "lat": 41.2924151,
+        "lng": -87.4226982
+      },
+      "scope": "25mi radius",
+      "asset_types": [
+        "Land"
+      ],
+      "total_comps": 2,
+      "avg_sale_price": 145000,
+      "min_sale_price": 125000,
+      "max_sale_price": 165000,
+      "avg_price_per_sf": null,
+      "comps": [
+        {
+          "id": 2603616,
+          "name": "2711 164th Place",
+          "address": "2711 164th Place, Hammond, Lake, IN 46323",
+          "city": "Hammond",
+          "state": "IN",
+          "asset_types": [
+            "Multifamily"
+          ],
+          "sale_price": 165000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 21.1,
+          "url": "https://www.crexi.com/properties/2603616/indiana-2711-164th-place"
+        },
+        {
+          "id": 2603617,
+          "name": "503 Lincolnway",
+          "address": "503 Lincolnway, La Porte, La Porte, IN 46350",
+          "city": "La Porte",
+          "state": "IN",
+          "asset_types": [
+            "Retail"
+          ],
+          "sale_price": 125000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 22.6,
+          "url": "https://www.crexi.com/properties/2603617/indiana-503-lincolnway"
+        }
+      ]
+    },
+    "walk_score": {
+      "source": "Walk Score API",
+      "status": "key_required",
+      "message": "Set WALKSCORE_API_KEY in .env (free key at walkscore.com/professional/api.php)",
+      "walk_score": null,
+      "transit_score": null,
+      "bike_score": null
+    },
+    "schools": {
+      "url": "https://www.areavibes.com/lowell-in/schools/",
+      "source": "Areavibes (NCES data)",
+      "grade": "C",
+      "test_scores": {
+        "city_percentile": 25,
+        "state_avg_pct": 46,
+        "national_avg_pct": 48
+      },
+      "student_teacher_ratio": {
+        "city": "22:1",
+        "state": "22:1",
+        "national": "16:1"
+      },
+      "school_counts": {
+        "public": 5,
+        "private": 2,
+        "post_secondary": null
+      },
+      "key_findings": [
+        "The school test scores in Lowell are 25% higher than the national average There are approximately 5 public schools in Lowell 85.",
+        "0% of people in Lowell have completed 8th grade 84.",
+        "3% of people in Lowell have completed high school 23.",
+        "2% of people in Lowell have completed a bachelors degree Nearby Areas with High Test Scores Livability Amenities Cost of Living Crime Employment Housing Schools User Ratings © Proximitii © OpenStreetMap contributors © OpenMapTiles Leaflet Cities & Neighborhoods Cities only Neighborhoods only See all the best places to live around Lowell Compare Lowell, IN Schools vs Compare --> How would you rate education in Lowell? Excellent."
+      ]
+    },
+    "flood_risk": {
+      "source": "FEMA NFHL + NWS",
+      "coordinates": {
+        "lat": 41.2924151,
+        "lng": -87.4226982
+      },
+      "flood_zone": {
+        "zone": "AE",
+        "zone_subtype": null,
+        "in_special_flood_hazard_area": true,
+        "risk_level": "High",
+        "description": "Special Flood Hazard Area with BFE determined",
+        "base_flood_elevation": null,
+        "expected_flood_depth": null
+      },
+      "climate_info": {
+        "nws_office": "LOT",
+        "forecast_zone": "INZ001",
+        "county": "INC089",
+        "radar_station": "KLOT",
+        "time_zone": "America/Chicago"
+      },
+      "insurance_note": "Flood insurance required by federally-backed mortgages (SFHA zone)"
+    }
+  },
+  "due_diligence": {
+    "analyzed_at": "2026-07-03T05:28:43.085Z",
+    "recommendation": "CONDITIONAL BID",
+    "max_bid_usd": null,
+    "max_bid_reasoning": "Vacant land — the income approach does not apply; value it on comparable land sales and development pro forma instead — provide a rent roll or square footage to complete the model",
+    "financial_model": null,
+    "assumptions": [
+      "Square footage (4,517 SF) taken from documents/description — not in Crexi listing data"
+    ],
+    "disposition_score": 5.2,
+    "disposition_score_breakdown": {
+      "market_liquidity": 3.2,
+      "asset_quality": 5,
+      "location_fundamentals": 7.8,
+      "title_legal_clarity": 6,
+      "exit_strategy_breadth": 4.5
+    },
+    "disposition_notes": {
+      "market_liquidity": "2 sold comps in area; active lease market",
+      "asset_quality": "year built unknown; no inspection report",
+      "location_fundamentals": "crime A+",
+      "title_legal_clarity": "no title report reviewed — unverified",
+      "exit_strategy_breadth": "1 viable use type(s): Land; land component narrows buyer pool to developers"
+    },
+    "risk_flags": [
+      "Sale is non-contingent — no financing or inspection outs after winning; all diligence must be complete before bidding",
+      "30-day closing window — financing must be arranged before auction day",
+      "Facts extracted from the broker description only — no due diligence documents reviewed; liens, condition, and environmental exposure are unverified",
+      "Absolute/non-contingent sale means the buyer cannot back out based on due diligence findings and must close regardless of inspection or financing outcomes.",
+      "The parcel is vacant land producing no income, so it offers no cash flow and relies entirely on future development or appreciation.",
+      "Development potential is subject to local approvals under the TC (Town Center) zoning, creating entitlement and permitting risk for any planned use.",
+      "A non-refundable earnest money deposit of the greater of $20,000 or 10% of the purchase price is required, exposing the bidder to significant loss if they fail to close.",
+      "Winning bidder owes a 5% marketing fee ($20,000 minimum) on top of the purchase price, increasing total acquisition cost."
+    ],
+    "documents": {
+      "source": "/Users/hiren/codebin/agents/crexi/auctions/documents/133_halsted_st_lowell_in_46356",
+      "reviewed": [],
+      "extraction": "ok"
+    },
+    "extracted_facts": {
+      "property": {
+        "square_footage": 4517,
+        "tenancy": "Vacant land"
+      },
+      "income": {},
+      "taxes": {},
+      "title": {},
+      "inspection": {},
+      "environmental": {},
+      "insurance": {},
+      "qualitative_risks": [
+        "Absolute/non-contingent sale means the buyer cannot back out based on due diligence findings and must close regardless of inspection or financing outcomes.",
+        "The parcel is vacant land producing no income, so it offers no cash flow and relies entirely on future development or appreciation.",
+        "Development potential is subject to local approvals under the TC (Town Center) zoning, creating entitlement and permitting risk for any planned use.",
+        "A non-refundable earnest money deposit of the greater of $20,000 or 10% of the purchase price is required, exposing the bidder to significant loss if they fail to close.",
+        "Winning bidder owes a 5% marketing fee ($20,000 minimum) on top of the purchase price, increasing total acquisition cost."
+      ],
+      "source_notes": [
+        "Property square footage and vacant land status from broker listing description.",
+        "Qualitative risks from broker description and auction terms (absolute/non-contingent sale, earnest money, marketing fee, TC zoning)."
+      ]
+    }
   }
 }

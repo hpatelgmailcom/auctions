@@ -10,6 +10,7 @@ const STAGE_COLORS = {
   'Scouted':      'border-t-slate-500',
   'Enriching':    'border-t-sky-500',
   'Enriched':     'border-t-blue-500',
+  'Due Diligence': 'border-t-indigo-500',
   'Under Review': 'border-t-amber-500',
   'BID':          'border-t-emerald-500',
   'NO BID':       'border-t-red-500',

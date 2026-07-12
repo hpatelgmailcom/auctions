@@ -60,34 +60,51 @@
   },
   "market_research": {
     "radius_miles": 3,
-    "enriched_at": "2026-06-28T15:48:42.561Z",
+    "enriched_at": "2026-06-28T21:56:30.900Z",
     "demographics": {
-      "url": "https://www.areavibes.com/davenport-ia/demographics/",
-      "source": "Areavibes",
-      "data_year": 2024,
-      "population": 105320,
-      "population_density_per_sq_mi": 1658,
-      "median_age": 37,
-      "married_pct": "50%",
-      "families_with_kids_pct": "42%",
+      "source": "US Census Bureau ACS 5-Year Estimates 2023",
+      "geography": "ZIP Code Tabulation Area 52807",
+      "data_year": 2023,
+      "population": {
+        "total": 15895,
+        "households": 7446
+      },
+      "median_age": {
+        "total": 37.9,
+        "male": 37.5,
+        "female": 38.3
+      },
       "income": {
-        "pct_households_below_25k": null,
-        "pct_households_above_150k": "13%"
+        "median_household_usd": 71866,
+        "pct_households_above_100k": "37.8%",
+        "pct_households_above_200k": "11.9%"
+      },
+      "poverty": {
+        "population_below_poverty": 1625,
+        "poverty_rate": "10.4%"
+      },
+      "housing": {
+        "median_home_value_usd": 323900
+      },
+      "employment": {
+        "civilian_labor_force": 8480,
+        "employed": 8353,
+        "unemployed": 127,
+        "unemployment_rate": "1.5%"
       },
       "race_ethnicity": {
-        "white": "79.9%",
-        "black_or_african_american": "11%",
-        "asian": "2.5%",
-        "american_indian": "0.4%",
-        "native_hawaiian": "0%",
-        "hispanic_or_latino": "8.9%"
+        "white_alone": "81.2%",
+        "black_or_african_american": "7.5%",
+        "american_indian": "0.2%",
+        "asian": "2.4%",
+        "two_or_more_races": "6.9%",
+        "hispanic_or_latino": "8.1%"
       },
-      "language": {
-        "english_only_pct": null,
-        "spanish_only_pct": "4.4%"
-      },
-      "foreign_born_pct": null,
-      "livability_score": 79
+      "education": {
+        "universe_25_plus": 11480,
+        "high_school_or_higher_pct": "94.5%",
+        "bachelors_or_higher_pct": "42.9%"
+      }
     },
     "crime": {
       "url": "https://www.areavibes.com/davenport-ia/crime/",
@@ -166,8 +183,11 @@
     "retail_market": {
       "source": "CommercialCafe.com",
       "url": "https://www.commercialcafe.com/commercial-real-estate/us/ia/davenport/",
+      "search_tier": 1,
+      "search_tier_label": "Davenport, IA (city)",
       "total_listings": 54,
       "retail_leases_with_price": 7,
+      "thin_market": false,
       "retail_asking_rent": {
         "avg_per_sf_yr": 16.14,
         "min_per_sf_yr": 5.5,
@@ -798,6 +818,247 @@
           "size_sf_range": null
         }
       ]
+    },
+    "sold_comps": {
+      "source": "Crexi SoldComps API",
+      "search_center": {
+        "lat": 41.552783,
+        "lng": -90.523698
+      },
+      "scope": "IA (state-level, no local comps)",
+      "asset_types": [
+        "Office",
+        "Mixed Use",
+        "Special Purpose"
+      ],
+      "total_comps": 99,
+      "avg_sale_price": 1355685,
+      "min_sale_price": 6000,
+      "max_sale_price": 12000000,
+      "avg_price_per_sf": null,
+      "comps": [
+        {
+          "id": 2603673,
+          "name": "321 NE MADISON Avenue",
+          "address": "321 NE MADISON AVE, PEORIA, PEORIA, IL 61603-3605",
+          "city": "PEORIA",
+          "state": "IL",
+          "asset_types": [
+            "Hospitality",
+            "Special Purpose",
+            "Business for Sale"
+          ],
+          "sale_price": 2800000,
+          "price_per_sf": null,
+          "sq_footage": 10800,
+          "sold_on": "2026-06-28",
+          "distance_mi": 76.6,
+          "url": "https://www.crexi.com/properties/2603673/illinois-321-ne-madison-avenue"
+        },
+        {
+          "id": 2603675,
+          "name": "12521-12531 W. Horseshoe Drive",
+          "address": "12521-12531 W. Horseshoe Drive, New Lenox, IL 60451",
+          "city": "New Lenox",
+          "state": "IL",
+          "asset_types": [
+            "Industrial"
+          ],
+          "sale_price": 2450000,
+          "price_per_sf": null,
+          "sq_footage": 12523,
+          "sold_on": "2026-06-28",
+          "distance_mi": 134.7,
+          "url": "https://www.crexi.com/properties/2603675/illinois-12521-12531-w-horseshoe-drive"
+        },
+        {
+          "id": 2603702,
+          "name": "20.96 AC Highway 51",
+          "address": "20.96 AC Highway 51, Arlington, Columbia, WI 53911",
+          "city": "Arlington",
+          "state": "WI",
+          "asset_types": [
+            "Land"
+          ],
+          "sale_price": 2415000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 136.5,
+          "url": "https://www.crexi.com/properties/2603702/wisconsin-2096-ac-highway-51"
+        },
+        {
+          "id": 2597273,
+          "name": "4252 Prescott Avenue",
+          "address": "4252 Prescott Avenue, Lyons, Cook, IL 60534",
+          "city": "Lyons",
+          "state": "IL",
+          "asset_types": [
+            "Multifamily"
+          ],
+          "sale_price": 685000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 140.7,
+          "url": "https://www.crexi.com/properties/2597273/illinois-4252-prescott-avenue"
+        },
+        {
+          "id": 2603616,
+          "name": "2711 164th Place",
+          "address": "2711 164th Place, Hammond, Lake, IN 46323",
+          "city": "Hammond",
+          "state": "IN",
+          "asset_types": [
+            "Multifamily"
+          ],
+          "sale_price": 165000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 158.2,
+          "url": "https://www.crexi.com/properties/2603616/indiana-2711-164th-place"
+        },
+        {
+          "id": 2603639,
+          "name": "3542/3544 Tripp Street",
+          "address": "3542/3544 Tripp Street, Ames, Story County, IA 50014",
+          "city": "Ames",
+          "state": "IA",
+          "asset_types": [
+            "Hospitality"
+          ],
+          "sale_price": 247500,
+          "price_per_sf": null,
+          "sq_footage": 1440,
+          "sold_on": "2026-06-28",
+          "distance_mi": 165.1,
+          "url": "https://www.crexi.com/properties/2603639/iowa-35423544-tripp-street"
+        },
+        {
+          "id": 2603698,
+          "name": "505 Market Street",
+          "address": "505 Market Street, West Des Moines, Polk, IA 50266",
+          "city": "West Des Moines",
+          "state": "IA",
+          "asset_types": [
+            "Office"
+          ],
+          "sale_price": 7400000,
+          "price_per_sf": null,
+          "sq_footage": 28626,
+          "sold_on": "2026-06-28",
+          "distance_mi": 168.8,
+          "url": "https://www.crexi.com/properties/2603698/iowa-505-market-street"
+        },
+        {
+          "id": 2603617,
+          "name": "503 Lincolnway",
+          "address": "503 Lincolnway, La Porte, La Porte, IN 46350",
+          "city": "La Porte",
+          "state": "IN",
+          "asset_types": [
+            "Retail"
+          ],
+          "sale_price": 125000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 179.6,
+          "url": "https://www.crexi.com/properties/2603617/indiana-503-lincolnway"
+        },
+        {
+          "id": 2603603,
+          "name": "2302 E MCCARTY STREET",
+          "address": "2302 E MCCARTY STREET, Jefferson City, Cole, MO 65101",
+          "city": "Jefferson City",
+          "state": "MO",
+          "asset_types": [
+            "Industrial"
+          ],
+          "sale_price": 229000,
+          "price_per_sf": null,
+          "sq_footage": 5000,
+          "sold_on": "2026-06-28",
+          "distance_mi": 223.7,
+          "url": "https://www.crexi.com/properties/2603603/missouri-2302-e-mccarty-street"
+        },
+        {
+          "id": 2603609,
+          "name": "Nw Of Waller Road",
+          "address": "Nw Of Waller Road, Richmond, Ray, MO 64085",
+          "city": "Richmond",
+          "state": "MO",
+          "asset_types": [
+            "Land",
+            "Special Purpose"
+          ],
+          "sale_price": 285000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 235,
+          "url": "https://www.crexi.com/properties/2603609/missouri-nw-of-waller-road"
+        }
+      ]
+    },
+    "walk_score": {
+      "source": "Walk Score API",
+      "status": "key_required",
+      "message": "Set WALKSCORE_API_KEY in .env (free key at walkscore.com/professional/api.php)",
+      "walk_score": null,
+      "transit_score": null,
+      "bike_score": null
+    },
+    "schools": {
+      "url": "https://www.areavibes.com/davenport-ia/schools/",
+      "source": "Areavibes (NCES data)",
+      "grade": "C",
+      "test_scores": {
+        "city_percentile": 11,
+        "state_avg_pct": 69,
+        "national_avg_pct": 48
+      },
+      "student_teacher_ratio": {
+        "city": "13:1",
+        "state": "13:1",
+        "national": "16:1"
+      },
+      "school_counts": {
+        "public": 28,
+        "private": 13,
+        "post_secondary": 8
+      },
+      "key_findings": [
+        "The school test scores in Davenport are 11% higher than the national average There are approximately 28 public schools in Davenport 86.",
+        "8% of people in Davenport have completed 8th grade 86.",
+        "0% of people in Davenport have completed high school 26.",
+        "7% of people in Davenport have completed a bachelors degree Nearby Areas with High Test Scores Livability Amenities Cost of Living Crime Employment Housing Schools User Ratings © Proximitii © OpenStreetMap contributors © OpenMapTiles Leaflet Cities & Neighborhoods Cities only Neighborhoods only See all the best places to live around Davenport Compare Davenport, IA Schools vs Compare --> How would you rate education in Davenport? Excellent."
+      ]
+    },
+    "flood_risk": {
+      "source": "FEMA NFHL + NWS",
+      "coordinates": {
+        "lat": 41.552783,
+        "lng": -90.523698
+      },
+      "flood_zone": {
+        "zone": "X",
+        "zone_subtype": "AREA OF MINIMAL FLOOD HAZARD",
+        "in_special_flood_hazard_area": false,
+        "risk_level": "Minimal",
+        "description": "Area of minimal flood hazard (above 500-yr)",
+        "base_flood_elevation": null,
+        "expected_flood_depth": null
+      },
+      "climate_info": {
+        "nws_office": "DVN",
+        "forecast_zone": "IAZ068",
+        "county": "IAC163",
+        "radar_station": "KDVN",
+        "time_zone": "America/Chicago"
+      },
+      "insurance_note": "Flood insurance not federally required but may be advisable"
     }
   }
 }

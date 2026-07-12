@@ -1,5 +1,5 @@
 {
-  "scraped_at": "2026-06-27T16:30:14.219Z",
+  "scraped_at": "2026-06-28T20:49:51.930Z",
   "url": "https://www.crexi.com/properties/2487945/illinois-former-dollar-store",
   "listing": {
     "id": 2487945,
@@ -54,5 +54,952 @@
     "videos": 0,
     "has_virtual_tour": false,
     "has_om": true
+  },
+  "market_research": {
+    "radius_miles": 3,
+    "enriched_at": "2026-06-28T22:30:20.215Z",
+    "demographics": {
+      "source": "US Census Bureau ACS 5-Year Estimates 2023",
+      "geography": "ZIP Code Tabulation Area 61265",
+      "data_year": 2023,
+      "population": {
+        "total": 43851,
+        "households": 18860
+      },
+      "median_age": {
+        "total": 38.9,
+        "male": 37.3,
+        "female": 40.4
+      },
+      "income": {
+        "median_household_usd": 63910,
+        "pct_households_above_100k": "30.7%",
+        "pct_households_above_200k": "5.3%"
+      },
+      "poverty": {
+        "population_below_poverty": 6906,
+        "poverty_rate": "16.0%"
+      },
+      "housing": {
+        "median_home_value_usd": 142300
+      },
+      "employment": {
+        "civilian_labor_force": 22239,
+        "employed": 20769,
+        "unemployed": 1470,
+        "unemployment_rate": "6.6%"
+      },
+      "race_ethnicity": {
+        "white_alone": "69.9%",
+        "black_or_african_american": "9.6%",
+        "american_indian": "0.2%",
+        "asian": "3.4%",
+        "two_or_more_races": "10.4%",
+        "hispanic_or_latino": "18.2%"
+      },
+      "education": {
+        "universe_25_plus": 30221,
+        "high_school_or_higher_pct": "89.1%",
+        "bachelors_or_higher_pct": "28.4%"
+      }
+    },
+    "crime": {
+      "url": "https://www.areavibes.com/moline-il/crime/",
+      "source": "Areavibes (FBI UCR)",
+      "data_year": 2024,
+      "overall_grade": "F",
+      "pct_below_national_avg": {
+        "total_crime": "75%",
+        "violent_crime": null,
+        "property_crime": null
+      },
+      "crime_rate_summary": null,
+      "incidents_per_100k": {
+        "total_crime": {
+          "city_incidents": 1549,
+          "city_per_100k": 3718,
+          "state_per_100k": 2004,
+          "national_per_100k": 2119
+        },
+        "violent_crime": {
+          "city_incidents": 160,
+          "city_per_100k": 384,
+          "state_per_100k": 289,
+          "national_per_100k": 359
+        },
+        "property_crime": {
+          "city_incidents": 1389,
+          "city_per_100k": 3334,
+          "state_per_100k": 1715,
+          "national_per_100k": 1760
+        },
+        "murder": {
+          "city_incidents": 5,
+          "city_per_100k": 12,
+          "state_per_100k": 5.8,
+          "national_per_100k": 5
+        },
+        "rape": {
+          "city_incidents": 23,
+          "city_per_100k": 55.2,
+          "state_per_100k": 46.9,
+          "national_per_100k": 37.5
+        },
+        "robbery": {
+          "city_incidents": 11,
+          "city_per_100k": 26.4,
+          "state_per_100k": 90.2,
+          "national_per_100k": 60.6
+        },
+        "assault": {
+          "city_incidents": 121,
+          "city_per_100k": 290.5,
+          "state_per_100k": 146.3,
+          "national_per_100k": 256.1
+        },
+        "burglary": {
+          "city_incidents": 465,
+          "city_per_100k": 1116.2,
+          "state_per_100k": 290.5,
+          "national_per_100k": 229.2
+        },
+        "theft": {
+          "city_incidents": 726,
+          "city_per_100k": 1742.7,
+          "state_per_100k": 1134.4,
+          "national_per_100k": 1272.1
+        },
+        "vehicle_theft": {
+          "city_incidents": 198,
+          "city_per_100k": 475.3,
+          "state_per_100k": 290.4,
+          "national_per_100k": 258.8
+        }
+      }
+    },
+    "retail_market": {
+      "source": "CommercialCafe.com",
+      "url": "https://www.commercialcafe.com/commercial-real-estate/us/il/moline/",
+      "search_tier": 1,
+      "search_tier_label": "Moline, IL (city)",
+      "total_listings": 54,
+      "retail_leases_with_price": 3,
+      "thin_market": false,
+      "retail_asking_rent": {
+        "avg_per_sf_yr": 13.17,
+        "min_per_sf_yr": 12,
+        "max_per_sf_yr": 14.5
+      },
+      "all_priced_leases": [
+        {
+          "address": "3900-3930 38TH AVENUE, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$10.00 - $13.00/SF/YR",
+          "asking_per_sf_yr": 13,
+          "sale_price": null,
+          "size_sf_range": "1,680-4,861"
+        },
+        {
+          "address": "1465 41st St, Park Hill, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$12.00 - $14.50/SF/YR",
+          "asking_per_sf_yr": 14.5,
+          "sale_price": null,
+          "size_sf_range": "670-1,873"
+        },
+        {
+          "address": "2121 47th Street, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$8.00 - $10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "10,000-30,000"
+        },
+        {
+          "address": "1522 River Dr, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "3,200"
+        },
+        {
+          "address": "1514 5th Ave, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$13.00/SF/YR",
+          "asking_per_sf_yr": 13,
+          "sale_price": null,
+          "size_sf_range": "2,500-2,799"
+        },
+        {
+          "address": "4707 15th Street A, Greater Prospect, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "3,056"
+        },
+        {
+          "address": "1803 7th St, Old Towne Moline, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$8.00/SF/YR",
+          "asking_per_sf_yr": 8,
+          "sale_price": null,
+          "size_sf_range": "8,367"
+        },
+        {
+          "address": "1711 5th Ave, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.23 - $17.40/SF/YR",
+          "asking_per_sf_yr": 17.4,
+          "sale_price": null,
+          "size_sf_range": "350-2,942"
+        },
+        {
+          "address": "4709-4711 15th Street A, Greater Prospect, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$9.00/SF/YR",
+          "asking_per_sf_yr": 9,
+          "sale_price": null,
+          "size_sf_range": "5,475"
+        }
+      ],
+      "all_listings": [
+        {
+          "address": "Moline, IL Commercial Real Estate for Lease and Sale",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$13.00/Acre/YR",
+          "asking_per_sf_yr": null,
+          "sale_price": 13,
+          "size_sf_range": "1,697-13,496"
+        },
+        {
+          "address": "609 35th Avenue, Karstens - City Line, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$1,350,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1350000,
+          "size_sf_range": null
+        },
+        {
+          "address": "4100 12th Ave., Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "5,407"
+        },
+        {
+          "address": "0 16th St, Greater Tartan Oaks, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$765,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 765000,
+          "size_sf_range": null
+        },
+        {
+          "address": "1524 6th Ave, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$199,500",
+          "asking_per_sf_yr": null,
+          "sale_price": 199500,
+          "size_sf_range": "4,485"
+        },
+        {
+          "address": "244 River Dr, Floreciente, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Industrial",
+          "price_raw": "$250,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 250000,
+          "size_sf_range": "12,272"
+        },
+        {
+          "address": "1411 6th Ave, Overlook, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$285,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 285000,
+          "size_sf_range": "7,688"
+        },
+        {
+          "address": "1500-1506 River Drive, Floreciente, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$599,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 599000,
+          "size_sf_range": null
+        },
+        {
+          "address": "609 35th Avenue, Karstens - City Line, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$11.00/Acre/YR",
+          "asking_per_sf_yr": null,
+          "sale_price": 11,
+          "size_sf_range": "5,500"
+        },
+        {
+          "address": "3126 Avenue of the Cities, Villa Park, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "8,219"
+        },
+        {
+          "address": "2222 41st St, Willard - Wharton, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$1,200,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1200000,
+          "size_sf_range": "2,688"
+        },
+        {
+          "address": "3400 70th Street, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$135,850",
+          "asking_per_sf_yr": null,
+          "sale_price": 135850,
+          "size_sf_range": null
+        },
+        {
+          "address": "612 35th Avenue, Karstens - City Line, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$900,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 900000,
+          "size_sf_range": "6,225"
+        },
+        {
+          "address": "3900-3930 38TH AVENUE, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$10.00 - $13.00/SF/YR",
+          "asking_per_sf_yr": 13,
+          "sale_price": null,
+          "size_sf_range": "1,680-4,861"
+        },
+        {
+          "address": "1405 5th Ave, Floreciente, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$499,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 499000,
+          "size_sf_range": "5,227"
+        },
+        {
+          "address": "3440 38th Avenue, Villa Park, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$854,360",
+          "asking_per_sf_yr": null,
+          "sale_price": 854360,
+          "size_sf_range": null
+        },
+        {
+          "address": "1465 41st St, Willard - Wharton, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$399,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 399000,
+          "size_sf_range": "39,431"
+        },
+        {
+          "address": "1800 36th Ave, Greater Tartan Oaks, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$545,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 545000,
+          "size_sf_range": "77,537"
+        },
+        {
+          "address": "2705 48th Ave, Villa Park, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": "28,800"
+        },
+        {
+          "address": "1465 41st St, Park Hill, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$12.00 - $14.50/SF/YR",
+          "asking_per_sf_yr": 14.5,
+          "sale_price": null,
+          "size_sf_range": "670-1,873"
+        },
+        {
+          "address": "4950 38th Ave, Greater Homewood, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$1,200,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 1200000,
+          "size_sf_range": "10,800"
+        },
+        {
+          "address": "6561 42nd Avenue Drive, Walton Hills, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$400,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 400000,
+          "size_sf_range": null
+        },
+        {
+          "address": "2110 47th Street, Willard - Wharton, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$125,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 125000,
+          "size_sf_range": null
+        },
+        {
+          "address": "2121 47th Street, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$8.00 - $10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "10,000-30,000"
+        },
+        {
+          "address": "1803 7th St, Old Towne Moline, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$495,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 495000,
+          "size_sf_range": "8,367"
+        },
+        {
+          "address": "501 15th St, Lower, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "1522 River Dr, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": "$12.00/SF/YR",
+          "asking_per_sf_yr": 12,
+          "sale_price": null,
+          "size_sf_range": "3,200"
+        },
+        {
+          "address": "555 19th Avenue, Old Towne Moline, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Retail",
+          "price_raw": "$4,000,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 4000000,
+          "size_sf_range": "14,392"
+        },
+        {
+          "address": "4703 16th Street, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "3816 27th St, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "4601 16th St, Greater Prospect, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "4703 16th St, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "2222 41st St, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Retail",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "1514 5th Ave, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$13.00/SF/YR",
+          "asking_per_sf_yr": 13,
+          "sale_price": null,
+          "size_sf_range": "2,500-2,799"
+        },
+        {
+          "address": "3800 Avenue of the Cities #201, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "3800 Avenue of the Cities #200, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "4705 44TH Street, Wheelock - Veille, Rock Island, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "4707 15th Street A, Greater Prospect, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$10.00/SF/YR",
+          "asking_per_sf_yr": 10,
+          "sale_price": null,
+          "size_sf_range": "3,056"
+        },
+        {
+          "address": "1550 52nd Ave, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "2900 River Drive, Suite B, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "1803 7th St, Old Towne Moline, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$8.00/SF/YR",
+          "asking_per_sf_yr": 8,
+          "sale_price": null,
+          "size_sf_range": "8,367"
+        },
+        {
+          "address": "4703 16th Street , Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "2900 River Drive, Suite C, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "1711 5th Ave, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$12.23 - $17.40/SF/YR",
+          "asking_per_sf_yr": 17.4,
+          "sale_price": null,
+          "size_sf_range": "350-2,942"
+        },
+        {
+          "address": "4011 Avenue of the Cities, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "3800 Avenue of the Cities #105, Willard - Wharton, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "1515 5th Avenue, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "2121 47th Street, Willard - Wharton, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": "Office",
+          "price_raw": "$2,250,000",
+          "asking_per_sf_yr": null,
+          "sale_price": 2250000,
+          "size_sf_range": "30,481"
+        },
+        {
+          "address": "1515 5th Avenue, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "4709-4711 15th Street A, Greater Prospect, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": "$9.00/SF/YR",
+          "asking_per_sf_yr": 9,
+          "sale_price": null,
+          "size_sf_range": "5,475"
+        },
+        {
+          "address": "1813-1815 Avenue Of The Cities, Willard - Wharton, Moline, IL",
+          "listing_type": "For Sale",
+          "property_type": null,
+          "price_raw": "$84,500",
+          "asking_per_sf_yr": null,
+          "sale_price": 84500,
+          "size_sf_range": null
+        },
+        {
+          "address": "501 15th St, Main, Floreciente, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "3561 60th Street, Villa Park, Moline, IL",
+          "listing_type": "For Lease",
+          "property_type": "Office",
+          "price_raw": null,
+          "asking_per_sf_yr": null,
+          "sale_price": null,
+          "size_sf_range": null
+        },
+        {
+          "address": "What is the average rent for commercial space in Moline, IL?",
+          "listing_type": "For Lease",
+          "property_type": "Office\t14\t139,278",
+          "price_raw": "The average rent for commercial real estate in Moline is $11.81 per square foot. However, specific rates may vary widely by property type, class and quality. The cheapest commercial space in Moline costs $10, while the city’s premium locations ask up to $13.7.",
+          "asking_per_sf_yr": null,
+          "sale_price": 11,
+          "size_sf_range": null
+        }
+      ]
+    },
+    "sold_comps": {
+      "source": "Crexi SoldComps API",
+      "search_center": {
+        "lat": 41.4916405,
+        "lng": -90.4932175
+      },
+      "scope": "IL (state-level, no local comps)",
+      "asset_types": [
+        "Retail"
+      ],
+      "total_comps": 99,
+      "avg_sale_price": 1467557,
+      "min_sale_price": 6000,
+      "max_sale_price": 14885000,
+      "avg_price_per_sf": null,
+      "comps": [
+        {
+          "id": 2603673,
+          "name": "321 NE MADISON Avenue",
+          "address": "321 NE MADISON AVE, PEORIA, PEORIA, IL 61603-3605",
+          "city": "PEORIA",
+          "state": "IL",
+          "asset_types": [
+            "Hospitality",
+            "Special Purpose",
+            "Business for Sale"
+          ],
+          "sale_price": 2800000,
+          "price_per_sf": null,
+          "sq_footage": 10800,
+          "sold_on": "2026-06-28",
+          "distance_mi": 72.4,
+          "url": "https://www.crexi.com/properties/2603673/illinois-321-ne-madison-avenue"
+        },
+        {
+          "id": 2603675,
+          "name": "12521-12531 W. Horseshoe Drive",
+          "address": "12521-12531 W. Horseshoe Drive, New Lenox, IL 60451",
+          "city": "New Lenox",
+          "state": "IL",
+          "asset_types": [
+            "Industrial"
+          ],
+          "sale_price": 2450000,
+          "price_per_sf": null,
+          "sq_footage": 12523,
+          "sold_on": "2026-06-28",
+          "distance_mi": 133.1,
+          "url": "https://www.crexi.com/properties/2603675/illinois-12521-12531-w-horseshoe-drive"
+        },
+        {
+          "id": 2603702,
+          "name": "20.96 AC Highway 51",
+          "address": "20.96 AC Highway 51, Arlington, Columbia, WI 53911",
+          "city": "Arlington",
+          "state": "WI",
+          "asset_types": [
+            "Land"
+          ],
+          "sale_price": 2415000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 139.7,
+          "url": "https://www.crexi.com/properties/2603702/wisconsin-2096-ac-highway-51"
+        },
+        {
+          "id": 2597273,
+          "name": "4252 Prescott Avenue",
+          "address": "4252 Prescott Avenue, Lyons, Cook, IL 60534",
+          "city": "Lyons",
+          "state": "IL",
+          "asset_types": [
+            "Multifamily"
+          ],
+          "sale_price": 685000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 139.8,
+          "url": "https://www.crexi.com/properties/2597273/illinois-4252-prescott-avenue"
+        },
+        {
+          "id": 2603616,
+          "name": "2711 164th Place",
+          "address": "2711 164th Place, Hammond, Lake, IN 46323",
+          "city": "Hammond",
+          "state": "IN",
+          "asset_types": [
+            "Multifamily"
+          ],
+          "sale_price": 165000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 156.8,
+          "url": "https://www.crexi.com/properties/2603616/indiana-2711-164th-place"
+        },
+        {
+          "id": 2603639,
+          "name": "3542/3544 Tripp Street",
+          "address": "3542/3544 Tripp Street, Ames, Story County, IA 50014",
+          "city": "Ames",
+          "state": "IA",
+          "asset_types": [
+            "Hospitality"
+          ],
+          "sale_price": 247500,
+          "price_per_sf": null,
+          "sq_footage": 1440,
+          "sold_on": "2026-06-28",
+          "distance_mi": 167.6,
+          "url": "https://www.crexi.com/properties/2603639/iowa-35423544-tripp-street"
+        },
+        {
+          "id": 2603698,
+          "name": "505 Market Street",
+          "address": "505 Market Street, West Des Moines, Polk, IA 50266",
+          "city": "West Des Moines",
+          "state": "IA",
+          "asset_types": [
+            "Office"
+          ],
+          "sale_price": 7400000,
+          "price_per_sf": null,
+          "sq_footage": 28626,
+          "sold_on": "2026-06-28",
+          "distance_mi": 170.6,
+          "url": "https://www.crexi.com/properties/2603698/iowa-505-market-street"
+        },
+        {
+          "id": 2603617,
+          "name": "503 Lincolnway",
+          "address": "503 Lincolnway, La Porte, La Porte, IN 46350",
+          "city": "La Porte",
+          "state": "IN",
+          "asset_types": [
+            "Retail"
+          ],
+          "sale_price": 125000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 178,
+          "url": "https://www.crexi.com/properties/2603617/indiana-503-lincolnway"
+        },
+        {
+          "id": 2603603,
+          "name": "2302 E MCCARTY STREET",
+          "address": "2302 E MCCARTY STREET, Jefferson City, Cole, MO 65101",
+          "city": "Jefferson City",
+          "state": "MO",
+          "asset_types": [
+            "Industrial"
+          ],
+          "sale_price": 229000,
+          "price_per_sf": null,
+          "sq_footage": 5000,
+          "sold_on": "2026-06-28",
+          "distance_mi": 220.5,
+          "url": "https://www.crexi.com/properties/2603603/missouri-2302-e-mccarty-street"
+        },
+        {
+          "id": 2603609,
+          "name": "Nw Of Waller Road",
+          "address": "Nw Of Waller Road, Richmond, Ray, MO 64085",
+          "city": "Richmond",
+          "state": "MO",
+          "asset_types": [
+            "Land",
+            "Special Purpose"
+          ],
+          "sale_price": 285000,
+          "price_per_sf": null,
+          "sq_footage": null,
+          "sold_on": "2026-06-28",
+          "distance_mi": 233.7,
+          "url": "https://www.crexi.com/properties/2603609/missouri-nw-of-waller-road"
+        }
+      ]
+    },
+    "walk_score": {
+      "source": "Walk Score API",
+      "status": "key_required",
+      "message": "Set WALKSCORE_API_KEY in .env (free key at walkscore.com/professional/api.php)",
+      "walk_score": null,
+      "transit_score": null,
+      "bike_score": null
+    },
+    "schools": {
+      "url": "https://www.areavibes.com/moline-il/schools/",
+      "source": "Areavibes (NCES data)",
+      "grade": "F",
+      "test_scores": {
+        "city_percentile": 52,
+        "state_avg_pct": 33,
+        "national_avg_pct": 48
+      },
+      "student_teacher_ratio": {
+        "city": "18:1",
+        "state": "18:1",
+        "national": "16:1"
+      },
+      "school_counts": {
+        "public": 19,
+        "private": 4,
+        "post_secondary": 2
+      },
+      "key_findings": [
+        "The school test scores in Moline are 52% lower than the national average There are approximately 19 public schools in Moline 85.",
+        "6% of people in Moline have completed 8th grade 84.",
+        "5% of people in Moline have completed high school 25.",
+        "8% of people in Moline have completed a bachelors degree Nearby Areas with High Test Scores Livability Amenities Cost of Living Crime Employment Housing Schools User Ratings © Proximitii © OpenStreetMap contributors © OpenMapTiles Leaflet Cities & Neighborhoods Cities only Neighborhoods only See all the best places to live around Moline Compare Moline, IL Schools vs Compare --> How would you rate education in Moline? Excellent."
+      ]
+    },
+    "flood_risk": {
+      "source": "FEMA NFHL + NWS",
+      "coordinates": {
+        "lat": 41.4916405,
+        "lng": -90.4932175
+      },
+      "flood_zone": {
+        "zone": "X",
+        "zone_subtype": "AREA OF MINIMAL FLOOD HAZARD",
+        "in_special_flood_hazard_area": false,
+        "risk_level": "Minimal",
+        "description": "Area of minimal flood hazard (above 500-yr)",
+        "base_flood_elevation": null,
+        "expected_flood_depth": null
+      },
+      "climate_info": {
+        "nws_office": "DVN",
+        "forecast_zone": "ILZ015",
+        "county": "ILC161",
+        "radar_station": "KDVN",
+        "time_zone": "America/Chicago"
+      },
+      "insurance_note": "Flood insurance not federally required but may be advisable"
+    }
   }
 }

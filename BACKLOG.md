@@ -29,7 +29,10 @@
 - [ ] **Automated scheduling** — cron job to run the full pipeline nightly and alert on new listings under the price threshold
 - [ ] **New business formation tracker** — fetch recently registered businesses within the property's city/zip from state Secretary of State APIs or the SBA's business formation dataset; high new-business velocity signals a growing local economy and stronger retail demand; flag areas where formation rate is accelerating year-over-year as a positive indicator in the disposition score
 - [ ] **Government compliance review agent** — see full spec below
-- [ ] **Due diligence agent** — see full spec below
+- [x] **Due diligence agent** — v1 implemented at `auctions/agents/due_diligence/` (CLI: `npm run dd -- <listing.json> [--docs <folder>]`); hybrid design: Claude extracts facts from local document folders (PDF/txt/md), deterministic model computes max bid + disposition score per the spec below
+- [ ] **Due diligence agent: data quality & calculation review** — the model can produce implausible max bids; e.g. listing 2561758 (4354 Industrial Center, San Antonio) got a $5.49M max bid vs a $250K opening bid. Root causes found: (1) income is always estimated from the *retail* asking-rent comp regardless of property type — a 40,000 SF **industrial** building was modeled at $29/SF/yr retail rent when industrial rents run ~$6–12/SF; (2) the extraction correctly identified the building as **vacant with no in-place income**, but the model still assumed immediate full lease-up at market rent with no lease-up period, TI, or leasing commissions; (3) no plausibility cross-checks — a max bid 22× the opening bid (or far above sold-comp values) should be flagged or capped. Fixes: match rent comps to property type (or discount when only retail comps exist), haircut income for vacant buildings (lease-up reserve + downtime), and add a sanity check against sold comps avg price and starting bid with a risk flag when the model diverges wildly
+- [ ] **Due diligence agent: S3/cloud document source** — extend `document_sources.js` to resolve `s3://` URIs (local folders only in v1)
+- [ ] **Due diligence agent: dashboard trigger** — `POST /api/listings/:id/due-diligence` endpoint + Run button in the Due Diligence tab (results already render via existing tab after DB sync)
 
 ---
 

@@ -4,13 +4,16 @@
   "description": "Crexi auction listing scraper",
   "type": "module",
   "scripts": {
-    "scrape":    "node --env-file=.env auctions/scraper.js",
-    "enrich":    "node --env-file=.env auctions/enrichment/enrich.js",
-    "api":       "cd api && node --env-file=../.env server.js",
+    "scrape": "node --env-file=.env auctions/scraper.js",
+    "enrich": "node --env-file=.env auctions/enrichment/enrich.js",
+    "dd": "node --env-file=.env auctions/agents/due_diligence/agent.js",
+    "api": "cd api && node --env-file=../.env server.js",
     "dashboard": "cd dashboard && npm run dev",
-    "dev":       "node -e \"require('child_process').spawn('node',['--env-file=.env','server.js'],{cwd:'api',stdio:'inherit',detached:true}).unref(); require('child_process').spawnSync('npm',['run','dev'],{cwd:'dashboard',stdio:'inherit'})\""
+    "dev": "node -e \"require('child_process').spawn('node',['--env-file=.env','server.js'],{cwd:'api',stdio:'inherit',detached:true}).unref(); require('child_process').spawnSync('npm',['run','dev'],{cwd:'dashboard',stdio:'inherit'})\""
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "baseline": "^0.3.0",
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2"

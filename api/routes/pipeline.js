@@ -30,7 +30,7 @@ export default async function pipelineRoutes(fastify) {
   // GET /api/pipeline — all listings grouped by stage
   fastify.get('/pipeline', async () => {
     const db = getDb();
-    const stages = ['Scouted','Enriching','Enriched','Under Review','BID','NO BID','CONDITIONAL','Auction Day','Closed'];
+    const stages = ['Scouted','Enriching','Enriched','Due Diligence','Under Review','BID','NO BID','CONDITIONAL','Auction Day','Closed'];
     const rows = db.prepare(`
       SELECT id, title, address, city, state, starting_bid_usd, max_bid_usd,
              bidding_starts, bidding_ends, disposition_score, recommendation, crime_grade,

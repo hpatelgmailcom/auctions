@@ -81,7 +81,7 @@ export default async function listingsRoutes(fastify) {
   fastify.patch('/listings/:id/stage', async (req, reply) => {
     const db = getDb();
     const { stage } = req.body;
-    const valid = ['Scouted','Enriching','Enriched','Under Review','BID','NO BID','CONDITIONAL','Auction Day','Closed'];
+    const valid = ['Scouted','Enriching','Enriched','Due Diligence','Under Review','BID','NO BID','CONDITIONAL','Auction Day','Closed'];
     if (!valid.includes(stage)) return reply.status(400).send({ error: 'Invalid stage' });
     db.prepare("UPDATE listings SET pipeline_stage = ?, updated_at = datetime('now') WHERE id = ?").run(stage, req.params.id);
     db.prepare("INSERT INTO pipeline_events (listing_id, stage) VALUES (?, ?)").run(req.params.id, stage);

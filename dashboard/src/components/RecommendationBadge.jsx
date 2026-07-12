@@ -4,6 +4,7 @@ const MAP = {
   'BID':         { cls: 'bg-bid-bg text-bid border border-bid/30',             label: 'BID' },
   'NO BID':      { cls: 'bg-nobid-bg text-nobid border border-nobid/30',       label: 'NO BID' },
   'CONDITIONAL': { cls: 'bg-conditional-bg text-conditional border border-conditional/30', label: 'CONDITIONAL' },
+  'CONDITIONAL BID': { cls: 'bg-conditional-bg text-conditional border border-conditional/30', label: 'CONDITIONAL' },
 };
 
 export default function RecommendationBadge({ value, size = 'sm' }) {
