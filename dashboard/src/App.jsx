@@ -33,11 +33,14 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
-  const [syncing, setSyncing] = useState(false);
+  const [syncing,  setSyncing]  = useState(false);
+  const [provider, setProvider] = useState('crexi');
 
   async function handleScrape() {
     setScraping(true);
-    try { await api.scrape({ max_price: 30000000, max_listings: 50 }); }
+    try {
+      await api.scrape({ provider, max_price: 30000000, max_listings: 50, state: 'OH' });
+    }
     finally { setTimeout(() => setScraping(false), 2000); }
   }
 
@@ -57,7 +60,7 @@ export default function App() {
             <Building2 size={15} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-ink leading-tight">Crexi Intel</p>
+            <p className="text-sm font-semibold text-ink leading-tight">Deal Intel</p>
             <p className="text-[10px] text-ink-subtle">Auction Intelligence</p>
           </div>
         </div>
@@ -89,6 +92,16 @@ export default function App() {
 
         {/* Actions */}
         <div className="p-3 border-t border-surface-border space-y-2">
+          <select
+            value={provider}
+            onChange={e => setProvider(e.target.value)}
+            className="input text-xs py-1.5 w-full"
+            aria-label="Scrape source"
+          >
+            <option value="crexi">Crexi (commercial)</option>
+            <option value="auction_com">Auction.com (residential)</option>
+            <option value="all">All providers</option>
+          </select>
           <button
             onClick={handleScrape}
             disabled={scraping}

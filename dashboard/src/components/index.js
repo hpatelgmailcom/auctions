@@ -5,3 +5,5 @@ export { default as StatCard }            from './StatCard.jsx';
 export { default as Spinner }             from './Spinner.jsx';
 export { default as EmptyState }          from './EmptyState.jsx';
 export { default as MapLinks }            from './MapLinks.jsx';
+export { default as SourceBadge }         from './SourceBadge.jsx';
+export { default as AssetClassTabs }      from './AssetClassTabs.jsx';

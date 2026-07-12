@@ -14,6 +14,15 @@ const MIGRATIONS = [
   "ALTER TABLE listings ADD COLUMN enrichment_walk_score TEXT",
   "ALTER TABLE listings ADD COLUMN enrichment_schools    TEXT",
   "ALTER TABLE listings ADD COLUMN enrichment_flood_risk TEXT",
+  // Multi-provider columns
+  "ALTER TABLE listings ADD COLUMN source           TEXT",
+  "ALTER TABLE listings ADD COLUMN source_id        TEXT",
+  "ALTER TABLE listings ADD COLUMN asset_class      TEXT",
+  "ALTER TABLE listings ADD COLUMN beds             REAL",
+  "ALTER TABLE listings ADD COLUMN baths            REAL",
+  "ALTER TABLE listings ADD COLUMN living_area_sqft REAL",
+  "ALTER TABLE listings ADD COLUMN home_type        TEXT",
+  "ALTER TABLE listings ADD COLUMN occupancy_status TEXT",
 ];
 
 export function getDb() {

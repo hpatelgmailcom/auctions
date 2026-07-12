@@ -11,6 +11,8 @@ import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tool
 const fmt$  = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtPct = v => v != null ? `${v}%` : '—';
 
+const SOURCE_LABEL = { crexi: 'Crexi', auction_com: 'Auction.com' };
+
 // MapLinks imported from components/MapLinks.jsx
 const row   = (label, value) => (
   <div key={label} className="flex justify-between items-start py-2 border-b border-surface-border/50 last:border-0 gap-4">
@@ -80,7 +82,7 @@ export default function PropertyDetail() {
           </button>
           {listing.url && (
             <a href={listing.url} target="_blank" rel="noreferrer" className="btn-ghost flex items-center gap-1.5 text-xs">
-              <ExternalLink size={12} /> Crexi
+              <ExternalLink size={12} /> {SOURCE_LABEL[listing.source] || 'Source'}
             </a>
           )}
         </div>
@@ -197,19 +199,32 @@ export default function PropertyDetail() {
         {tab === 'Property' && (
           <div className="card p-5 max-w-lg">
             <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-4">Property Details</h3>
-            {row('APN',            listing.apn)}
             {row('Address',        listing.address)}
             {row('City / State',   `${listing.city}, ${listing.state} ${listing.zip}`)}
-            {row('Property Types', Array.isArray(listing.property_types) ? listing.property_types.join(', ') : listing.property_types)}
-            {row('Sub Types',      Array.isArray(listing.sub_types) ? listing.sub_types.join(', ') : listing.sub_types)}
-            {row('Square Footage', listing.square_footage ? `${Number(listing.square_footage).toLocaleString()} SF` : null)}
-            {row('Year Built',     listing.year_built)}
-            {row('Stories',        listing.stories)}
-            {row('Buildings',      listing.buildings)}
-            {row('Acreage',        listing.acreage ? `${listing.acreage} acres` : null)}
-            {row('Zoning',         listing.zoning)}
-            {row('Tenancy',        listing.tenancy)}
-            {row('Opportunity Zone', listing.opportunity_zone ? 'Yes' : 'No')}
+            {listing.asset_class === 'residential' ? (
+              <>
+                {row('Home Type',      listing.home_type)}
+                {row('Occupancy',      listing.occupancy_status)}
+                {row('Beds',           listing.beds)}
+                {row('Baths',          listing.baths)}
+                {row('Living Area',    listing.living_area_sqft ? `${Number(listing.living_area_sqft).toLocaleString()} SF` : null)}
+                {row('Year Built',     listing.year_built)}
+              </>
+            ) : (
+              <>
+                {row('APN',            listing.apn)}
+                {row('Property Types', Array.isArray(listing.property_types) ? listing.property_types.join(', ') : listing.property_types)}
+                {row('Sub Types',      Array.isArray(listing.sub_types) ? listing.sub_types.join(', ') : listing.sub_types)}
+                {row('Square Footage', listing.square_footage ? `${Number(listing.square_footage).toLocaleString()} SF` : null)}
+                {row('Year Built',     listing.year_built)}
+                {row('Stories',        listing.stories)}
+                {row('Buildings',      listing.buildings)}
+                {row('Acreage',        listing.acreage ? `${listing.acreage} acres` : null)}
+                {row('Zoning',         listing.zoning)}
+                {row('Tenancy',        listing.tenancy)}
+                {row('Opportunity Zone', listing.opportunity_zone ? 'Yes' : 'No')}
+              </>
+            )}
           </div>
         )}
 
@@ -485,8 +500,8 @@ export default function PropertyDetail() {
                 <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider">Sold Comps</h3>
                 {sold?.scope && <span className="text-[10px] text-ink-subtle ml-auto">{sold.scope}</span>}
               </div>
-              {!sold ? <p className="text-sm text-ink-subtle">Not yet enriched.</p>
-                : sold.total_comps === 0 ? <p className="text-sm text-ink-subtle">No sold comps found in Crexi's database for this area and property type.</p>
+              {!sold ? <p className="text-sm text-ink-subtle">{listing.asset_class === 'residential' ? 'Sold comps are a commercial-only data source.' : 'Not yet enriched.'}</p>
+                : sold.total_comps === 0 ? <p className="text-sm text-ink-subtle">No sold comps found for this area and property type.</p>
                 : (
                   <div>
                     <div className="grid grid-cols-3 gap-3 mb-4">

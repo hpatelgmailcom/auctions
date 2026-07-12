@@ -9,7 +9,7 @@ export default async function listingsRoutes(fastify) {
       page = 1, limit = 50,
       state, recommendation, min_price, max_price,
       max_days_to_auction, crime_grade, opportunity_zone,
-      auction_type, property_type,
+      auction_type, property_type, asset_class, source,
       sort = 'bidding_starts', dir = 'asc',
     } = req.query;
 
@@ -21,6 +21,8 @@ export default async function listingsRoutes(fastify) {
     const params     = {};
 
     if (state)            { conditions.push('state = @state');                          params.state = state; }
+    if (asset_class)      { conditions.push('asset_class = @ac');                         params.ac = asset_class; }
+    if (source)           { conditions.push('source = @src');                            params.src = source; }
     if (recommendation)   { conditions.push('recommendation = @rec');                    params.rec = recommendation; }
     if (min_price)        { conditions.push('starting_bid_usd >= @min');                 params.min = Number(min_price); }
     if (max_price)        { conditions.push('starting_bid_usd <= @max');                 params.max = Number(max_price); }
@@ -38,10 +40,11 @@ export default async function listingsRoutes(fastify) {
     const offset = (Number(page) - 1) * Number(limit);
 
     const rows = db.prepare(`
-      SELECT id, title, address, city, state, zip, url,
+      SELECT id, source, source_id, asset_class, title, address, city, state, zip, url,
              starting_bid_usd, max_bid_usd, bidding_starts, bidding_ends,
              auction_type, reserve_met, auction_status,
              square_footage, property_types, opportunity_zone, zoning,
+             beds, baths, living_area_sqft, home_type, occupancy_status,
              crime_grade, disposition_score, recommendation,
              avg_retail_rent, compliance_status, pipeline_stage,
              enriched_at, scraped_at
@@ -121,13 +124,15 @@ async function runEnrichment(listing) {
   const root = join(dirname(fileURLToPath(import.meta.url)), '../../');
   const listingsDir = join(root, 'auctions/listings');
 
-  // Find the file for this listing ID
+  // Find the file for this listing. listing.id is the composite "source:source_id";
+  // match on the file's own source + listing.id so two providers never collide.
+  const { readFileSync } = await import('fs');
   const files = readdirSync(listingsDir);
   const file  = files.find(f => {
     try {
-      const { readFileSync } = require('fs');
       const d = JSON.parse(readFileSync(join(listingsDir, f)));
-      return d.listing?.id === listing.id;
+      const key = `${d.source ?? 'crexi'}:${d.source_id ?? d.listing?.id}`;
+      return key === listing.id;
     } catch { return false; }
   });
   if (!file) throw new Error('Listing file not found');

@@ -8,7 +8,7 @@ import { ChevronUp, ChevronDown, ExternalLink, Filter } from 'lucide-react';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks, SourceBadge, AssetClassTabs } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtSF = v => v != null ? `${Number(v).toLocaleString()} SF` : '—';
@@ -57,6 +57,13 @@ function FilterBar({ filters, onChange }) {
       <div className="flex items-center gap-1.5 text-xs text-ink-subtle">
         <Filter size={12} /> Filters:
       </div>
+      <select className="input text-xs py-1.5"
+        value={filters.source}
+        onChange={e => onChange('source', e.target.value)}>
+        <option value="">Any Source</option>
+        <option value="crexi">Crexi</option>
+        <option value="auction_com">Auction.com</option>
+      </select>
       <select className="input text-xs py-1.5"
         value={filters.recommendation}
         onChange={e => onChange('recommendation', e.target.value)}>
@@ -113,6 +120,7 @@ export default function ScreeningPage() {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState([{ id: 'bidding_starts', desc: false }]);
   const [filters, setFilters] = useState({
+    asset_class: '', source: '',
     recommendation: '', auction_type: '', property_type: '',
     state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
   });
@@ -135,8 +143,9 @@ export default function ScreeningPage() {
       sortingFn: 'alphanumeric',
       cell: ({ row }) => (
         <div>
-          <div className="flex items-center gap-1">
-            <p className="text-sm text-ink font-medium truncate max-w-[200px]">{row.original.address || '—'}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm text-ink font-medium truncate max-w-[180px]">{row.original.address || '—'}</p>
+            <SourceBadge source={row.original.source} />
             <MapLinks address={row.original.address} />
           </div>
           <p className="text-xs text-ink-subtle">{row.original.city}, {row.original.state}</p>
@@ -192,7 +201,17 @@ export default function ScreeningPage() {
       header: 'Size',
       accessorKey: 'square_footage',
       sortingFn: numSortFn,
-      cell: ({ getValue }) => <span className="text-xs text-ink-muted">{fmtSF(getValue())}</span>,
+      cell: ({ row }) => {
+        const r = row.original;
+        if (r.asset_class === 'residential') {
+          const parts = [];
+          if (r.beds != null)  parts.push(`${r.beds} bd`);
+          if (r.baths != null) parts.push(`${r.baths} ba`);
+          if (r.living_area_sqft != null) parts.push(fmtSF(r.living_area_sqft));
+          return <span className="text-xs text-ink-muted">{parts.length ? parts.join(' · ') : '—'}</span>;
+        }
+        return <span className="text-xs text-ink-muted">{fmtSF(r.square_footage)}</span>;
+      },
     },
     {
       id: 'crime_grade',
@@ -258,9 +277,12 @@ export default function ScreeningPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-5">
-        <h1 className="text-xl font-semibold text-ink">Screening</h1>
-        <p className="text-sm text-ink-subtle mt-0.5">{data?.total ?? '…'} listings</p>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-ink">Screening</h1>
+          <p className="text-sm text-ink-subtle mt-0.5">{data?.total ?? '…'} listings</p>
+        </div>
+        <AssetClassTabs value={filters.asset_class} onChange={v => setFilter('asset_class', v)} />
       </div>
 
       <FilterBar filters={filters} onChange={setFilter} />

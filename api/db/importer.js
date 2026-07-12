@@ -39,8 +39,14 @@ function toRow(raw) {
   const sch    = mr.schools       || null;
   const flood  = mr.flood_risk    || null;
 
+  const source    = raw.source ?? 'crexi';
+  const sourceId  = String(raw.source_id ?? l.id ?? '');
+
   return {
-    id:                    l.id,
+    id:                    `${source}:${sourceId}`,
+    source,
+    source_id:             sourceId,
+    asset_class:           raw.asset_class ?? 'commercial',
     title:                 l.title,
     address:               l.address,
     city:                  l.city,
@@ -76,6 +82,12 @@ function toRow(raw) {
     zoning:         p.zoning,
     opportunity_zone: p.opportunity_zone ? 1 : 0,
 
+    beds:             p.beds ?? null,
+    baths:            p.baths ?? null,
+    living_area_sqft: p.living_area_sqft ?? null,
+    home_type:        p.home_type ?? null,
+    occupancy_status: p.occupancy_status ?? null,
+
     pipeline_stage: inferStage(raw),
 
     enrichment_demographics: JSON.stringify(demo),
@@ -103,11 +115,13 @@ export function importListings() {
 
   const upsert = db.prepare(`
     INSERT OR REPLACE INTO listings (
-      id, title, address, city, state, zip, latitude, longitude, brokerage, listed_on, url, scraped_at,
+      id, source, source_id, asset_class,
+      title, address, city, state, zip, latitude, longitude, brokerage, listed_on, url, scraped_at,
       auction_status, auction_type, starting_bid_usd, bidding_starts, bidding_ends,
       reserve_met, bid_increment_usd, participation_deposit, earnest_money_deposit,
       marketing_fee_pct, minimum_marketing_fee_usd, closing_period_days, non_contingent,
       property_types, sub_types, square_footage, tenancy, year_built, acreage, zoning, opportunity_zone,
+      beds, baths, living_area_sqft, home_type, occupancy_status,
       pipeline_stage,
       enrichment_demographics, enrichment_crime, enrichment_retail,
       enrichment_sold_comps, enrichment_walk_score, enrichment_schools, enrichment_flood_risk,
@@ -115,11 +129,13 @@ export function importListings() {
       crime_grade, disposition_score, recommendation, max_bid_usd, avg_retail_rent,
       compliance_status, enriched_at
     ) VALUES (
-      @id, @title, @address, @city, @state, @zip, @latitude, @longitude, @brokerage, @listed_on, @url, @scraped_at,
+      @id, @source, @source_id, @asset_class,
+      @title, @address, @city, @state, @zip, @latitude, @longitude, @brokerage, @listed_on, @url, @scraped_at,
       @auction_status, @auction_type, @starting_bid_usd, @bidding_starts, @bidding_ends,
       @reserve_met, @bid_increment_usd, @participation_deposit, @earnest_money_deposit,
       @marketing_fee_pct, @minimum_marketing_fee_usd, @closing_period_days, @non_contingent,
       @property_types, @sub_types, @square_footage, @tenancy, @year_built, @acreage, @zoning, @opportunity_zone,
+      @beds, @baths, @living_area_sqft, @home_type, @occupancy_status,
       @pipeline_stage,
       @enrichment_demographics, @enrichment_crime, @enrichment_retail,
       @enrichment_sold_comps, @enrichment_walk_score, @enrichment_schools, @enrichment_flood_risk,

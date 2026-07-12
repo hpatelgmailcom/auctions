@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, SourceBadge, AssetClassTabs } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 
@@ -37,8 +38,16 @@ function ListingCard({ listing, onClick }) {
     <div onClick={onClick}
       className="bg-surface-card border border-surface-border rounded-xl p-3.5 cursor-pointer hover:border-brand/40 hover:bg-surface-hover transition-all space-y-2">
       <div>
-        <p className="text-xs font-medium text-ink leading-tight truncate">{listing.address}</p>
-        <p className="text-[10px] text-ink-subtle">{listing.city}, {listing.state}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-xs font-medium text-ink leading-tight truncate flex-1">{listing.address}</p>
+          <SourceBadge source={listing.source} />
+        </div>
+        <p className="text-[10px] text-ink-subtle">
+          {listing.city}, {listing.state}
+          {listing.asset_class === 'residential' && (listing.beds != null || listing.baths != null) && (
+            <span className="ml-1">· {[listing.beds != null ? `${listing.beds}bd` : null, listing.baths != null ? `${listing.baths}ba` : null].filter(Boolean).join(' ')}</span>
+          )}
+        </p>
       </div>
       <div className="flex items-center justify-between">
         <span className="text-sm font-bold font-mono text-ink">{fmt$(listing.starting_bid_usd)}</span>
@@ -76,20 +85,31 @@ function ListingCard({ listing, onClick }) {
 
 export default function PipelinePage() {
   const navigate = useNavigate();
+  const [assetClass, setAssetClass] = useState('');
   const { data, loading } = useFetch(() => api.pipeline.board());
 
   if (loading) return <Spinner />;
   const { stages = [], groups = {} } = data || {};
 
+  const matches = c => !assetClass || (c.asset_class ?? 'commercial') === assetClass;
+  const counts = Object.values(groups).flat().reduce((acc, c) => {
+    const k = c.asset_class ?? 'commercial';
+    acc[k] = (acc[k] || 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <div className="p-6">
-      <div className="mb-5">
-        <h1 className="text-xl font-semibold text-ink">Pipeline</h1>
-        <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-ink">Pipeline</h1>
+          <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>
+        </div>
+        <AssetClassTabs value={assetClass} onChange={setAssetClass} counts={counts} />
       </div>
       <div className="flex gap-3 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 140px)' }}>
         {stages.map(stage => {
-          const cards = groups[stage] || [];
+          const cards = (groups[stage] || []).filter(matches);
           return (
             <div key={stage} className="shrink-0 w-64 flex flex-col gap-2">
               {/* Column header */}
