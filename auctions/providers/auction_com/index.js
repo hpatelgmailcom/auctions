@@ -100,21 +100,32 @@ const SEARCH_QUERY = `
     }
   }`;
 
-// Detail — extra facts not present on the search card.
-// NOTE: only bedrooms/bathrooms are confirmed on the Property type. Square
-// footage, year built, lot size, granular home_type, AND the property's
-// latitude/longitude live under nested structures whose exact field names still
-// need to be captured from the site's own PDP query (open a /details/ page, hook
-// window.fetch for graph.auction.com, read the operation). Until then those
-// canonical fields stay null, and enrich.js runs only its city/state-based steps
-// for these records (see enrichment/enrich.js coordinate handling).
+// Detail — facts not present on the search card. `primary_property.summary`
+// carries beds/baths, square footage, lot size, year built, structure type, and
+// the address block with coordinates (lat/lon) — enough for enrichment's
+// coordinate-dependent steps (walk score, flood risk, sold comps).
 const DETAIL_QUERY = `
   query acomDetail($listingId: ID!) {
     listing(listingId: $listingId) {
       listing_id
       primary_property {
-        bedrooms
-        bathrooms
+        summary {
+          total_bedrooms
+          total_bathrooms
+          square_footage
+          living_size
+          lot_size
+          year_built
+          apn
+          structure_type_code
+          address {
+            municipality
+            postal_code
+            country_primary_subdivision
+            country_secondary_subdivision
+            coordinates { lat lon }
+          }
+        }
       }
     }
   }`;
@@ -221,10 +232,18 @@ function parseAddress(formatted) {
 
 /** Map a raw Auction.com bundle → canonical record. */
 export function normalize({ card, detail }) {
-  const seg  = card.selling_method?.__typename === 'OnlineAuctionSegment' ? card.selling_method : null;
-  const val  = card.external_information?.collateral?.summary || null;
-  const prop = detail?.primary_property || {};
-  const { address, city, state, zip } = parseAddress(card.formatted_address);
+  const seg     = card.selling_method?.__typename === 'OnlineAuctionSegment' ? card.selling_method : null;
+  const val     = card.external_information?.collateral?.summary || null;
+  const summary = detail?.primary_property?.summary || {};
+  const addr    = summary.address || {};
+  const coords  = addr.coordinates || {};
+  const parsed  = parseAddress(card.formatted_address);
+
+  // Prefer the structured detail address block; fall back to the parsed card address.
+  const address = summary.formatted_address || parsed.address;
+  const city    = addr.municipality || parsed.city;
+  const state   = addr.country_primary_subdivision || parsed.state;
+  const zip     = addr.postal_code || parsed.zip;
 
   return {
     source:      meta.slug,
@@ -239,8 +258,8 @@ export function normalize({ card, detail }) {
       city,
       state,
       zip,
-      latitude:  null,   // not exposed on the search card
-      longitude: null,
+      latitude:  coords.lat ?? null,
+      longitude: coords.lon ?? null,
       brokerage: null,
       listed_on: seg?.start_date || null,
     },
@@ -263,20 +282,21 @@ export function normalize({ card, detail }) {
       value_range_high_usd:   val?.high ?? null,
     },
     property: {
-      // Commercial fields — null for residential auction.com inventory
-      apn:            null,
+      // Commercial fields — mostly null for residential auction.com inventory
+      apn:            summary.apn ?? null,
       property_types: card.listing_configuration?.product_type ? [card.listing_configuration.product_type] : null,
-      sub_types:      null,
-      square_footage: null,   // see DETAIL_QUERY note (follow-up)
+      sub_types:      summary.structure_type_code ? [summary.structure_type_code] : null,
+      square_footage: summary.square_footage ?? null,
       tenancy:        null,
-      year_built:     null,   // follow-up
+      year_built:     summary.year_built ?? null,
+      acreage:        summary.lot_size ?? null,
       zoning:         null,
       opportunity_zone: null,
       // Residential fields
-      beds:             prop.bedrooms ?? null,
-      baths:            prop.bathrooms ?? null,
-      living_area_sqft: null, // follow-up
-      home_type:        card.listing_configuration?.asset_type || null,
+      beds:             summary.total_bedrooms ?? null,
+      baths:            summary.total_bathrooms ?? null,
+      living_area_sqft: summary.living_size ?? summary.square_footage ?? null,
+      home_type:        summary.structure_type_code || card.listing_configuration?.asset_type || null,
       occupancy_status: card.listing_configuration?.occupancy_status || null,
     },
     description:           null,
