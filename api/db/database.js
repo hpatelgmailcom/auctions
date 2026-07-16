@@ -23,6 +23,13 @@ const MIGRATIONS = [
   "ALTER TABLE listings ADD COLUMN living_area_sqft REAL",
   "ALTER TABLE listings ADD COLUMN home_type        TEXT",
   "ALTER TABLE listings ADD COLUMN occupancy_status TEXT",
+  // Sale listings (email-sourced brokers)
+  "ALTER TABLE listings ADD COLUMN listing_type     TEXT",
+  "ALTER TABLE listings ADD COLUMN asking_price_usd REAL",
+  "ALTER TABLE listings ADD COLUMN cap_rate_pct     REAL",
+  "ALTER TABLE listings ADD COLUMN noi_usd          REAL",
+  "ALTER TABLE listings ADD COLUMN email_message_id TEXT",
+  "ALTER TABLE listings ADD COLUMN received_at      TEXT",
 ];
 
 export function getDb() {

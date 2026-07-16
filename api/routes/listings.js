@@ -9,7 +9,7 @@ export default async function listingsRoutes(fastify) {
       page = 1, limit = 50,
       state, recommendation, min_price, max_price,
       max_days_to_auction, crime_grade, opportunity_zone,
-      auction_type, property_type, asset_class, source,
+      auction_type, property_type, asset_class, source, listing_type,
       sort = 'bidding_starts', dir = 'asc',
     } = req.query;
 
@@ -23,6 +23,7 @@ export default async function listingsRoutes(fastify) {
     if (state)            { conditions.push('state = @state');                          params.state = state; }
     if (asset_class)      { conditions.push('asset_class = @ac');                         params.ac = asset_class; }
     if (source)           { conditions.push('source = @src');                            params.src = source; }
+    if (listing_type)     { conditions.push("COALESCE(listing_type,'auction') = @lt");   params.lt = listing_type; }
     if (recommendation)   { conditions.push('recommendation = @rec');                    params.rec = recommendation; }
     if (min_price)        { conditions.push('starting_bid_usd >= @min');                 params.min = Number(min_price); }
     if (max_price)        { conditions.push('starting_bid_usd <= @max');                 params.max = Number(max_price); }
@@ -40,8 +41,9 @@ export default async function listingsRoutes(fastify) {
     const offset = (Number(page) - 1) * Number(limit);
 
     const rows = db.prepare(`
-      SELECT id, source, source_id, asset_class, title, address, city, state, zip, url,
+      SELECT id, source, source_id, asset_class, listing_type, title, address, city, state, zip, url,
              starting_bid_usd, max_bid_usd, bidding_starts, bidding_ends,
+             asking_price_usd, cap_rate_pct, noi_usd, brokerage,
              auction_type, reserve_met, auction_status,
              square_footage, property_types, opportunity_zone, zoning,
              beds, baths, living_area_sqft, home_type, occupancy_status,

@@ -5,6 +5,10 @@
   "type": "module",
   "scripts": {
     "scrape": "node --env-file=.env auctions/scraper.js",
+    "email:auth": "node auctions/email/auth.js",
+    "email:fetch": "node auctions/email/fetch_emails.js",
+    "email:sample": "node auctions/email/sample.js",
+    "email:test": "node auctions/email/test_parsers.js",
     "enrich": "node --env-file=.env auctions/enrichment/enrich.js",
     "dd": "node --env-file=.env auctions/agents/due_diligence/agent.js",
     "api": "cd api && node --env-file=../.env server.js",
@@ -13,6 +17,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
+    "@google-cloud/local-auth": "^3.0.1",
+    "googleapis": "^144.0.0",
     "baseline": "^0.3.0",
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",

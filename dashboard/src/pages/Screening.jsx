@@ -63,6 +63,14 @@ function FilterBar({ filters, onChange }) {
         <option value="">Any Source</option>
         <option value="crexi">Crexi</option>
         <option value="auction_com">Auction.com</option>
+        <option value="cushman_wakefield">Cushman &amp; Wakefield</option>
+      </select>
+      <select className="input text-xs py-1.5"
+        value={filters.listing_type}
+        onChange={e => onChange('listing_type', e.target.value)}>
+        <option value="">Any Type</option>
+        <option value="auction">Auction</option>
+        <option value="sale">For Sale</option>
       </select>
       <select className="input text-xs py-1.5"
         value={filters.recommendation}
@@ -120,7 +128,7 @@ export default function ScreeningPage() {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState([{ id: 'bidding_starts', desc: false }]);
   const [filters, setFilters] = useState({
-    asset_class: '', source: '',
+    asset_class: '', source: '', listing_type: '',
     recommendation: '', auction_type: '', property_type: '',
     state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
   });
@@ -154,10 +162,17 @@ export default function ScreeningPage() {
     },
     {
       id: 'starting_bid_usd',
-      header: 'Starting Bid',
-      accessorKey: 'starting_bid_usd',
+      header: 'Price',
+      accessorFn: r => r.listing_type === 'sale' ? r.asking_price_usd : r.starting_bid_usd,
       sortingFn: numSortFn,
-      cell: ({ getValue }) => <span className="font-mono text-sm text-ink">{fmt$(getValue())}</span>,
+      cell: ({ getValue, row }) => (
+        <div>
+          <span className="font-mono text-sm text-ink">{fmt$(getValue())}</span>
+          {row.original.listing_type === 'sale' && (
+            <p className="text-[10px] text-ink-subtle">asking</p>
+          )}
+        </div>
+      ),
     },
     {
       id: 'max_bid_usd',
@@ -183,6 +198,18 @@ export default function ScreeningPage() {
       accessorKey: 'bidding_starts',
       sortingFn: 'datetime',
       cell: ({ row }) => {
+        if (row.original.listing_type === 'sale') {
+          return (
+            <div className="space-y-1">
+              <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 text-[10px] font-medium">
+                For Sale
+              </span>
+              {row.original.cap_rate_pct != null && (
+                <div className="text-[10px] text-ink-subtle font-mono">{row.original.cap_rate_pct}% cap</div>
+              )}
+            </div>
+          );
+        }
         const starts = row.original.bidding_starts;
         const ends   = row.original.bidding_ends;
         return (

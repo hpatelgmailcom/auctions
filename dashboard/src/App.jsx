@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import {
   LayoutGrid, TableProperties, BarChart3, Bell, Building2,
-  RefreshCw, Database
+  RefreshCw, Database, Mail
 } from 'lucide-react';
 import { api } from './api/client.js';
 
@@ -35,6 +35,12 @@ export default function App() {
 
   const [syncing,  setSyncing]  = useState(false);
   const [provider, setProvider] = useState('crexi');
+  const [fetchingEmail, setFetchingEmail] = useState(false);
+  const [emailStatus,   setEmailStatus]   = useState(null);
+
+  useEffect(() => {
+    api.email.status().then(setEmailStatus).catch(() => {});
+  }, []);
 
   async function handleScrape() {
     setScraping(true);
@@ -42,6 +48,18 @@ export default function App() {
       await api.scrape({ provider, max_price: 30000000, max_listings: 50, state: 'OH' });
     }
     finally { setTimeout(() => setScraping(false), 2000); }
+  }
+
+  async function handleEmailFetch() {
+    setFetchingEmail(true);
+    try { await api.email.fetch({}); }
+    finally {
+      // The fetch runs async server-side; refresh the status line shortly after.
+      setTimeout(() => {
+        setFetchingEmail(false);
+        api.email.status().then(setEmailStatus).catch(() => {});
+      }, 5000);
+    }
   }
 
   async function handleSync() {
@@ -110,6 +128,22 @@ export default function App() {
             <RefreshCw size={13} className={scraping ? 'animate-spin' : ''} />
             {scraping ? 'Running…' : 'Run Scraper'}
           </button>
+          <button
+            onClick={handleEmailFetch}
+            disabled={fetchingEmail}
+            className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Mail size={13} className={fetchingEmail ? 'animate-pulse' : ''} />
+            {fetchingEmail ? 'Fetching…' : 'Fetch Emails'}
+          </button>
+          {emailStatus?.totals?.parsed != null && (
+            <p className="text-[10px] text-ink-subtle text-center leading-tight">
+              {emailStatus.by_sender.length} sender{emailStatus.by_sender.length === 1 ? '' : 's'}
+              {' · '}{emailStatus.totals.parsed} parsed
+              {emailStatus.totals.error > 0 && <span className="text-red-400">{' · '}{emailStatus.totals.error} errors</span>}
+              {emailStatus.unregistered.length > 0 && <span className="text-amber-400">{' · '}{emailStatus.unregistered.length} unmatched</span>}
+            </p>
+          )}
           <button
             onClick={handleSync}
             disabled={syncing}

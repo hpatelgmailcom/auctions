@@ -39,7 +39,8 @@ export default async function pipelineRoutes(fastify) {
     const db = getDb();
     const stages = ['Scouted','Enriching','Enriched','Due Diligence','Under Review','BID','NO BID','CONDITIONAL','Auction Day','Closed'];
     const rows = db.prepare(`
-      SELECT id, source, asset_class, title, address, city, state, starting_bid_usd, max_bid_usd,
+      SELECT id, source, asset_class, listing_type, title, address, city, state, starting_bid_usd, max_bid_usd,
+             asking_price_usd, cap_rate_pct,
              bidding_starts, bidding_ends, disposition_score, recommendation, crime_grade,
              beds, baths, home_type,
              compliance_status, pipeline_stage, enriched_at, property_types

@@ -1,8 +1,9 @@
 import clsx from 'clsx';
 
 const SOURCES = {
-  crexi:       { label: 'Crexi',       cls: 'bg-sky-500/15 text-sky-400 border-sky-500/30' },
-  auction_com: { label: 'Auction.com', cls: 'bg-orange-500/15 text-orange-400 border-orange-500/30' },
+  crexi:             { label: 'Crexi',       cls: 'bg-sky-500/15 text-sky-400 border-sky-500/30' },
+  auction_com:       { label: 'Auction.com', cls: 'bg-orange-500/15 text-orange-400 border-orange-500/30' },
+  cushman_wakefield: { label: 'C&W',         cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
 };
 
 /** Small pill showing which provider a listing came from. */

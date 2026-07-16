@@ -33,7 +33,8 @@ function isLiveNow(starts, ends) {
 }
 
 function ListingCard({ listing, onClick }) {
-  const live = isLiveNow(listing.bidding_starts, listing.bidding_ends);
+  const live   = isLiveNow(listing.bidding_starts, listing.bidding_ends);
+  const isSale = listing.listing_type === 'sale';
   return (
     <div onClick={onClick}
       className="bg-surface-card border border-surface-border rounded-xl p-3.5 cursor-pointer hover:border-brand/40 hover:bg-surface-hover transition-all space-y-2">
@@ -50,27 +51,38 @@ function ListingCard({ listing, onClick }) {
         </p>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-sm font-bold font-mono text-ink">{fmt$(listing.starting_bid_usd)}</span>
+        <span className="text-sm font-bold font-mono text-ink">
+          {fmt$(isSale ? listing.asking_price_usd : listing.starting_bid_usd)}
+          {isSale ? <span className="ml-1 text-[10px] font-sans font-normal text-ink-subtle">asking</span> : null}
+        </span>
         <RecommendationBadge value={listing.recommendation} />
       </div>
       <div className="flex items-center justify-between">
         <CrimeGradeBadge grade={listing.crime_grade} />
-        <AuctionCountdown date={listing.bidding_starts} endDate={listing.bidding_ends} compact />
-      </div>
-      <div className="text-[10px] text-ink-subtle space-y-0.5 border-t border-surface-border pt-1.5">
-        {listing.bidding_starts && (
-          <div className="flex justify-between">
-            <span className="text-ink-subtle">Start</span>
-            <span className="font-mono">{fmtDate(listing.bidding_starts)}</span>
-          </div>
-        )}
-        {listing.bidding_ends && (
-          <div className="flex justify-between">
-            <span className={live ? 'text-emerald-400' : 'text-ink-subtle'}>End</span>
-            <span className={`font-mono ${live ? 'text-emerald-400 font-semibold' : ''}`}>{fmtDate(listing.bidding_ends)}</span>
-          </div>
+        {isSale ? (
+          listing.cap_rate_pct != null
+            ? <span className="text-[10px] text-ink-subtle font-mono">{listing.cap_rate_pct}% cap</span>
+            : null
+        ) : (
+          <AuctionCountdown date={listing.bidding_starts} endDate={listing.bidding_ends} compact />
         )}
       </div>
+      {isSale ? null : (
+        <div className="text-[10px] text-ink-subtle space-y-0.5 border-t border-surface-border pt-1.5">
+          {listing.bidding_starts && (
+            <div className="flex justify-between">
+              <span className="text-ink-subtle">Start</span>
+              <span className="font-mono">{fmtDate(listing.bidding_starts)}</span>
+            </div>
+          )}
+          {listing.bidding_ends && (
+            <div className="flex justify-between">
+              <span className={live ? 'text-emerald-400' : 'text-ink-subtle'}>End</span>
+              <span className={`font-mono ${live ? 'text-emerald-400 font-semibold' : ''}`}>{fmtDate(listing.bidding_ends)}</span>
+            </div>
+          )}
+        </div>
+      )}
       {listing.disposition_score != null && (
         <div className="flex items-center gap-1.5">
           <div className="flex-1 bg-surface rounded-full h-1">

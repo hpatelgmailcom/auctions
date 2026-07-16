@@ -8,3 +8,6 @@ dashboard/node_modules/
 dashboard/dist/
 auctions/results_test.json
 auctions/listings/
+auctions/email/credentials.json
+auctions/email/token.json
+auctions/email/samples/

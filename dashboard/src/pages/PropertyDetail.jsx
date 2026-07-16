@@ -11,7 +11,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tool
 const fmt$  = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtPct = v => v != null ? `${v}%` : '—';
 
-const SOURCE_LABEL = { crexi: 'Crexi', auction_com: 'Auction.com' };
+const SOURCE_LABEL = { crexi: 'Crexi', auction_com: 'Auction.com', cushman_wakefield: 'Cushman & Wakefield' };
 
 // MapLinks imported from components/MapLinks.jsx
 const row   = (label, value) => (
@@ -21,7 +21,7 @@ const row   = (label, value) => (
   </div>
 );
 
-const TABS = ['Overview', 'Auction Terms', 'Property', 'Market Intelligence', 'Due Diligence', 'Compliance'];
+const TABS = (isSale) => ['Overview', isSale ? 'Sale Terms' : 'Auction Terms', 'Property', 'Market Intelligence', 'Due Diligence', 'Compliance'];
 
 export default function PropertyDetail() {
   const { id }    = useParams();
@@ -39,6 +39,8 @@ export default function PropertyDetail() {
 
   if (loading) return <Spinner />;
   if (!listing) return <div className="p-8 text-ink-subtle">Listing not found.</div>;
+
+  const isSale = listing.listing_type === 'sale';
 
   const demo   = listing.enrichment_demographics || {};
   const crime  = listing.enrichment_crime        || {};
@@ -90,18 +92,23 @@ export default function PropertyDetail() {
 
       {/* Hero stats */}
       <div className="px-6 py-5 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 border-b border-surface-border">
-        {[
+        {(isSale ? [
+          ['Asking Price',    fmt$(listing.asking_price_usd),   'text-ink'],
+          ['Cap Rate',        listing.cap_rate_pct != null ? `${listing.cap_rate_pct}%` : '—', 'text-bid'],
+          ['NOI',             fmt$(listing.noi_usd),            'text-ink-muted'],
+        ] : [
           ['Starting Bid',    fmt$(listing.starting_bid_usd),  'text-ink'],
           ['Max Bid',         fmt$(listing.max_bid_usd),        dd ? 'text-bid' : 'text-ink-subtle'],
           ['Bid Headroom',    listing.max_bid_usd != null && listing.starting_bid_usd != null
             ? fmt$(listing.max_bid_usd - listing.starting_bid_usd)
             : '—',
             (listing.max_bid_usd - listing.starting_bid_usd) >= 0 ? 'text-bid' : 'text-nobid'],
+        ]).concat([
           ['Disposition',     dd?.disposition_score != null ? `${dd.disposition_score}/10` : '—',
             dd?.disposition_score >= 7 ? 'text-bid' : dd?.disposition_score >= 5 ? 'text-conditional' : 'text-ink-subtle'],
           ['Crime Grade',     listing.crime_grade || '—',       'text-ink'],
           ['Avg Retail Rent', listing.avg_retail_rent != null ? `$${Number(listing.avg_retail_rent).toFixed(2)}/SF` : '—', 'text-ink-muted'],
-        ].map(([label, value, color]) => (
+        ]).map(([label, value, color]) => (
           <div key={label} className="card p-3">
             <p className="text-[10px] text-ink-subtle uppercase tracking-wider mb-1">{label}</p>
             <p className={clsx('text-lg font-bold font-mono', color)}>{value}</p>
@@ -110,7 +117,7 @@ export default function PropertyDetail() {
       </div>
 
       {/* Auction countdown */}
-      {listing.bidding_starts && (
+      {!isSale && listing.bidding_starts && (
         <div className="px-6 py-3 border-b border-surface-border flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-xs text-ink-subtle">
             <Calendar size={12} /> Auction starts
@@ -124,7 +131,7 @@ export default function PropertyDetail() {
 
       {/* Tabs */}
       <div className="flex gap-0 border-b border-surface-border px-6 overflow-x-auto">
-        {TABS.map(t => (
+        {TABS(isSale).map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={clsx(
               'px-4 py-3 text-sm whitespace-nowrap border-b-2 transition-colors',
@@ -170,11 +177,27 @@ export default function PropertyDetail() {
                 {row('Stage', listing.pipeline_stage)}
                 {row('Scraped', listing.scraped_at ? format(new Date(listing.scraped_at), 'MMM d, yyyy') : null)}
                 {row('Enriched', listing.enriched_at ? format(new Date(listing.enriched_at), 'MMM d, yyyy') : 'Not yet')}
-                {row('Auction Type', listing.auction_type)}
-                {row('Reserve Met', listing.reserve_met ? 'Yes' : 'No')}
+                {isSale ? row('Listing Type', 'For Sale') : row('Auction Type', listing.auction_type)}
+                {isSale
+                  ? row('Received', listing.received_at ? format(new Date(listing.received_at), 'MMM d, yyyy') : null)
+                  : row('Reserve Met', listing.reserve_met ? 'Yes' : 'No')}
                 {row('Listed By', listing.brokerage)}
               </div>
             </div>
+          </div>
+        )}
+
+        {tab === 'Sale Terms' && (
+          <div className="card p-5 max-w-lg">
+            <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-4">Sale Terms</h3>
+            {row('Asking Price',   fmt$(listing.asking_price_usd))}
+            {row('Cap Rate',       listing.cap_rate_pct != null ? `${listing.cap_rate_pct}%` : null)}
+            {row('NOI',            fmt$(listing.noi_usd))}
+            {row('Price / SF',     listing.asking_price_usd != null && listing.square_footage
+              ? `$${(listing.asking_price_usd / listing.square_footage).toFixed(2)}`
+              : null)}
+            {row('Brokerage',      listing.brokerage)}
+            {row('Received',       listing.received_at ? format(new Date(listing.received_at), 'MMM d, yyyy') : null)}
           </div>
         )}
 

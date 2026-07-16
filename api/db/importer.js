@@ -41,12 +41,15 @@ function toRow(raw) {
 
   const source    = raw.source ?? 'crexi';
   const sourceId  = String(raw.source_id ?? l.id ?? '');
+  const sale      = raw.sale  || {};
+  const em        = raw.email || {};
 
   return {
     id:                    `${source}:${sourceId}`,
     source,
     source_id:             sourceId,
     asset_class:           raw.asset_class ?? 'commercial',
+    listing_type:          raw.listing_type ?? 'auction',
     title:                 l.title,
     address:               l.address,
     city:                  l.city,
@@ -82,6 +85,12 @@ function toRow(raw) {
     zoning:         p.zoning,
     opportunity_zone: p.opportunity_zone ? 1 : 0,
 
+    asking_price_usd: sale.asking_price_usd ?? null,
+    cap_rate_pct:     sale.cap_rate_pct     ?? null,
+    noi_usd:          sale.noi_usd          ?? null,
+    email_message_id: em.message_id  ?? null,
+    received_at:      em.received_at ?? null,
+
     beds:             p.beds ?? null,
     baths:            p.baths ?? null,
     living_area_sqft: p.living_area_sqft ?? null,
@@ -115,12 +124,13 @@ export function importListings() {
 
   const upsert = db.prepare(`
     INSERT OR REPLACE INTO listings (
-      id, source, source_id, asset_class,
+      id, source, source_id, asset_class, listing_type,
       title, address, city, state, zip, latitude, longitude, brokerage, listed_on, url, scraped_at,
       auction_status, auction_type, starting_bid_usd, bidding_starts, bidding_ends,
       reserve_met, bid_increment_usd, participation_deposit, earnest_money_deposit,
       marketing_fee_pct, minimum_marketing_fee_usd, closing_period_days, non_contingent,
       property_types, sub_types, square_footage, tenancy, year_built, acreage, zoning, opportunity_zone,
+      asking_price_usd, cap_rate_pct, noi_usd, email_message_id, received_at,
       beds, baths, living_area_sqft, home_type, occupancy_status,
       pipeline_stage,
       enrichment_demographics, enrichment_crime, enrichment_retail,
@@ -129,12 +139,13 @@ export function importListings() {
       crime_grade, disposition_score, recommendation, max_bid_usd, avg_retail_rent,
       compliance_status, enriched_at
     ) VALUES (
-      @id, @source, @source_id, @asset_class,
+      @id, @source, @source_id, @asset_class, @listing_type,
       @title, @address, @city, @state, @zip, @latitude, @longitude, @brokerage, @listed_on, @url, @scraped_at,
       @auction_status, @auction_type, @starting_bid_usd, @bidding_starts, @bidding_ends,
       @reserve_met, @bid_increment_usd, @participation_deposit, @earnest_money_deposit,
       @marketing_fee_pct, @minimum_marketing_fee_usd, @closing_period_days, @non_contingent,
       @property_types, @sub_types, @square_footage, @tenancy, @year_built, @acreage, @zoning, @opportunity_zone,
+      @asking_price_usd, @cap_rate_pct, @noi_usd, @email_message_id, @received_at,
       @beds, @baths, @living_area_sqft, @home_type, @occupancy_status,
       @pipeline_stage,
       @enrichment_demographics, @enrichment_crime, @enrichment_retail,

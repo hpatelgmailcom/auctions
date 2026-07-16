@@ -19,13 +19,16 @@
  * A canonical record looks like:
  *
  * {
- *   source:       "crexi" | "auction_com",   // provider slug
+ *   source:       "crexi" | "auction_com" | email-parser slug (e.g. "cushman_wakefield"),
  *   source_id:    "1893472",                  // provider-native id (string)
  *   asset_class:  "commercial" | "residential",
+ *   listing_type: "auction" | "sale",          // default "auction" when absent
  *   scraped_at:   ISO string,
  *   url:          provider-owned listing URL,
  *   listing:  { id, title, address, city, state, zip, latitude, longitude, brokerage, listed_on },
  *   auction:  { status, auction_type, starting_bid_usd, bidding_starts, bidding_ends, ... },
+ *   sale:     { asking_price_usd, cap_rate_pct, noi_usd, price_per_sqft, tenant },  // for-sale listings only
+ *   email:    { message_id, received_at, from },  // provenance for email-sourced records
  *   property: { // commercial: apn, property_types, square_footage, zoning, tenancy, ...
  *               // residential: beds, baths, living_area_sqft, home_type, occupancy_status },
  *   description, investment_highlights,
@@ -39,6 +42,8 @@
  */
 
 export const ASSET_CLASSES = ['commercial', 'residential'];
+
+export const LISTING_TYPES = ['auction', 'sale'];
 
 /**
  * Validate a canonical record. Returns { ok, errors[] }. Providers should run
@@ -54,6 +59,8 @@ export function validate(record) {
   req(typeof record.source === 'string' && record.source, 'missing source');
   req(record.source_id != null && String(record.source_id).length > 0, 'missing source_id');
   req(ASSET_CLASSES.includes(record.asset_class), `asset_class must be one of ${ASSET_CLASSES.join('/')}`);
+  req(record.listing_type == null || LISTING_TYPES.includes(record.listing_type),
+      `listing_type must be one of ${LISTING_TYPES.join('/')}`);
   req(typeof record.url === 'string' && record.url, 'missing url');
 
   const l = record.listing || {};
@@ -121,4 +128,21 @@ export function countyFrom(address) {
 /** Composite DB primary key for a canonical record: "crexi:1893472". */
 export function recordKey(record) {
   return `${record.source}:${record.source_id ?? record.listing?.id}`;
+}
+
+// ---------------------------------------------------------------------------
+// Numeric sanity guards (used by email parsers so a template change never
+// writes a $12 asking price or a 4500% cap rate into the DB)
+// ---------------------------------------------------------------------------
+
+/** Parse a money value; returns null unless min <= v <= max. Accepts "$1,250,000". */
+export function saneMoney(v, { min = 10000, max = 500_000_000 } = {}) {
+  const n = typeof v === 'string' ? Number(v.replace(/[$,\s]/g, '')) : Number(v);
+  return Number.isFinite(n) && n >= min && n <= max ? n : null;
+}
+
+/** Parse a cap rate in percent; returns null unless 0 < v <= 20. Accepts "6.25%". */
+export function saneCapRate(v) {
+  const n = typeof v === 'string' ? Number(v.replace(/[%\s]/g, '')) : Number(v);
+  return Number.isFinite(n) && n > 0 && n <= 20 ? n : null;
 }
