@@ -32,6 +32,9 @@
  *   --listings-since messages older than this window are recorded as 'archived'
  *                    and trashed WITHOUT creating listings (backlog hygiene),
  *                    e.g. --listings-since 90d
+ *   --retry-no-listings  reprocess messages previously recorded as no_listings
+ *                    (fetched by id — works even after they were trashed); use
+ *                    after improving a parser
  *   --force          reprocess already-seen messages and overwrite listing files
  *   --from-fixtures  read normalized-message JSONs from a directory instead of
  *                    Gmail (offline mode — no credentials needed)
@@ -59,6 +62,7 @@ const FORCE     = argv.includes('--force');
 const FIXTURES  = getArg('--from-fixtures', null);
 const TRASH     = !argv.includes('--keep') && !FIXTURES;
 const LISTINGS_SINCE = getArg('--listings-since', null);
+const RETRY_NO_LISTINGS = argv.includes('--retry-no-listings');
 
 /** Statuses that mean "fully handled — safe to trash the email". */
 const TRASHABLE = new Set(['parsed', 'no_listings', 'archived']);
@@ -82,6 +86,25 @@ function loadFixtureMessages(dir) {
   };
   walk(abs);
   return files.map(f => JSON.parse(fs.readFileSync(f, 'utf8')));
+}
+
+/** Re-fetch messages previously recorded as no_listings (by gmail id — works
+ *  even from trash) so an improved parser gets a second pass at them. */
+async function loadRetryMessages(db) {
+  const { getMessage } = await import('./gmail.js');
+  const senders = registeredSenders().filter(s => SENDER === 'all' || s.slug === SENDER);
+  const addresses = senders.flatMap(s => s.addresses);
+  const rows = db.prepare(
+    `SELECT gmail_id FROM email_messages WHERE status = 'no_listings'
+     AND sender IN (${addresses.map(() => '?').join(',')}) ORDER BY received_at DESC`
+  ).all(...addresses);
+  console.log(`  Retrying ${rows.length} no_listings message(s)…`);
+  const messages = [];
+  for (const { gmail_id } of rows) {
+    try { messages.push(await getMessage(gmail_id)); }
+    catch (err) { console.error(`  ✗ fetch failed (${gmail_id}): ${err.message.split('\n')[0]}`); }
+  }
+  return messages;
 }
 
 async function loadGmailMessages(db) {
@@ -154,7 +177,9 @@ async function main() {
     VALUES (@gmail_id, @thread_id, @sender, @subject, @received_at, @parser_slug, @status, @error, @listing_ids)
   `);
 
-  const messages = FIXTURES ? loadFixtureMessages(FIXTURES) : await loadGmailMessages(db);
+  const messages = FIXTURES ? loadFixtureMessages(FIXTURES)
+                 : RETRY_NO_LISTINGS ? await loadRetryMessages(db)
+                 : await loadGmailMessages(db);
   console.log(`  Processing ${messages.length} message(s)…\n`);
 
   let parsed = 0, saved = 0, skipped = 0, noParser = 0, errors = 0, trashed = 0, archived = 0;

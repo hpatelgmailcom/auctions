@@ -4,6 +4,7 @@ export const SOURCES = {
   crexi:             { label: 'Crexi',               cls: 'bg-sky-500/15 text-sky-400 border-sky-500/30' },
   auction_com:       { label: 'Auction.com',         cls: 'bg-orange-500/15 text-orange-400 border-orange-500/30' },
   cushman_wakefield: { label: 'C&W',                 cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
+  marcus_millichap:  { label: 'M&M',                 cls: 'bg-violet-500/15 text-violet-400 border-violet-500/30' },
 };
 
 /** Full display name for filter dropdowns (badge labels stay short). */
@@ -11,6 +12,7 @@ export const SOURCE_NAMES = {
   crexi:             'Crexi',
   auction_com:       'Auction.com',
   cushman_wakefield: 'Cushman & Wakefield',
+  marcus_millichap:  'Marcus & Millichap',
 };
 
 /** Small pill showing which provider a listing came from. */

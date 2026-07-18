@@ -10,3 +10,4 @@ They provide deals via email, website or an API.
 ## Provider List 
 - [] **Boulder Group** — https://www.bouldergroup.com/NNN-Properties-For-Sale.html
 - [x] **Cushman & Wakefield** - Info@cwmultifamily.com — email parser + portal detail fetcher live (see auctions/email/README.md)
+- [x] **Marcus & Millichap Auction Services** - mmauctions@marcusmillichap.com — email parser live (auction listings; RIM portal detail fetcher is a future step)

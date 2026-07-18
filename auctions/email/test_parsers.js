@@ -11,7 +11,7 @@
 import fs   from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { validate } from '../schema.js';
+import { validate, LISTING_TYPES } from '../schema.js';
 import { resolveParser } from './registry.js';
 
 const __dirname    = path.dirname(fileURLToPath(import.meta.url));
@@ -51,7 +51,7 @@ for (const slug of slugs) {
     for (const r of records) {
       const { ok, errors } = validate(r);
       assert(ok, `${file}: invalid record ${r.source_id} — ${errors.join(', ')}`);
-      assert(r.listing_type === 'sale', `${file}: listing_type should be 'sale'`);
+      assert(LISTING_TYPES.includes(r.listing_type), `${file}: bad listing_type ${r.listing_type}`);
       assert(r.listing.id === r.source_id, `${file}: listing.id must equal source_id`);
       assert(r.email?.message_id === msg.id, `${file}: email.message_id missing/wrong`);
 
@@ -60,6 +60,9 @@ for (const slug of slugs) {
       const price = r.sale?.asking_price_usd;
       assert(price == null || (price >= 10000 && price <= 500_000_000),
              `${file}: asking price out of range: ${price}`);
+      const bid = r.auction?.starting_bid_usd;
+      assert(bid == null || (bid >= 1000 && bid <= 500_000_000),
+             `${file}: starting bid out of range: ${bid}`);
       assert(!/password/i.test(r.description || ''), `${file}: description leaked credential text`);
       const cap = r.sale?.cap_rate_pct;
       assert(cap == null || (cap > 0 && cap <= 20), `${file}: cap rate out of range: ${cap}`);

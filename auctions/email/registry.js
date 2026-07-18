@@ -7,9 +7,11 @@
  */
 
 import * as cushmanWakefield from './parsers/cushman_wakefield.js';
+import * as marcusMillichap  from './parsers/marcus_millichap.js';
 
 const PARSERS = [
   cushmanWakefield,
+  marcusMillichap,
 ];
 
 /** "CW Multifamily <Info@CWMultifamily.com>" → "info@cwmultifamily.com" */
