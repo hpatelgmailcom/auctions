@@ -7,6 +7,15 @@
  *   3. validate + dedup + write one JSON file per listing to auctions/listings/
  *   4. enrich() each new file (unless --no-enrich)
  *   5. records every message in email_messages, then pings the API to re-import
+ *   6. moves processed messages to Gmail Trash (recoverable ~30 days; never a
+ *      permanent delete) — only AFTER the email_messages row is committed, and
+ *      only for status parsed/no_listings. Errors stay in the inbox so a broken
+ *      parser never destroys its own evidence. --keep disables trashing.
+ *
+ * Duplication guardrails (in order): the email_messages PK skips any message
+ * already parsed (even if trashing failed); listing files dedupe by filename;
+ * the DB upserts on "source:source_id". Already-processed messages still in
+ * the inbox are swept to trash on the next run.
  *
  * Usage:
  *   node auctions/email/fetch_emails.js                       # incremental fetch, all senders
@@ -19,6 +28,10 @@
  *   --since          lookback window, e.g. 7d / 24h   (default: since last fetch, else 7d)
  *   --out-dir        output directory                 (default: auctions/listings)
  *   --no-enrich      skip enrichment after each save
+ *   --keep           leave processed messages in the inbox (default: trash them)
+ *   --listings-since messages older than this window are recorded as 'archived'
+ *                    and trashed WITHOUT creating listings (backlog hygiene),
+ *                    e.g. --listings-since 90d
  *   --force          reprocess already-seen messages and overwrite listing files
  *   --from-fixtures  read normalized-message JSONs from a directory instead of
  *                    Gmail (offline mode — no credentials needed)
@@ -44,6 +57,11 @@ const OUT_DIR   = getArg('--out-dir', path.join(__dirname, '../listings'));
 const NO_ENRICH = argv.includes('--no-enrich');
 const FORCE     = argv.includes('--force');
 const FIXTURES  = getArg('--from-fixtures', null);
+const TRASH     = !argv.includes('--keep') && !FIXTURES;
+const LISTINGS_SINCE = getArg('--listings-since', null);
+
+/** Statuses that mean "fully handled — safe to trash the email". */
+const TRASHABLE = new Set(['parsed', 'no_listings', 'archived']);
 
 /** "7d" → ms, "24h" → ms */
 function windowMs(str) {
@@ -93,12 +111,23 @@ async function loadGmailMessages(db) {
   const ids = await listMessages({ query, maxResults: MAX_MSGS });
   console.log(`  ${ids.length} message(s) matched.`);
 
-  const seen = db.prepare("SELECT 1 FROM email_messages WHERE gmail_id = ? AND status = 'parsed'");
+  const { trashMessage } = await import('./gmail.js');
+  const seen = db.prepare('SELECT status FROM email_messages WHERE gmail_id = ?');
   const messages = [];
+  let swept = 0;
   for (const { id } of ids) {
-    if (!FORCE && seen.get(id)) continue;
+    const prior = seen.get(id);
+    if (!FORCE && prior && TRASHABLE.has(prior.status)) {
+      // Already fully handled — sweep the leftover inbox copy to trash.
+      if (TRASH) {
+        try { await trashMessage(id); swept++; }
+        catch (err) { console.error(`  ✗ trash failed (${id}): ${err.message.split('\n')[0]}`); }
+      }
+      continue;
+    }
     messages.push(await getMessage(id));
   }
+  if (swept) console.log(`  ${swept} already-processed message(s) swept to trash.`);
   return messages;
 }
 
@@ -128,7 +157,19 @@ async function main() {
   const messages = FIXTURES ? loadFixtureMessages(FIXTURES) : await loadGmailMessages(db);
   console.log(`  Processing ${messages.length} message(s)…\n`);
 
-  let parsed = 0, saved = 0, skipped = 0, noParser = 0, errors = 0;
+  let parsed = 0, saved = 0, skipped = 0, noParser = 0, errors = 0, trashed = 0, archived = 0;
+  const archiveCutoff = LISTINGS_SINCE ? Date.now() - windowMs(LISTINGS_SINCE) : null;
+
+  // Record the outcome FIRST, then trash — the email_messages row is the dedup
+  // guardrail, so a failed trash can never cause a message to be reprocessed.
+  const trashMessage = TRASH ? (await import('./gmail.js')).trashMessage : null;
+  const finish = async (row) => {
+    upsertMsg.run(row);
+    if (trashMessage && TRASHABLE.has(row.status)) {
+      try { await trashMessage(row.gmail_id); trashed++; }
+      catch (err) { console.error(`  ✗ trash failed (${row.gmail_id}): ${err.message.split('\n')[0]}`); }
+    }
+  };
 
   for (const msg of messages) {
     const row = {
@@ -143,12 +184,21 @@ async function main() {
       listing_ids: null,
     };
 
+    // Backlog hygiene: too old to be an actionable offering — record + trash,
+    // but don't pollute the pipeline with dead listings.
+    if (archiveCutoff && msg.date && new Date(msg.date).getTime() < archiveCutoff) {
+      row.status = 'archived';
+      archived++;
+      await finish(row);
+      continue;
+    }
+
     const parser = resolveParser(msg);
     if (!parser) {
       row.status = 'no_parser';
       noParser++;
       console.log(`  ? no parser for ${row.sender} — "${row.subject}"`);
-      upsertMsg.run(row);
+      await finish(row);
       continue;
     }
     row.parser_slug = parser.meta.slug;
@@ -161,14 +211,14 @@ async function main() {
       row.error  = err.message;
       errors++;
       console.error(`  ✗ parse failed (${parser.meta.slug}): ${err.message.split('\n')[0]}`);
-      upsertMsg.run(row);
+      await finish(row); // error → kept in inbox
       continue;
     }
 
     if (!records.length) {
       row.status = 'no_listings';
       console.log(`  – no listings in "${row.subject}"`);
-      upsertMsg.run(row);
+      await finish(row);
       continue;
     }
 
@@ -194,13 +244,22 @@ async function main() {
       }
     }
 
+    if (ids.length === 0) {
+      // Every record failed validation — treat as an error and keep the email.
+      row.status = 'error';
+      row.error  = `${records.length} record(s), all failed validation`;
+      errors++;
+      await finish(row);
+      continue;
+    }
+
     row.status      = 'parsed';
     row.listing_ids = JSON.stringify(ids);
     parsed++;
-    upsertMsg.run(row);
+    await finish(row);
   }
 
-  console.log(`\nDone. ${parsed} parsed, ${saved} listing(s) saved, ${skipped} skipped, ${noParser} no-parser, ${errors} error(s).`);
+  console.log(`\nDone. ${parsed} parsed, ${saved} listing(s) saved, ${skipped} skipped, ${archived} archived, ${noParser} no-parser, ${errors} error(s), ${trashed} trashed.`);
 
   // Notify the API to re-sync its DB (silently skipped if it isn't running).
   if (saved > 0) {

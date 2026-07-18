@@ -25,8 +25,18 @@ Gmail API → gmail.js → fetch_emails.js → registry.js → parsers/<slug>.js
   `node auctions/email/fetch_emails.js [--sender all] [--max-messages 50] [--since 7d] [--no-enrich] [--force]`
 
 Every processed Gmail message is recorded in the `email_messages` table
-(status `parsed | no_parser | no_listings | error`), so fetches are incremental
-and idempotent, and parser breakage is visible via `GET /api/email/status`.
+(status `parsed | no_parser | no_listings | archived | error`), so fetches are
+incremental and idempotent, and parser breakage is visible via
+`GET /api/email/status`.
+
+**Processed messages are moved to Gmail Trash** (recoverable ~30 days — never
+permanently deleted) only *after* their outcome row is committed, and only for
+`parsed/no_listings/archived`; `error` messages stay in the inbox so a broken
+parser keeps its evidence. `--keep` disables trashing;
+`--listings-since 90d` archives (records + trashes) older messages without
+creating listings. The `email_messages` row is the dedup guardrail: even if a
+trash call fails, the message is never reprocessed, and leftover processed
+messages are swept to trash on the next run.
 
 ## Adding a new sender (the one-time-AI loop)
 

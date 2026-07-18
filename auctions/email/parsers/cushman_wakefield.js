@@ -96,6 +96,9 @@ function locationFrom(body, subject) {
 }
 
 export function parse(msg) {
+  // Sold/closed announcements are not actionable inventory.
+  if (/^\s*(?:JUST\s+)?(?:SOLD|CLOSED)\b/i.test(msg.subject || '')) return [];
+
   const raw = msg.text || (msg.html ? htmlToText(msg.html) : null);
   if (!raw) return [];
 

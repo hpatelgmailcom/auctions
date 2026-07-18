@@ -25,7 +25,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 export const TOKEN_PATH       = path.join(__dirname, 'token.json');
-export const SCOPES           = ['https://www.googleapis.com/auth/gmail.readonly'];
+// gmail.modify (not full mail scope): read + trash processed messages.
+// Trash is recoverable for 30 days; this module never permanently deletes.
+export const SCOPES           = ['https://www.googleapis.com/auth/gmail.modify'];
 
 let _gmail;
 
@@ -81,6 +83,12 @@ export async function getMessage(id) {
   const gmail = await getGmail();
   const { data } = await gmail.users.messages.get({ userId: 'me', id, format: 'full' });
   return decodeMessage(data);
+}
+
+/** Move a message to Trash (recoverable ~30 days). Never permanently deletes. */
+export async function trashMessage(id) {
+  const gmail = await getGmail();
+  await gmail.users.messages.trash({ userId: 'me', id });
 }
 
 const b64 = data => (data ? Buffer.from(data, 'base64url').toString('utf8') : null);
