@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, SourceBadge, AssetClassTabs } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, SourceBadge, AssetClassTabs, SOURCE_NAMES } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 
@@ -97,14 +97,23 @@ function ListingCard({ listing, onClick }) {
 
 export default function PipelinePage() {
   const navigate = useNavigate();
-  const [assetClass, setAssetClass] = useState('');
+  const [assetClass,  setAssetClass]  = useState('');
+  const [source,      setSource]      = useState('');
+  const [listingType, setListingType] = useState('');
   const { data, loading } = useFetch(() => api.pipeline.board());
 
   if (loading) return <Spinner />;
   const { stages = [], groups = {} } = data || {};
 
-  const matches = c => !assetClass || (c.asset_class ?? 'commercial') === assetClass;
-  const counts = Object.values(groups).flat().reduce((acc, c) => {
+  const all = Object.values(groups).flat();
+  // Options come from the data, so new providers appear without a code change.
+  const sourceOptions = [...new Set(all.map(c => c.source).filter(Boolean))].sort();
+
+  const matches = c =>
+    (!assetClass  || (c.asset_class ?? 'commercial') === assetClass) &&
+    (!source      || c.source === source) &&
+    (!listingType || (c.listing_type ?? 'auction') === listingType);
+  const counts = all.reduce((acc, c) => {
     const k = c.asset_class ?? 'commercial';
     acc[k] = (acc[k] || 0) + 1;
     return acc;
@@ -117,7 +126,18 @@ export default function PipelinePage() {
           <h1 className="text-xl font-semibold text-ink">Pipeline</h1>
           <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>
         </div>
-        <AssetClassTabs value={assetClass} onChange={setAssetClass} counts={counts} />
+        <div className="flex items-center gap-2">
+          <select className="input text-xs py-1.5" value={source} onChange={e => setSource(e.target.value)} aria-label="Provider">
+            <option value="">All Providers</option>
+            {sourceOptions.map(s => <option key={s} value={s}>{SOURCE_NAMES[s] || s}</option>)}
+          </select>
+          <select className="input text-xs py-1.5" value={listingType} onChange={e => setListingType(e.target.value)} aria-label="Listing type">
+            <option value="">Auctions + Sales</option>
+            <option value="auction">Auctions</option>
+            <option value="sale">For Sale (email)</option>
+          </select>
+          <AssetClassTabs value={assetClass} onChange={setAssetClass} counts={counts} />
+        </div>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 140px)' }}>
         {stages.map(stage => {

@@ -5,13 +5,13 @@ import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, MapLinks } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, MapLinks, SOURCE_NAMES } from '../components/index.js';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 
 const fmt$  = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtPct = v => v != null ? `${v}%` : '—';
 
-const SOURCE_LABEL = { crexi: 'Crexi', auction_com: 'Auction.com', cushman_wakefield: 'Cushman & Wakefield' };
+const SOURCE_LABEL = SOURCE_NAMES;
 
 // MapLinks imported from components/MapLinks.jsx
 const row   = (label, value) => (

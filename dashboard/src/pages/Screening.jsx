@@ -8,7 +8,7 @@ import { ChevronUp, ChevronDown, ExternalLink, Filter } from 'lucide-react';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks, SourceBadge, AssetClassTabs } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks, SourceBadge, AssetClassTabs, SOURCE_NAMES } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtSF = v => v != null ? `${Number(v).toLocaleString()} SF` : '—';
@@ -60,10 +60,10 @@ function FilterBar({ filters, onChange }) {
       <select className="input text-xs py-1.5"
         value={filters.source}
         onChange={e => onChange('source', e.target.value)}>
-        <option value="">Any Source</option>
-        <option value="crexi">Crexi</option>
-        <option value="auction_com">Auction.com</option>
-        <option value="cushman_wakefield">Cushman &amp; Wakefield</option>
+        <option value="">Any Provider</option>
+        {Object.entries(SOURCE_NAMES).map(([slug, name]) => (
+          <option key={slug} value={slug}>{name}</option>
+        ))}
       </select>
       <select className="input text-xs py-1.5"
         value={filters.listing_type}
