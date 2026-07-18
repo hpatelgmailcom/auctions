@@ -65,3 +65,13 @@ to prove the plumbing — re-author it from real samples after the first
 | `test_parsers.js` | runs every parser against its fixtures |
 | `fixtures/<slug>/` | committed normalized-message JSONs (regression tests) |
 | `samples/`, `credentials.json`, `token.json` | gitignored |
+
+## Detail enrichment (C&W)
+
+Email blasts are thin; the portal listing pages are public and server-rendered.
+`npm run cw:details` (`auctions/providers/cushman_wakefield/details.js`) fetches
+`multifamily.cushwake.com/Listings/<source_id>` for every C&W listing file and
+merges street address, zip, coordinates, units, property type, and the full
+description in place (`--enrich` re-runs enrichment so coords unlock
+walk-score/flood/comps; `--id <n>` for one listing). OM documents are behind a
+login + confidentiality agreement and are not fetched.
