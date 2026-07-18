@@ -1,25 +1,29 @@
 /**
- * Cushman & Wakefield (info@cwmultifamily.com) email parser.
+ * Cushman & Wakefield Multifamily (info@cwmultifamily.com) email parser.
  *
- * Deterministic — no network, no AI at runtime. AUTHORED AGAINST SYNTHETIC
- * FIXTURES (auctions/email/fixtures/cushman_wakefield/): once real samples are
- * dumped with `npm run email:sample -- --from info@cwmultifamily.com`, re-author
- * the field extraction below against them and replace the fixtures with
- * scrubbed real messages. See auctions/email/README.md.
+ * Deterministic — no network, no AI at runtime. Authored 2026-07-17 from real
+ * samples (multifamily.cushwake.com listing-notification blasts). Observed
+ * format, one listing per email:
  *
- * Expected blast structure (one email can carry several listings):
- *
- *   <title line>
- *   1234 N High St, Columbus, OH 43201
- *   Asking Price: $4,250,000
- *   Cap Rate: 6.25%
- *   NOI: $265,625
- *   Building Size: 14,550 SF
- *   View Listing: https://...
+ *   - Subject carries the title behind a prefix:
+ *       "EXCLUSIVE OFFERING: 1025 Metro | 151-Unit Multifamily Opportunity"
+ *       "NEW OFFERING: The Johnson Street Assemblage Hollywood, FL"
+ *       "COMING SOON :: Lamplighter Legacy | ... | Ocala, FL"
+ *   - Body links to https://multifamily.cushwake.com/Listings/<id>?RUID=…
+ *     (the numeric id is the stable source_id)
+ *   - Location lives in prose: "located at 1025 E 25th Street in Hialeah,
+ *     Florida" or just "in Ocala, Florida" — or in the subject's trailing
+ *     "City, ST". Some emails (development sites, coming-soons) carry no
+ *     location at all → we return [] and the message lands as `no_listings`.
+ *   - Institutional offerings are UNPRICED — sale.asking_price_usd is null
+ *     unless a labeled price appears. Unit count appears as "151-Unit"/"423
+ *     Units".
+ *   - Footer (after "Thank you for your interest" / "You received this
+ *     e-mail") contains C&W *office* addresses — must be truncated before any
+ *     address matching.
  */
 
-import { createHash } from 'crypto';
-import { saneMoney, saneCapRate, stateToAbbr } from '../../schema.js';
+import { saneMoney, saneCapRate, stateToAbbr, STATE_ABBR } from '../../schema.js';
 import { normalizeAddress } from '../registry.js';
 
 export const meta = {
@@ -33,8 +37,8 @@ export function matches(msg) {
   return meta.addresses.includes(normalizeAddress(msg.from));
 }
 
-// "…<br>…</p>…" → line-oriented plain text (stripHtml would collapse newlines).
-// Anchor hrefs are inlined first so listing URLs survive tag stripping.
+// "…<br>…</p>…" → line-oriented plain text; anchor hrefs inlined so listing
+// URLs survive tag stripping.
 function htmlToText(html) {
   return html
     .replace(/<a\s[^>]*href="([^"]+)"[^>]*>/gi, ' $1 ')
@@ -46,93 +50,131 @@ function htmlToText(html) {
     .split('\n').map(l => l.trim()).filter(Boolean).join('\n');
 }
 
-// "1234 N High St, Columbus, OH 43201"
-const ADDRESS_RE = /^(\d+[^,\n]{3,60}),\s*([A-Za-z .'-]{2,40}),\s*([A-Za-z]{2})\.?\s*(\d{5})?/gm;
+// "Alabama|Alaska|…|Wyoming" — for matching full state names in prose
+const STATE_NAME_RE = Object.keys(STATE_ABBR)
+  .map(s => s.replace(/(^|\s)\w/g, c => c.toUpperCase()))
+  .join('|');
 
-const field = (block, label) => {
-  const m = block.match(new RegExp(`${label}\\s*[:—-]\\s*([^\\n]+)`, 'i'));
-  return m ? m[1].trim() : null;
-};
+// "NEW OFFERING:", "OM AVAILABLE:", "OFFERS DUE 7/22:", "COMING SOON ::",
+// "CFO Reminder: July 29th |", … — marketing prefix up to the first ":"/"::"
+const SUBJECT_PREFIX_RE = /^(?:EXCLUSIVE OFFERING|NEW OFFERING|NEW FINANCIALS|COMING SOON|JUST LISTED|FOR SALE|OMS? AVAILABLE|OFFERS DUE|TOURS? AVAILABLE|CALL FOR OFFERS(?: REMINDER)?|CFO REMINDER|AVAILABLE|PRICE (?:REDUCED|IMPROVEMENT))[\s\d/.]*[:|–-]+\s*/i;
 
-/** Stable source_id: listing-page URL slug when present, else address hash. */
-function sourceIdFor(url, address) {
-  const m = url?.match(/\/(?:listings?|properties|property)\/([\w-]+)/i);
-  if (m) return m[1];
-  const norm = address.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-  return createHash('sha1').update(norm).digest('hex').slice(0, 12);
+/** Strip marketing prefix ("NEW OFFERING:", "COMING SOON ::") from a subject. */
+function titleFrom(subject) {
+  return (subject || '').replace(SUBJECT_PREFIX_RE, '').trim() || null;
+}
+
+// Two-word cities are only accepted when the first word is a common city
+// prefix — subjects run the property name straight into the city ("…Assemblage
+// Hollywood, FL"), so a greedy multi-word match would swallow the name.
+const CITY_PREFIX = '(?:Fort|Port|San|Santa|New|North|South|East|West|Lake|Palm|Coral|Boca|Saint|St\\.?|Los|Las|El|Cape|Mount|Pueblo)';
+const CITY_RE     = `(?:${CITY_PREFIX}\\s[A-Z][a-z]+|[A-Z][a-z]+)`;
+
+/**
+ * Find the property location. Priority:
+ *   1. prose "located/situated at <street> in <City>, <State>"
+ *   2. prose "in/throughout <City>, <StateName|ST>"
+ *   3. subject trailing "…City, ST"
+ * Returns { street, city, state } (street may be null) or null.
+ */
+function locationFrom(body, subject) {
+  const at = body.match(new RegExp(
+    `(?:located|situated)\\s+at\\s+(\\d[\\w\\d .'-]{3,50}?)\\s+in\\s+([A-Z][A-Za-z .'-]{2,30}?),\\s+(${STATE_NAME_RE}|[A-Z]{2})\\b`
+  ));
+  if (at) return { street: at[1].trim(), city: at[2].trim(), state: at[3] };
+
+  // "throughout Pueblo and Pueblo West, Colorado" — skip a leading "<City> and"
+  const inCity = body.match(new RegExp(
+    `\\b(?:in|throughout|across|of)\\s+(?:${CITY_RE}\\s+and\\s+)?(${CITY_RE}),\\s+(${STATE_NAME_RE}|[A-Z]{2})\\b`
+  ));
+  if (inCity) return { street: null, city: inCity[1].trim(), state: inCity[2] };
+
+  const subj = (subject || '').match(new RegExp(`(${CITY_RE}),\\s*([A-Z]{2})\\s*$`));
+  if (subj) return { street: null, city: subj[1].trim(), state: subj[2] };
+
+  return null;
 }
 
 export function parse(msg) {
-  const body = msg.text || (msg.html ? htmlToText(msg.html) : null);
-  if (!body) return [];
+  const raw = msg.text || (msg.html ? htmlToText(msg.html) : null);
+  if (!raw) return [];
 
-  // Locate every address line; each one anchors a listing block that runs
-  // until the next address (blast emails carry several listings).
-  const anchors = [...body.matchAll(ADDRESS_RE)];
-  const records = [];
+  // Everything after the sign-off is broker signatures + office addresses +
+  // legal boilerplate; matching against it would pick up C&W office locations.
+  const body = raw.split(/Thank you for your interest|You received this e-?mail|Global Headquarters/i)[0];
 
-  for (let i = 0; i < anchors.length; i++) {
-    const [line, street, city, state, zip] = anchors[i];
-    const start = anchors[i].index;
-    const end   = i + 1 < anchors.length ? anchors[i + 1].index : body.length;
-    const block = body.slice(start, end);
+  // The listing page link carries the only stable id. No link → nothing to key on.
+  const link = body.match(/https?:\/\/multifamily\.cushwake\.com\/Listings\/(\d+)\S*/i);
+  if (!link) return [];
+  const sourceId = link[1];
+  const url      = `https://multifamily.cushwake.com/Listings/${sourceId}`; // strip per-recipient RUID token
 
-    const asking  = saneMoney(field(block, 'Asking Price') ?? field(block, 'Price'));
-    if (!asking) continue; // not a listing block (footer address, office address, …)
+  const loc = locationFrom(body, msg.subject);
+  if (!loc) return []; // no location in email → operator follows up via the message itself
 
-    const capRate = saneCapRate(field(block, 'Cap Rate'));
-    const noi     = saneMoney(field(block, 'NOI'), { min: 1000 });
-    const sqftRaw = field(block, 'Building Size') ?? field(block, 'Size') ?? field(block, 'SF');
-    const sqft    = sqftRaw ? Number(sqftRaw.replace(/[^0-9.]/g, '')) || null : null;
-    const url     = block.match(/https?:\/\/[^\s>"')]+/)?.[0] || null;
+  const state   = stateToAbbr(loc.state).toUpperCase();
+  const title   = titleFrom(msg.subject);
+  // Street when present; else the property name makes the address (and thus
+  // the listing filename) unique across same-city offerings. Trailing
+  // "City, ST" / unit-count segments are stripped so they don't duplicate.
+  const nameForAddress = (title || `Listing ${sourceId}`)
+    .replace(new RegExp(`[|,]?\\s*${CITY_RE},\\s*[A-Z]{2}\\s*$`), '')
+    .replace(/[|,]?\s*[\d.]+[\s-]?(?:Units?|Acres?)(?:\s+in)?\s*(?=[|,]|$)/gi, '')
+    .split('|')[0].replace(/[-,\s]+$/, '').trim();
+  const address = loc.street
+    ? `${loc.street}, ${loc.city}, ${state}`
+    : `${nameForAddress}, ${loc.city}, ${state}`;
 
-    // Title: nearest non-empty line above the address line
-    const before  = body.slice(0, start).split('\n').filter(l => l.trim());
-    const title   = before.length ? before[before.length - 1].trim() : null;
+  const units   = body.match(/\b(\d{2,4})[\s-]?Units?\b/i)?.[1]
+               ?? msg.subject?.match(/\b(\d{2,4})[\s-]?Units?\b/i)?.[1] ?? null;
+  // Prices are rare in these blasts; parse only explicit labels.
+  const asking  = saneMoney(body.match(/(?:Asking|List|Purchase)?\s*Price\s*[:–-]\s*\$?([\d,.]+)/i)?.[1]);
+  const capRate = saneCapRate(body.match(/Cap Rate\s*[:–-]\s*([\d.]+)\s*%/i)?.[1]);
+  const noi     = saneMoney(body.match(/\bNOI\s*[:–-]\s*\$?([\d,.]+)/i)?.[1], { min: 1000 });
 
-    const address   = zip ? `${street}, ${city}, ${state} ${zip}` : `${street}, ${city}, ${state}`;
-    const sourceId  = sourceIdFor(url, address);
+  // First prose paragraph as the description — skip link preambles, CTA rows,
+  // and the account-credential blurb (never store passwords).
+  const description = body.split('\n')
+    .map(l => l.replace(/\(?https?:\/\/\S+\)?/g, '').replace(/\(mailto:[^)]*\)/g, '').trim())
+    .filter(l => l.length > 80 && !/password|unsubscribe|schedule a tour|execute the|watch the video/i.test(l))[0] ?? null;
 
-    records.push({
-      source:       meta.slug,
-      source_id:    sourceId,
-      asset_class:  meta.assetClass,
-      listing_type: 'sale',
-      scraped_at:   new Date().toISOString(),
-      url:          url || `https://mail.google.com/mail/u/0/#all/${msg.id}`,
-      listing: {
-        id:        sourceId,
-        title:     title || line.trim(),
-        address,
-        city:      city.trim(),
-        state:     stateToAbbr(state).toUpperCase(),
-        zip:       zip || null,
-        latitude:  null,
-        longitude: null,
-        brokerage: meta.displayName,
-        listed_on: msg.date || null,
-      },
-      auction: {},
-      sale: {
-        asking_price_usd: asking,
-        cap_rate_pct:     capRate,
-        noi_usd:          noi,
-        price_per_sqft:   sqft ? Math.round((asking / sqft) * 100) / 100 : null,
-        tenant:           null,
-      },
-      property: {
-        property_types: [field(block, 'Property Type') || 'Multifamily'],
-        square_footage: sqft,
-      },
-      email: {
-        message_id:  msg.id,
-        received_at: msg.date || null,
-        from:        normalizeAddress(msg.from),
-      },
-      description: msg.subject || null,
-      media: {},
-    });
-  }
-
-  return records;
+  return [{
+    source:       meta.slug,
+    source_id:    sourceId,
+    asset_class:  meta.assetClass,
+    listing_type: 'sale',
+    scraped_at:   new Date().toISOString(),
+    url,
+    listing: {
+      id:        sourceId,
+      title,
+      address,
+      city:      loc.city,
+      state,
+      zip:       null,
+      latitude:  null,
+      longitude: null,
+      brokerage: meta.displayName,
+      listed_on: msg.date || null,
+    },
+    auction: {},
+    sale: {
+      asking_price_usd: asking,
+      cap_rate_pct:     capRate,
+      noi_usd:          noi,
+      price_per_sqft:   null,
+      tenant:           null,
+    },
+    property: {
+      property_types: ['Multifamily'],
+      units:          units ? Number(units) : null,
+    },
+    email: {
+      message_id:  msg.id,
+      received_at: msg.date || null,
+      from:        normalizeAddress(msg.from),
+    },
+    description,
+    media: {},
+  }];
 }

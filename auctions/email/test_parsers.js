@@ -55,10 +55,12 @@ for (const slug of slugs) {
       assert(r.listing.id === r.source_id, `${file}: listing.id must equal source_id`);
       assert(r.email?.message_id === msg.id, `${file}: email.message_id missing/wrong`);
 
+      // Institutional blasts are usually unpriced — price is optional but
+      // must be sane when present.
       const price = r.sale?.asking_price_usd;
       assert(price == null || (price >= 10000 && price <= 500_000_000),
              `${file}: asking price out of range: ${price}`);
-      assert(price != null, `${file}: parsed record has no asking price`);
+      assert(!/password/i.test(r.description || ''), `${file}: description leaked credential text`);
       const cap = r.sale?.cap_rate_pct;
       assert(cap == null || (cap > 0 && cap <= 20), `${file}: cap rate out of range: ${cap}`);
       assert(/^[A-Z]{2}$/.test(r.listing.state), `${file}: state not a 2-letter abbr: ${r.listing.state}`);

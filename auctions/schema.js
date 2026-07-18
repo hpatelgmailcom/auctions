@@ -95,7 +95,7 @@ export function addressToFilename(address) {
 }
 
 /** US state abbreviation lookup (full name → 2-letter abbr). */
-const STATE_ABBR = {
+export const STATE_ABBR = {
   alabama:'al',alaska:'ak',arizona:'az',arkansas:'ar',california:'ca',colorado:'co',
   connecticut:'ct',delaware:'de',florida:'fl',georgia:'ga',hawaii:'hi',idaho:'id',
   illinois:'il',indiana:'in',iowa:'ia',kansas:'ks',kentucky:'ky',louisiana:'la',
