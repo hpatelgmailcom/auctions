@@ -96,13 +96,14 @@ function ListingCard({ listing, onClick }) {
   );
 }
 
-const DEFAULT_FILTERS = { assetClass: '', source: '', listingType: '' };
+// Shared with Screening — one filter set carried across pages.
+const SHARED_DEFAULTS = { asset_class: '', source: '', listing_type: '' };
 
 export default function PipelinePage() {
   const navigate = useNavigate();
-  // Sticky — selections survive navigation and reloads (localStorage)
-  const [filters, setFilters] = useStickyState('pipeline-filters', DEFAULT_FILTERS);
-  const { assetClass, source, listingType } = filters;
+  // Sticky + shared — selections survive navigation/reloads and carry to Screening
+  const [filters, setFilters] = useStickyState('shared-filters', SHARED_DEFAULTS);
+  const { asset_class: assetClass, source, listing_type: listingType } = filters;
   const setFilter = (k, v) => setFilters(f => ({ ...f, [k]: v }));
   const activeCount = Object.values(filters).filter(Boolean).length;
   const { data, loading } = useFetch(() => api.pipeline.board());
@@ -137,14 +138,14 @@ export default function PipelinePage() {
             <option value="">All Providers</option>
             {sourceOptions.map(s => <option key={s} value={s}>{SOURCE_NAMES[s] || s}</option>)}
           </select>
-          <select className="input text-xs py-1.5" value={listingType} onChange={e => setFilter('listingType', e.target.value)} aria-label="Listing type">
+          <select className="input text-xs py-1.5" value={listingType} onChange={e => setFilter('listing_type', e.target.value)} aria-label="Listing type">
             <option value="">Auctions + Sales</option>
             <option value="auction">Auctions</option>
             <option value="sale">For Sale (email)</option>
           </select>
-          <AssetClassTabs value={assetClass} onChange={v => setFilter('assetClass', v)} counts={counts} />
+          <AssetClassTabs value={assetClass} onChange={v => setFilter('asset_class', v)} counts={counts} />
           {activeCount > 0 && (
-            <button onClick={() => setFilters(DEFAULT_FILTERS)}
+            <button onClick={() => setFilters(SHARED_DEFAULTS)}
               className="btn-ghost flex items-center gap-1 text-xs text-ink-muted"
               title="Clear all filters">
               <X size={12} /> Reset

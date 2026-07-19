@@ -133,8 +133,10 @@ function FilterBar({ filters, onChange, onReset }) {
   );
 }
 
-const DEFAULT_FILTERS = {
-  asset_class: '', source: '', listing_type: '',
+// Shared with the Pipeline board — set on either page, applied on both.
+const SHARED_DEFAULTS = { asset_class: '', source: '', listing_type: '' };
+// Screening-only refinements.
+const SCREEN_DEFAULTS = {
   recommendation: '', auction_type: '', property_type: '',
   state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
 };
@@ -142,8 +144,11 @@ const DEFAULT_FILTERS = {
 export default function ScreeningPage() {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState([{ id: 'bidding_starts', desc: false }]);
-  // Sticky — selections survive navigation and reloads (localStorage)
-  const [filters, setFilters] = useStickyState('screening-filters', DEFAULT_FILTERS);
+  // Sticky — selections survive navigation and reloads (localStorage);
+  // provider/type/asset-class live in a store shared with the Pipeline board.
+  const [shared, setShared]         = useStickyState('shared-filters', SHARED_DEFAULTS);
+  const [screenOnly, setScreenOnly] = useStickyState('screening-filters', SCREEN_DEFAULTS);
+  const filters = { ...screenOnly, ...shared };
 
   // Only filters drive API re-fetches; sorting is done client-side
   const queryParams = useMemo(() => {
@@ -312,7 +317,10 @@ export default function ScreeningPage() {
     // Client-side sorting — custom sortingFns handle nulls and grade rank correctly
   });
 
-  const setFilter = (k, v) => setFilters(f => ({ ...f, [k]: v }));
+  const setFilter = (k, v) => k in SHARED_DEFAULTS
+    ? setShared(f => ({ ...f, [k]: v }))
+    : setScreenOnly(f => ({ ...f, [k]: v }));
+  const resetFilters = () => { setShared(SHARED_DEFAULTS); setScreenOnly(SCREEN_DEFAULTS); };
 
   return (
     <div className="p-6 pt-0">
@@ -326,7 +334,7 @@ export default function ScreeningPage() {
           <AssetClassTabs value={filters.asset_class} onChange={v => setFilter('asset_class', v)} />
         </div>
 
-        <FilterBar filters={filters} onChange={setFilter} onReset={() => setFilters(DEFAULT_FILTERS)} />
+        <FilterBar filters={filters} onChange={setFilter} onReset={resetFilters} />
       </div>
 
       {loading ? <Spinner /> : rows.length === 0 ? <EmptyState message="No listings match your filters" /> : (
