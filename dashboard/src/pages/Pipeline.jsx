@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
+import { X } from 'lucide-react';
 import { useFetch } from '../hooks/useFetch.js';
+import { useStickyState } from '../hooks/useStickyState.js';
 import { api } from '../api/client.js';
 import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, SourceBadge, AssetClassTabs, SOURCE_NAMES } from '../components/index.js';
 
@@ -95,11 +96,15 @@ function ListingCard({ listing, onClick }) {
   );
 }
 
+const DEFAULT_FILTERS = { assetClass: '', source: '', listingType: '' };
+
 export default function PipelinePage() {
   const navigate = useNavigate();
-  const [assetClass,  setAssetClass]  = useState('');
-  const [source,      setSource]      = useState('');
-  const [listingType, setListingType] = useState('');
+  // Sticky — selections survive navigation and reloads (localStorage)
+  const [filters, setFilters] = useStickyState('pipeline-filters', DEFAULT_FILTERS);
+  const { assetClass, source, listingType } = filters;
+  const setFilter = (k, v) => setFilters(f => ({ ...f, [k]: v }));
+  const activeCount = Object.values(filters).filter(Boolean).length;
   const { data, loading } = useFetch(() => api.pipeline.board());
 
   if (loading) return <Spinner />;
@@ -127,16 +132,23 @@ export default function PipelinePage() {
           <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>
         </div>
         <div className="flex items-center gap-2">
-          <select className="input text-xs py-1.5" value={source} onChange={e => setSource(e.target.value)} aria-label="Provider">
+          <select className="input text-xs py-1.5" value={source} onChange={e => setFilter('source', e.target.value)} aria-label="Provider">
             <option value="">All Providers</option>
             {sourceOptions.map(s => <option key={s} value={s}>{SOURCE_NAMES[s] || s}</option>)}
           </select>
-          <select className="input text-xs py-1.5" value={listingType} onChange={e => setListingType(e.target.value)} aria-label="Listing type">
+          <select className="input text-xs py-1.5" value={listingType} onChange={e => setFilter('listingType', e.target.value)} aria-label="Listing type">
             <option value="">Auctions + Sales</option>
             <option value="auction">Auctions</option>
             <option value="sale">For Sale (email)</option>
           </select>
-          <AssetClassTabs value={assetClass} onChange={setAssetClass} counts={counts} />
+          <AssetClassTabs value={assetClass} onChange={v => setFilter('assetClass', v)} counts={counts} />
+          {activeCount > 0 && (
+            <button onClick={() => setFilters(DEFAULT_FILTERS)}
+              className="btn-ghost flex items-center gap-1 text-xs text-ink-muted"
+              title="Clear all filters">
+              <X size={12} /> Reset
+            </button>
+          )}
         </div>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 140px)' }}>

@@ -4,9 +4,10 @@ import {
   useReactTable, getCoreRowModel, getSortedRowModel,
   getFilteredRowModel, flexRender,
 } from '@tanstack/react-table';
-import { ChevronUp, ChevronDown, ExternalLink, Filter } from 'lucide-react';
+import { ChevronUp, ChevronDown, ExternalLink, Filter, X } from 'lucide-react';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
+import { useStickyState } from '../hooks/useStickyState.js';
 import { api } from '../api/client.js';
 import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks, SourceBadge, AssetClassTabs, SOURCE_NAMES } from '../components/index.js';
 
@@ -51,9 +52,10 @@ const numSortFn = (rowA, rowB, colId) => {
 
 const PROPERTY_TYPES = ['Retail','Office','Industrial','Multifamily','Land','Mixed Use','Hospitality','Healthcare','Flex','Special Purpose'];
 
-function FilterBar({ filters, onChange }) {
+function FilterBar({ filters, onChange, onReset }) {
+  const active = Object.values(filters).filter(Boolean).length;
   return (
-    <div className="flex flex-wrap gap-2 mb-4">
+    <div className="flex flex-wrap gap-2 mb-4 items-center">
       <div className="flex items-center gap-1.5 text-xs text-ink-subtle">
         <Filter size={12} /> Filters:
       </div>
@@ -120,18 +122,28 @@ function FilterBar({ filters, onChange }) {
           onChange={e => onChange('opportunity_zone', e.target.checked ? '1' : '')} />
         Opportunity Zone
       </label>
+      {active > 0 && (
+        <button onClick={onReset}
+          className="btn-ghost flex items-center gap-1 text-xs text-ink-muted"
+          title="Clear all filters">
+          <X size={12} /> Reset ({active})
+        </button>
+      )}
     </div>
   );
 }
 
+const DEFAULT_FILTERS = {
+  asset_class: '', source: '', listing_type: '',
+  recommendation: '', auction_type: '', property_type: '',
+  state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
+};
+
 export default function ScreeningPage() {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState([{ id: 'bidding_starts', desc: false }]);
-  const [filters, setFilters] = useState({
-    asset_class: '', source: '', listing_type: '',
-    recommendation: '', auction_type: '', property_type: '',
-    state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
-  });
+  // Sticky — selections survive navigation and reloads (localStorage)
+  const [filters, setFilters] = useStickyState('screening-filters', DEFAULT_FILTERS);
 
   // Only filters drive API re-fetches; sorting is done client-side
   const queryParams = useMemo(() => {
@@ -312,7 +324,7 @@ export default function ScreeningPage() {
         <AssetClassTabs value={filters.asset_class} onChange={v => setFilter('asset_class', v)} />
       </div>
 
-      <FilterBar filters={filters} onChange={setFilter} />
+      <FilterBar filters={filters} onChange={setFilter} onReset={() => setFilters(DEFAULT_FILTERS)} />
 
       {loading ? <Spinner /> : rows.length === 0 ? <EmptyState message="No listings match your filters" /> : (
         <div className="card overflow-hidden">
