@@ -125,8 +125,9 @@ export default function PipelinePage() {
   }, {});
 
   return (
-    <div className="p-6">
-      <div className="mb-5 flex items-start justify-between gap-4">
+    <div className="p-6 pt-0">
+      {/* Pinned while the board scrolls; filter state itself is sticky via localStorage */}
+      <div className="sticky top-0 z-20 -mx-6 px-6 pt-6 pb-4 mb-4 bg-surface/95 backdrop-blur border-b border-surface-border flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold text-ink">Pipeline</h1>
           <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>

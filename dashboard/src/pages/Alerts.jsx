@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import { Bell, BellOff, AlertTriangle, Clock, Info, CheckCheck } from 'lucide-react';
 import { useFetch } from '../hooks/useFetch.js';
+import { useStickyState } from '../hooks/useStickyState.js';
 import { api } from '../api/client.js';
 import { AuctionCountdown, Spinner, EmptyState } from '../components/index.js';
 
@@ -21,7 +21,8 @@ const TYPE_LABEL = {
 
 export default function AlertsPage({ onSeenChange }) {
   const navigate    = useNavigate();
-  const [filter, setFilter] = useState('unseen');
+  // Sticky — the unseen/all choice survives navigation and reloads
+  const [filter, setFilter] = useStickyState('alerts-filter', 'unseen');
   const { data: alerts = [], loading, reload } = useFetch(
     () => api.alerts.list(filter === 'unseen'),
     [filter]
@@ -43,8 +44,9 @@ export default function AlertsPage({ onSeenChange }) {
   const unseen = alerts.filter(a => !a.seen).length;
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-5">
+    <div className="p-6 pt-0">
+      {/* Pinned while the alert list scrolls */}
+      <div className="sticky top-0 z-10 -mx-6 px-6 pt-6 pb-4 mb-4 bg-surface/95 backdrop-blur border-b border-surface-border flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-ink">Alerts</h1>
           <p className="text-sm text-ink-subtle mt-0.5">{unseen} unseen</p>

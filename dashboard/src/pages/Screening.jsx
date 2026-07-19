@@ -315,16 +315,19 @@ export default function ScreeningPage() {
   const setFilter = (k, v) => setFilters(f => ({ ...f, [k]: v }));
 
   return (
-    <div className="p-6">
-      <div className="mb-5 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold text-ink">Screening</h1>
-          <p className="text-sm text-ink-subtle mt-0.5">{data?.total ?? '…'} listings</p>
+    <div className="p-6 pt-0">
+      {/* Pinned while the table scrolls; filter state itself is sticky via localStorage */}
+      <div className="sticky top-0 z-10 -mx-6 px-6 pt-6 mb-4 bg-surface/95 backdrop-blur border-b border-surface-border">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-semibold text-ink">Screening</h1>
+            <p className="text-sm text-ink-subtle mt-0.5">{data?.total ?? '…'} listings</p>
+          </div>
+          <AssetClassTabs value={filters.asset_class} onChange={v => setFilter('asset_class', v)} />
         </div>
-        <AssetClassTabs value={filters.asset_class} onChange={v => setFilter('asset_class', v)} />
-      </div>
 
-      <FilterBar filters={filters} onChange={setFilter} onReset={() => setFilters(DEFAULT_FILTERS)} />
+        <FilterBar filters={filters} onChange={setFilter} onReset={() => setFilters(DEFAULT_FILTERS)} />
+      </div>
 
       {loading ? <Spinner /> : rows.length === 0 ? <EmptyState message="No listings match your filters" /> : (
         <div className="card overflow-hidden">
