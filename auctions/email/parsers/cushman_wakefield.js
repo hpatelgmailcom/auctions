@@ -57,11 +57,14 @@ const STATE_NAME_RE = Object.keys(STATE_ABBR)
 
 // "NEW OFFERING:", "OM AVAILABLE:", "OFFERS DUE 7/22:", "COMING SOON ::",
 // "CFO Reminder: July 29th |", … — marketing prefix up to the first ":"/"::"
-const SUBJECT_PREFIX_RE = /^(?:EXCLUSIVE OFFERING|NEW OFFERING|NEW FINANCIALS|COMING SOON|JUST LISTED|FOR SALE|OMS? AVAILABLE|OFFERS DUE|TOURS? AVAILABLE|CALL FOR OFFERS(?: REMINDER)?|CFO REMINDER|AVAILABLE|PRICE (?:REDUCED|IMPROVEMENT))[\s\d/.]*[:|–-]+\s*/i;
+const SUBJECT_PREFIX_RE = /^(?:EXCLUSIVE OFFERING|NEW OFFE?RING|NEW FINANCIALS|UPDATED (?:FINANCIALS|OFFERING)|OFFERING UPDATE|COMING SOON|JUST LISTED|FOR SALE|OMS? AVAILABLE|OFFERS DUE[A-Z\s]*|NOW TOURING|TOURS? AVAILABLE|CALL FOR OFFERS(?: REMINDER)?|CFO REMINDER|AVAILABLE|PRICE (?:REDUCED|IMPROVEMENT))[\s\d/.]*[:|–-]+\s*/i;
 
-/** Strip marketing prefix ("NEW OFFERING:", "COMING SOON ::") from a subject. */
+/** Strip marketing prefixes ("NEW OFFERING:", "COMING SOON ::") from a subject.
+ *  Prefixes stack ("CALL FOR OFFERS REMINDER | UPDATED FINANCIALS: …"). */
 function titleFrom(subject) {
-  return (subject || '').replace(SUBJECT_PREFIX_RE, '').trim() || null;
+  let t = (subject || '').trim(), prev;
+  do { prev = t; t = t.replace(SUBJECT_PREFIX_RE, '').trim(); } while (t !== prev);
+  return t || null;
 }
 
 // Two-word cities are only accepted when the first word is a common city
@@ -89,7 +92,16 @@ function locationFrom(body, subject) {
   ));
   if (inCity) return { street: null, city: inCity[1].trim(), state: inCity[2] };
 
-  const subj = (subject || '').match(new RegExp(`(${CITY_RE}),\\s*([A-Z]{2})\\s*$`));
+  // Trailing "City, ST" / "City, State" — full names and mixed-case abbrs
+  // both occur ("Omaha, Nebraska", "Sheboygan, Wi"); stateToAbbr normalizes.
+  // A trailing parenthetical ("Winter Park, FL (Orlando MSA)") is ignored.
+  // When a "|" or "," delimits the tail, the whole segment is the city, so
+  // multi-word cities like Winter Park survive; without a delimiter the
+  // conservative CITY_RE guards against subjects that run the property name
+  // into the city ("…Assemblage Hollywood, FL").
+  const subj =
+    (subject || '').match(new RegExp(`[|,]\\s*((?:[A-Z][a-z.'-]+\\s){0,2}[A-Z][a-z.'-]+),\\s*(${STATE_NAME_RE}|[A-Za-z]{2})\\s*(?:\\([^)]*\\))?\\s*$`)) ||
+    (subject || '').match(new RegExp(`(${CITY_RE}),\\s*(${STATE_NAME_RE}|[A-Za-z]{2})\\s*(?:\\([^)]*\\))?\\s*$`));
   if (subj) return { street: null, city: subj[1].trim(), state: subj[2] };
 
   return null;
@@ -121,7 +133,7 @@ export function parse(msg) {
   // the listing filename) unique across same-city offerings. Trailing
   // "City, ST" / unit-count segments are stripped so they don't duplicate.
   const nameForAddress = (title || `Listing ${sourceId}`)
-    .replace(new RegExp(`[|,]?\\s*${CITY_RE},\\s*[A-Z]{2}\\s*$`), '')
+    .replace(new RegExp(`[|,]?\\s*${CITY_RE},\\s*(?:${STATE_NAME_RE}|[A-Za-z]{2})\\s*(?:\\([^)]*\\))?\\s*$`), '')
     .replace(/[|,]?\s*[\d.]+[\s-]?(?:Units?|Acres?)(?:\s+in)?\s*(?=[|,]|$)/gi, '')
     .split('|')[0].replace(/[-,\s]+$/, '').trim();
   const address = loc.street

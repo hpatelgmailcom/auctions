@@ -111,6 +111,40 @@ export function parse(msg) {
   const cleanSubject = subject.replace(SUBJECT_PREFIX_RE, '').trim();
   const name         = cleanSubject.split('|')[0].trim();
 
+  // --- Portfolio blast: "TENANT CITY, STATE PRICE CAP RATE TERM REMAINING"
+  // header followed by one row per property ("Bank of the Sierra Fresno, CA
+  // $6,684,719 5.90% 15 Years") → one record per row.
+  if (/TENANT CITY, STATE PRICE CAP RATE/i.test(msg.text || '')) {
+    // Rows all start with the tenant name ("Bank of the Sierra Fresno, CA
+    // $6,684,719 5.90%") — anchoring on it keeps multi-word cities intact.
+    const tenant    = name.replace(/\s+Portfolio$/i, '');
+    const tenantEsc = tenant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const rowRe = new RegExp(`${tenantEsc}\\s+([A-Z][A-Za-z .'-]+?),\\s*([A-Z]{2})\\s+\\$([\\d,]+)\\s+([\\d.]+)%`, 'g');
+    const rows  = [...msg.text.matchAll(rowRe)].map(m => [m[0], tenant, m[1], m[2], m[3], m[4]]);
+    const description = msg.text.split(/Contact Us/i)[0]
+      .match(/Investment Highlights\s+([\s\S]{40,2500}?)\s*$/i)?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+    return rows.map(r => {
+      const rec = buildRecord(msg, {
+        name:  r[1],
+        city:  r[2].trim(),
+        state: r[3],
+        url:   msg.html?.match(/<a[^>]+href="([^"]+)"[^>]*>(?:(?!<\/a>)[\s\S]){0,300}?Download\s+Offering/i)?.[1] ?? null,
+        sale: {
+          asking_price_usd: saneMoney(r[4]),
+          cap_rate_pct:     saneCapRate(r[5]),
+          noi_usd:          null,
+          price_per_sqft:   null,
+          tenant:           r[1],
+        },
+        property: { property_types: ['Retail'] },
+        description,
+      });
+      // portfolio rows share the subject — disambiguate titles per city
+      rec.listing.title = `${r[1]} | ${rec.listing.city}, ${rec.listing.state}`;
+      return rec;
+    });
+  }
+
   // --- Format 1: direct Constant Contact blast (text body) ------------------
   // Case-sensitive on purpose: ALL-CAPS labels + ALL-CAPS city only appear in
   // real listing blasts.

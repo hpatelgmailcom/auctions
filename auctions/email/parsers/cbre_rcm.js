@@ -50,7 +50,7 @@ function htmlToText(html) {
     .split('\n').map(l => l.trim()).filter(Boolean).join('\n');
 }
 
-const SUBJECT_PREFIX_RE = /^(?:New to Market|TAKE A CLOSER LOOK|JUST LISTED|Now Touring|LIVE VIRTUAL TOUR[^|:]*|OFFERS DUE[^|:]*|LAST CALL[^|:]*|PRICE (?:REDUCED|GUIDANCE)[^|:]*)\s*[|:]+\s*/i;
+const SUBJECT_PREFIX_RE = /^(?:New to Market|TAKE A CLOSER LOOK|JUST LISTED|Now Touring|LIVE VIRTUAL TOUR[^|:]*|(?:NEW\s+)?(?:LAND\s+)?OFFERING|OFFERS DUE[^|:]*|Tours [^|:]*|Call for Offers[^|:]*|LAST CALL[^|:]*|PRICE (?:REDUCED|GUIDANCE)[^|:]*|Investment Opportunity for)\s*[|:]*\s*/i;
 
 const num = s => { const n = Number(String(s ?? '').replace(/[^0-9.]/g, '')); return n > 0 ? n : null; };
 
@@ -59,33 +59,46 @@ export function parse(msg) {
   if (/\b(?:JUST\s+)?(?:SOLD|CLOSED)\b/i.test(subject)) return [];
   if (!msg.html) return [];
 
-  // Location: subjects end "… in Lafayette, IN" / "… | Cadillac, MI".
-  // Every city word must be capitalized so "44 Units in Lafayette" → "Lafayette".
-  const loc = subject.match(/((?:[A-Z][a-z.'-]+\s)*[A-Z][a-z.'-]+),\s*([A-Z]{2})\s*$/);
-  if (!loc) return [];
-  const city = loc[1].trim(), state = loc[2];
+  const text = htmlToText(msg.html);
 
-  // Unit count: "44 Units in", "70-unit community" — subject first, prose second.
-  const text  = htmlToText(msg.html);
-  const units = num(subject.match(/(\d{1,4})[\s-]?[Uu]nits?\b/)?.[1])
-             ?? num(text.match(/(\d{1,4})[\s-]?unit\b/i)?.[1]);
-  if (!units) return []; // units+city is the dedup key — without it, skip
+  // Location: a body street line "535 S West St, Indianapolis, IN" (present in
+  // most hotel/office/student blasts), else the subject tail "… | Cadillac, MI"
+  // (every city word capitalized so "44 Units in Lafayette" → "Lafayette").
+  const streetLine = text.match(/^(\d[\w\d .'&#-]{3,40}?),\s*([A-Z][A-Za-z .'-]{2,25}?),\s*([A-Z]{2})$/m);
+  const subjTail   = subject.match(/((?:[A-Z][a-z.'-]+\s)*[A-Z][a-z.'-]+)(?:\s*\((?:[A-Z][a-z.'-]+)\))?,\s*([A-Z]{2})\s*$/);
+  if (!streetLine && !subjTail) return [];
+  const street = streetLine?.[1] ?? null;
+  const city   = (streetLine?.[2] ?? subjTail[1]).trim();
+  const state  = streetLine?.[3] ?? subjTail[2];
 
-  // Property name: a subject segment that looks like a community name, else
-  // the prose "<Name> presents/is/offers …" opener.
+  // Size: units ("44 Units", "70-unit"), hotel rooms ("113-room"), student
+  // beds ("118 Beds"), or land acreage ("4.59-Acre") — any one qualifies.
+  const units   = num(subject.match(/(\d{1,4})[\s-]?(?:Residential\s)?[Uu]nits?\b/)?.[1]) ?? num(text.match(/(\d{1,4})[\s-]?unit\b/i)?.[1]);
+  const rooms   = num(subject.match(/(\d{2,4})[\s-]?rooms?\b/i)?.[1])   ?? num(text.match(/(\d{2,4})[\s-]?rooms?\b/i)?.[1]);
+  const beds    = num(subject.match(/(\d{2,4})\s?Beds\b/i)?.[1]);
+  const acreage = num(subject.match(/([\d.]+)[\s-]?Acres?\b/i)?.[1])    ?? num(text.match(/([\d.]+)[\s-]?acre\b/i)?.[1]);
+  if (!units && !rooms && !beds && !acreage) return [];
+
+  const isHotel = /\b(?:Inn(?:\s?&\s?Suites)?|Suites|Hotel|Lodge|Resort|Staybridge|Hampton|Marriott|Hilton|Holiday Inn|LaQuinta|TownePlace|Fairfield)\b/i.test(subject);
+  const isLand  = /land offering|development sites?\b/i.test(subject) && !units;
+
+  // Property name: a subject segment that looks like a community name, the
+  // preheader "Beech Meadow | …" line, or the prose "<Name> presents/is/offers"
+  // opener.
   const name = subject.split(/\|+/).map(s => s.replace(SUBJECT_PREFIX_RE, '').trim())
       .find(s => /^[A-Z][\w'. ]{2,35}(?:Apartments|Townhomes|Flats|Lofts|Villas|Commons|Estates|Gardens|Heights|Landing|Manor|Park|Place|Pointe?|Ridge|Square|Station|Terrace|Towers?|Village)$/.test(s))
     ?? text.match(/\n(?:[A-Z​ ]{6,60}\n)?((?:The\s)?[A-Z][A-Za-z']+(?:\s[A-Z][A-Za-z']+){0,3})\s(?:presents|is a|offers)\b/)?.[1]
     ?? null;
 
-  const sourceId = sha12(`${units} units, ${city}, ${state}`);
+  // units+city keeps the ids of already-ingested multifamily listings stable;
+  // hotels/land/student deals (no units) key on the street or name instead.
+  const sourceId = units
+    ? sha12(`${units} units, ${city}, ${state}`)
+    : sha12(`${street ?? name ?? subject.replace(SUBJECT_PREFIX_RE, '').split('|')[0]}, ${city}, ${state}`);
 
   const capRate = saneCapRate(subject.match(/([\d.]+)\s*%\s*(?:In-Place\s*)?Cap/i)?.[1])
                ?? saneCapRate(text.match(/([\d.]+)\s*%\s*cap rate/i)?.[1])
                ?? saneCapRate(text.match(/cap rate (?:is\s+)?(?:strong\s+)?(?:at|of)\s+([\d.]+)\s*%/i)?.[1]);
-
-  // Some blasts print a street line right under the name: "328 Pearl Street, Cadillac, MI"
-  const street = text.match(new RegExp(`^(\\d[\\w\\d .'-]{3,50}?),\\s*${city},\\s*${state}\\b`, 'm'))?.[1] ?? null;
 
   const description = text
     .match(/(?:Investment Highlights|The Offering)\s*\n([\s\S]{40,2500})/i)?.[1]
@@ -108,7 +121,7 @@ export function parse(msg) {
                    ? `${name} | ${subject.replace(SUBJECT_PREFIX_RE, '').trim()}`
                    : subject.replace(SUBJECT_PREFIX_RE, '').trim(),
       address:   street ? `${street}, ${city}, ${state}`
-                        : `${name ?? units + ' Units'}, ${city}, ${state}`,
+                        : `${name ?? subject.replace(SUBJECT_PREFIX_RE, '').split('|')[0].trim()}, ${city}, ${state}`,
       city,
       state,
       zip:       null,
@@ -126,8 +139,11 @@ export function parse(msg) {
       tenant:           null,
     },
     property: {
-      property_types: ['Multifamily'],
+      property_types: [isHotel ? 'Hospitality' : isLand ? 'Land' : 'Multifamily'],
       units,
+      rooms,
+      beds,
+      acreage,
     },
     email: {
       message_id:  msg.id,
