@@ -10,6 +10,7 @@
     "email:sample": "node auctions/email/sample.js",
     "email:test": "node auctions/email/test_parsers.js",
     "cw:details": "node --env-file=.env auctions/providers/cushman_wakefield/details.js",
+    "mm:details": "node --env-file=.env auctions/providers/marcus_millichap/details.js",
     "enrich": "node --env-file=.env auctions/enrichment/enrich.js",
     "dd": "node --env-file=.env auctions/agents/due_diligence/agent.js",
     "api": "cd api && node --env-file=../.env server.js",
