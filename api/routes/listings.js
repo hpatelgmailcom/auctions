@@ -10,6 +10,7 @@ export default async function listingsRoutes(fastify) {
       state, recommendation, min_price, max_price,
       max_days_to_auction, crime_grade, opportunity_zone,
       auction_type, property_type, asset_class, source, listing_type,
+      archived,
       sort = 'bidding_starts', dir = 'asc',
     } = req.query;
 
@@ -19,6 +20,11 @@ export default async function listingsRoutes(fastify) {
 
     const conditions = [];
     const params     = {};
+
+    // Archived listings are hidden everywhere except the explicit archived view.
+    conditions.push(archived === '1' || archived === 'true'
+      ? 'al.listing_id IS NOT NULL'
+      : 'al.listing_id IS NULL');
 
     if (state)            { conditions.push('state = @state');                          params.state = state; }
     if (asset_class)      { conditions.push('asset_class = @ac');                         params.ac = asset_class; }
@@ -38,10 +44,11 @@ export default async function listingsRoutes(fastify) {
     }
 
     const where  = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+    const join   = 'LEFT JOIN archived_listings al ON al.listing_id = listings.id';
     const offset = (Number(page) - 1) * Number(limit);
 
     const rows = db.prepare(`
-      SELECT id, source, source_id, asset_class, listing_type, title, address, city, state, zip, url,
+      SELECT listings.id, source, source_id, asset_class, listing_type, title, address, city, state, zip, url,
              starting_bid_usd, max_bid_usd, bidding_starts, bidding_ends,
              asking_price_usd, cap_rate_pct, noi_usd, brokerage,
              auction_type, reserve_met, auction_status,
@@ -49,13 +56,13 @@ export default async function listingsRoutes(fastify) {
              beds, baths, living_area_sqft, home_type, occupancy_status,
              crime_grade, disposition_score, recommendation,
              avg_retail_rent, compliance_status, pipeline_stage,
-             enriched_at, scraped_at
-      FROM listings ${where}
+             enriched_at, scraped_at, al.archived_at
+      FROM listings ${join} ${where}
       ORDER BY ${sortCol} ${sortDir} NULLS LAST
       LIMIT @limit OFFSET @offset
     `).all({ ...params, limit: Number(limit), offset });
 
-    const total = db.prepare(`SELECT COUNT(*) as n FROM listings ${where}`).get(params).n;
+    const total = db.prepare(`SELECT COUNT(*) as n FROM listings ${join} ${where}`).get(params).n;
 
     return { data: rows.map(r => ({ ...r, property_types: safeJson(r.property_types) })), total, page: Number(page), limit: Number(limit) };
   });
@@ -65,9 +72,11 @@ export default async function listingsRoutes(fastify) {
     const db = getDb();
     const row = db.prepare('SELECT * FROM listings WHERE id = ?').get(req.params.id);
     if (!row) return reply.status(404).send({ error: 'Not found' });
+    const arch = db.prepare('SELECT archived_at FROM archived_listings WHERE listing_id = ?').get(row.id);
 
     return {
       ...row,
+      archived_at: arch?.archived_at ?? null,
       property_types:          safeJson(row.property_types),
       sub_types:               safeJson(row.sub_types),
       enrichment_demographics: safeJson(row.enrichment_demographics),
@@ -90,6 +99,25 @@ export default async function listingsRoutes(fastify) {
     if (!valid.includes(stage)) return reply.status(400).send({ error: 'Invalid stage' });
     db.prepare("UPDATE listings SET pipeline_stage = ?, updated_at = datetime('now') WHERE id = ?").run(stage, req.params.id);
     db.prepare("INSERT INTO pipeline_events (listing_id, stage) VALUES (?, ?)").run(req.params.id, stage);
+    return { ok: true };
+  });
+
+  // POST /api/listings/:id/archive — hide a listing from all default views
+  fastify.post('/listings/:id/archive', async (req, reply) => {
+    const db  = getDb();
+    const row = db.prepare('SELECT id FROM listings WHERE id = ?').get(req.params.id);
+    if (!row) return reply.status(404).send({ error: 'Not found' });
+    db.prepare('INSERT OR IGNORE INTO archived_listings (listing_id) VALUES (?)').run(row.id);
+    db.prepare("INSERT INTO pipeline_events (listing_id, stage, note) VALUES (?, 'Archived', 'Archived by operator')").run(row.id);
+    return { ok: true };
+  });
+
+  // DELETE /api/listings/:id/archive — restore a listing
+  fastify.delete('/listings/:id/archive', async (req, reply) => {
+    const db = getDb();
+    const changed = db.prepare('DELETE FROM archived_listings WHERE listing_id = ?').run(req.params.id).changes;
+    if (!changed) return reply.status(404).send({ error: 'Not archived' });
+    db.prepare("INSERT INTO pipeline_events (listing_id, stage, note) VALUES (?, 'Unarchived', 'Restored by operator')").run(req.params.id);
     return { ok: true };
   });
 

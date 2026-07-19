@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import {
   LayoutGrid, TableProperties, BarChart3, Bell, Building2,
-  RefreshCw, Database, Mail
+  RefreshCw, Database, Mail, Archive
 } from 'lucide-react';
 import { api } from './api/client.js';
 
@@ -12,12 +12,14 @@ import PipelinePage   from './pages/Pipeline.jsx';
 import PropertyDetail from './pages/PropertyDetail.jsx';
 import AnalyticsPage  from './pages/Analytics.jsx';
 import AlertsPage     from './pages/Alerts.jsx';
+import ArchivedPage   from './pages/Archived.jsx';
 
 const NAV = [
   { to: '/',          label: 'Pipeline',  icon: LayoutGrid },
   { to: '/screening', label: 'Screening', icon: TableProperties },
   { to: '/analytics', label: 'Analytics', icon: BarChart3 },
   { to: '/alerts',    label: 'Alerts',    icon: Bell },
+  { to: '/archived',  label: 'Archived',  icon: Archive },
 ];
 
 export default function App() {
@@ -162,6 +164,7 @@ export default function App() {
           <Route path="/screening"    element={<ScreeningPage />} />
           <Route path="/analytics"    element={<AnalyticsPage />} />
           <Route path="/alerts"       element={<AlertsPage onSeenChange={setUnseenAlerts} />} />
+          <Route path="/archived"     element={<ArchivedPage />} />
           <Route path="/listing/:id"  element={<PropertyDetail />} />
         </Routes>
       </main>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, ExternalLink, RefreshCw, AlertTriangle, TrendingUp, Shield, ShoppingBag, Users, Footprints, GraduationCap, CloudRain, BarChart2, Archive, ArchiveRestore } from 'lucide-react';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
@@ -35,6 +35,12 @@ export default function PropertyDetail() {
     setEnriching(true);
     try { await api.listings.enrich(id); setTimeout(reload, 3000); }
     finally { setTimeout(() => setEnriching(false), 2000); }
+  }
+
+  async function handleArchiveToggle() {
+    if (listing.archived_at) await api.listings.unarchive(id);
+    else await api.listings.archive(id);
+    reload();
   }
 
   if (loading) return <Spinner />;
@@ -76,7 +82,19 @@ export default function PropertyDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {listing.archived_at && (
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2 py-1 rounded">
+              Archived
+            </span>
+          )}
           <RecommendationBadge value={listing.recommendation} size="lg" />
+          <button onClick={handleArchiveToggle}
+            className="btn-ghost flex items-center gap-1.5 text-xs"
+            title={listing.archived_at ? 'Restore to pipeline' : 'Hide from pipeline and screening'}>
+            {listing.archived_at
+              ? <><ArchiveRestore size={12} /> Restore</>
+              : <><Archive size={12} /> Archive</>}
+          </button>
           <button onClick={handleEnrich} disabled={enriching}
             className="btn-ghost flex items-center gap-1.5 text-xs disabled:opacity-50">
             <RefreshCw size={12} className={enriching ? 'animate-spin' : ''} />

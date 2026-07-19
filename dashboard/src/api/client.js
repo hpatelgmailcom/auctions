@@ -16,6 +16,9 @@ export const api = {
     events: (id)           => req(`/listings/${id}/events`),
     stage:  (id, stage)    => req(`/listings/${id}/stage`, { method: 'PATCH', body: JSON.stringify({ stage }) }),
     enrich: (id)           => req(`/listings/${id}/enrich`, { method: 'POST' }),
+    archive:   (id)        => req(`/listings/${id}/archive`, { method: 'POST' }),
+    unarchive: (id)        => req(`/listings/${id}/archive`, { method: 'DELETE' }),
+    archived:  (params = {}) => req('/listings?' + new URLSearchParams({ ...params, archived: '1' })),
   },
   pipeline: {
     board: () => req('/pipeline'),

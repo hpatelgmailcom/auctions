@@ -81,6 +81,15 @@ CREATE TABLE IF NOT EXISTS listings (
   updated_at TEXT DEFAULT (datetime('now'))
 );
 
+-- Operator-archived listings. Deliberately a separate table (not a listings
+-- column, which INSERT OR REPLACE would reset on every import) and with no
+-- foreign key (REPLACE deletes+reinserts the listings row mid-import, which
+-- would trip enforcement). Survives re-imports and re-scrapes.
+CREATE TABLE IF NOT EXISTS archived_listings (
+  listing_id  TEXT PRIMARY KEY,
+  archived_at TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS alerts (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   listing_id  TEXT REFERENCES listings(id),

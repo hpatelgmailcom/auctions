@@ -44,7 +44,10 @@ export default async function pipelineRoutes(fastify) {
              bidding_starts, bidding_ends, disposition_score, recommendation, crime_grade,
              beds, baths, home_type,
              compliance_status, pipeline_stage, enriched_at, property_types
-      FROM listings ORDER BY bidding_starts ASC NULLS LAST
+      FROM listings
+      LEFT JOIN archived_listings al ON al.listing_id = listings.id
+      WHERE al.listing_id IS NULL
+      ORDER BY bidding_starts ASC NULLS LAST
     `).all();
 
     const grouped = {};
