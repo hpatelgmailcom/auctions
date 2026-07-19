@@ -5,11 +5,13 @@ import { format } from 'date-fns';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, MapLinks } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, MapLinks, SOURCE_NAMES } from '../components/index.js';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from 'recharts';
 
 const fmt$  = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtPct = v => v != null ? `${v}%` : '—';
+
+const SOURCE_LABEL = SOURCE_NAMES;
 
 // MapLinks imported from components/MapLinks.jsx
 const row   = (label, value) => (
@@ -19,7 +21,7 @@ const row   = (label, value) => (
   </div>
 );
 
-const TABS = ['Overview', 'Auction Terms', 'Property', 'Market Intelligence', 'Due Diligence', 'Compliance'];
+const TABS = (isSale) => ['Overview', isSale ? 'Sale Terms' : 'Auction Terms', 'Property', 'Market Intelligence', 'Due Diligence', 'Compliance'];
 
 export default function PropertyDetail() {
   const { id }    = useParams();
@@ -37,6 +39,8 @@ export default function PropertyDetail() {
 
   if (loading) return <Spinner />;
   if (!listing) return <div className="p-8 text-ink-subtle">Listing not found.</div>;
+
+  const isSale = listing.listing_type === 'sale';
 
   const demo   = listing.enrichment_demographics || {};
   const crime  = listing.enrichment_crime        || {};
@@ -80,7 +84,7 @@ export default function PropertyDetail() {
           </button>
           {listing.url && (
             <a href={listing.url} target="_blank" rel="noreferrer" className="btn-ghost flex items-center gap-1.5 text-xs">
-              <ExternalLink size={12} /> Crexi
+              <ExternalLink size={12} /> {SOURCE_LABEL[listing.source] || 'Source'}
             </a>
           )}
         </div>
@@ -88,18 +92,23 @@ export default function PropertyDetail() {
 
       {/* Hero stats */}
       <div className="px-6 py-5 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 border-b border-surface-border">
-        {[
+        {(isSale ? [
+          ['Asking Price',    fmt$(listing.asking_price_usd),   'text-ink'],
+          ['Cap Rate',        listing.cap_rate_pct != null ? `${listing.cap_rate_pct}%` : '—', 'text-bid'],
+          ['NOI',             fmt$(listing.noi_usd),            'text-ink-muted'],
+        ] : [
           ['Starting Bid',    fmt$(listing.starting_bid_usd),  'text-ink'],
           ['Max Bid',         fmt$(listing.max_bid_usd),        dd ? 'text-bid' : 'text-ink-subtle'],
           ['Bid Headroom',    listing.max_bid_usd != null && listing.starting_bid_usd != null
             ? fmt$(listing.max_bid_usd - listing.starting_bid_usd)
             : '—',
             (listing.max_bid_usd - listing.starting_bid_usd) >= 0 ? 'text-bid' : 'text-nobid'],
+        ]).concat([
           ['Disposition',     dd?.disposition_score != null ? `${dd.disposition_score}/10` : '—',
             dd?.disposition_score >= 7 ? 'text-bid' : dd?.disposition_score >= 5 ? 'text-conditional' : 'text-ink-subtle'],
           ['Crime Grade',     listing.crime_grade || '—',       'text-ink'],
           ['Avg Retail Rent', listing.avg_retail_rent != null ? `$${Number(listing.avg_retail_rent).toFixed(2)}/SF` : '—', 'text-ink-muted'],
-        ].map(([label, value, color]) => (
+        ]).map(([label, value, color]) => (
           <div key={label} className="card p-3">
             <p className="text-[10px] text-ink-subtle uppercase tracking-wider mb-1">{label}</p>
             <p className={clsx('text-lg font-bold font-mono', color)}>{value}</p>
@@ -108,7 +117,7 @@ export default function PropertyDetail() {
       </div>
 
       {/* Auction countdown */}
-      {listing.bidding_starts && (
+      {!isSale && listing.bidding_starts && (
         <div className="px-6 py-3 border-b border-surface-border flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-xs text-ink-subtle">
             <Calendar size={12} /> Auction starts
@@ -122,7 +131,7 @@ export default function PropertyDetail() {
 
       {/* Tabs */}
       <div className="flex gap-0 border-b border-surface-border px-6 overflow-x-auto">
-        {TABS.map(t => (
+        {TABS(isSale).map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={clsx(
               'px-4 py-3 text-sm whitespace-nowrap border-b-2 transition-colors',
@@ -168,11 +177,27 @@ export default function PropertyDetail() {
                 {row('Stage', listing.pipeline_stage)}
                 {row('Scraped', listing.scraped_at ? format(new Date(listing.scraped_at), 'MMM d, yyyy') : null)}
                 {row('Enriched', listing.enriched_at ? format(new Date(listing.enriched_at), 'MMM d, yyyy') : 'Not yet')}
-                {row('Auction Type', listing.auction_type)}
-                {row('Reserve Met', listing.reserve_met ? 'Yes' : 'No')}
+                {isSale ? row('Listing Type', 'For Sale') : row('Auction Type', listing.auction_type)}
+                {isSale
+                  ? row('Received', listing.received_at ? format(new Date(listing.received_at), 'MMM d, yyyy') : null)
+                  : row('Reserve Met', listing.reserve_met ? 'Yes' : 'No')}
                 {row('Listed By', listing.brokerage)}
               </div>
             </div>
+          </div>
+        )}
+
+        {tab === 'Sale Terms' && (
+          <div className="card p-5 max-w-lg">
+            <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-4">Sale Terms</h3>
+            {row('Asking Price',   fmt$(listing.asking_price_usd))}
+            {row('Cap Rate',       listing.cap_rate_pct != null ? `${listing.cap_rate_pct}%` : null)}
+            {row('NOI',            fmt$(listing.noi_usd))}
+            {row('Price / SF',     listing.asking_price_usd != null && listing.square_footage
+              ? `$${(listing.asking_price_usd / listing.square_footage).toFixed(2)}`
+              : null)}
+            {row('Brokerage',      listing.brokerage)}
+            {row('Received',       listing.received_at ? format(new Date(listing.received_at), 'MMM d, yyyy') : null)}
           </div>
         )}
 
@@ -197,19 +222,32 @@ export default function PropertyDetail() {
         {tab === 'Property' && (
           <div className="card p-5 max-w-lg">
             <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider mb-4">Property Details</h3>
-            {row('APN',            listing.apn)}
             {row('Address',        listing.address)}
             {row('City / State',   `${listing.city}, ${listing.state} ${listing.zip}`)}
-            {row('Property Types', Array.isArray(listing.property_types) ? listing.property_types.join(', ') : listing.property_types)}
-            {row('Sub Types',      Array.isArray(listing.sub_types) ? listing.sub_types.join(', ') : listing.sub_types)}
-            {row('Square Footage', listing.square_footage ? `${Number(listing.square_footage).toLocaleString()} SF` : null)}
-            {row('Year Built',     listing.year_built)}
-            {row('Stories',        listing.stories)}
-            {row('Buildings',      listing.buildings)}
-            {row('Acreage',        listing.acreage ? `${listing.acreage} acres` : null)}
-            {row('Zoning',         listing.zoning)}
-            {row('Tenancy',        listing.tenancy)}
-            {row('Opportunity Zone', listing.opportunity_zone ? 'Yes' : 'No')}
+            {listing.asset_class === 'residential' ? (
+              <>
+                {row('Home Type',      listing.home_type)}
+                {row('Occupancy',      listing.occupancy_status)}
+                {row('Beds',           listing.beds)}
+                {row('Baths',          listing.baths)}
+                {row('Living Area',    listing.living_area_sqft ? `${Number(listing.living_area_sqft).toLocaleString()} SF` : null)}
+                {row('Year Built',     listing.year_built)}
+              </>
+            ) : (
+              <>
+                {row('APN',            listing.apn)}
+                {row('Property Types', Array.isArray(listing.property_types) ? listing.property_types.join(', ') : listing.property_types)}
+                {row('Sub Types',      Array.isArray(listing.sub_types) ? listing.sub_types.join(', ') : listing.sub_types)}
+                {row('Square Footage', listing.square_footage ? `${Number(listing.square_footage).toLocaleString()} SF` : null)}
+                {row('Year Built',     listing.year_built)}
+                {row('Stories',        listing.stories)}
+                {row('Buildings',      listing.buildings)}
+                {row('Acreage',        listing.acreage ? `${listing.acreage} acres` : null)}
+                {row('Zoning',         listing.zoning)}
+                {row('Tenancy',        listing.tenancy)}
+                {row('Opportunity Zone', listing.opportunity_zone ? 'Yes' : 'No')}
+              </>
+            )}
           </div>
         )}
 
@@ -485,8 +523,8 @@ export default function PropertyDetail() {
                 <h3 className="text-xs font-semibold text-ink-subtle uppercase tracking-wider">Sold Comps</h3>
                 {sold?.scope && <span className="text-[10px] text-ink-subtle ml-auto">{sold.scope}</span>}
               </div>
-              {!sold ? <p className="text-sm text-ink-subtle">Not yet enriched.</p>
-                : sold.total_comps === 0 ? <p className="text-sm text-ink-subtle">No sold comps found in Crexi's database for this area and property type.</p>
+              {!sold ? <p className="text-sm text-ink-subtle">{listing.asset_class === 'residential' ? 'Sold comps are a commercial-only data source.' : 'Not yet enriched.'}</p>
+                : sold.total_comps === 0 ? <p className="text-sm text-ink-subtle">No sold comps found for this area and property type.</p>
                 : (
                   <div>
                     <div className="grid grid-cols-3 gap-3 mb-4">

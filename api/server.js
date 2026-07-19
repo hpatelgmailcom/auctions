@@ -7,6 +7,7 @@ import listingsRoutes  from './routes/listings.js';
 import analyticsRoutes from './routes/analytics.js';
 import alertsRoutes    from './routes/alerts.js';
 import pipelineRoutes  from './routes/pipeline.js';
+import emailRoutes     from './routes/email.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +25,7 @@ await fastify.register(async (app) => {
   await app.register(analyticsRoutes);
   await app.register(alertsRoutes);
   await app.register(pipelineRoutes);
+  await app.register(emailRoutes);
 }, { prefix: '/api' });
 
 // Health check

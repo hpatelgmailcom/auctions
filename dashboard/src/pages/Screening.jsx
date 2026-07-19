@@ -8,7 +8,7 @@ import { ChevronUp, ChevronDown, ExternalLink, Filter } from 'lucide-react';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, EmptyState, MapLinks, SourceBadge, AssetClassTabs, SOURCE_NAMES } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 const fmtSF = v => v != null ? `${Number(v).toLocaleString()} SF` : '—';
@@ -57,6 +57,21 @@ function FilterBar({ filters, onChange }) {
       <div className="flex items-center gap-1.5 text-xs text-ink-subtle">
         <Filter size={12} /> Filters:
       </div>
+      <select className="input text-xs py-1.5"
+        value={filters.source}
+        onChange={e => onChange('source', e.target.value)}>
+        <option value="">Any Provider</option>
+        {Object.entries(SOURCE_NAMES).map(([slug, name]) => (
+          <option key={slug} value={slug}>{name}</option>
+        ))}
+      </select>
+      <select className="input text-xs py-1.5"
+        value={filters.listing_type}
+        onChange={e => onChange('listing_type', e.target.value)}>
+        <option value="">Any Type</option>
+        <option value="auction">Auction</option>
+        <option value="sale">For Sale</option>
+      </select>
       <select className="input text-xs py-1.5"
         value={filters.recommendation}
         onChange={e => onChange('recommendation', e.target.value)}>
@@ -113,6 +128,7 @@ export default function ScreeningPage() {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState([{ id: 'bidding_starts', desc: false }]);
   const [filters, setFilters] = useState({
+    asset_class: '', source: '', listing_type: '',
     recommendation: '', auction_type: '', property_type: '',
     state: '', max_price: '', max_days_to_auction: '', crime_grade: '', opportunity_zone: ''
   });
@@ -135,8 +151,9 @@ export default function ScreeningPage() {
       sortingFn: 'alphanumeric',
       cell: ({ row }) => (
         <div>
-          <div className="flex items-center gap-1">
-            <p className="text-sm text-ink font-medium truncate max-w-[200px]">{row.original.address || '—'}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm text-ink font-medium truncate max-w-[180px]">{row.original.address || '—'}</p>
+            <SourceBadge source={row.original.source} />
             <MapLinks address={row.original.address} />
           </div>
           <p className="text-xs text-ink-subtle">{row.original.city}, {row.original.state}</p>
@@ -145,10 +162,17 @@ export default function ScreeningPage() {
     },
     {
       id: 'starting_bid_usd',
-      header: 'Starting Bid',
-      accessorKey: 'starting_bid_usd',
+      header: 'Price',
+      accessorFn: r => r.listing_type === 'sale' ? r.asking_price_usd : r.starting_bid_usd,
       sortingFn: numSortFn,
-      cell: ({ getValue }) => <span className="font-mono text-sm text-ink">{fmt$(getValue())}</span>,
+      cell: ({ getValue, row }) => (
+        <div>
+          <span className="font-mono text-sm text-ink">{fmt$(getValue())}</span>
+          {row.original.listing_type === 'sale' && (
+            <p className="text-[10px] text-ink-subtle">asking</p>
+          )}
+        </div>
+      ),
     },
     {
       id: 'max_bid_usd',
@@ -174,6 +198,18 @@ export default function ScreeningPage() {
       accessorKey: 'bidding_starts',
       sortingFn: 'datetime',
       cell: ({ row }) => {
+        if (row.original.listing_type === 'sale') {
+          return (
+            <div className="space-y-1">
+              <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 text-[10px] font-medium">
+                For Sale
+              </span>
+              {row.original.cap_rate_pct != null && (
+                <div className="text-[10px] text-ink-subtle font-mono">{row.original.cap_rate_pct}% cap</div>
+              )}
+            </div>
+          );
+        }
         const starts = row.original.bidding_starts;
         const ends   = row.original.bidding_ends;
         return (
@@ -192,7 +228,17 @@ export default function ScreeningPage() {
       header: 'Size',
       accessorKey: 'square_footage',
       sortingFn: numSortFn,
-      cell: ({ getValue }) => <span className="text-xs text-ink-muted">{fmtSF(getValue())}</span>,
+      cell: ({ row }) => {
+        const r = row.original;
+        if (r.asset_class === 'residential') {
+          const parts = [];
+          if (r.beds != null)  parts.push(`${r.beds} bd`);
+          if (r.baths != null) parts.push(`${r.baths} ba`);
+          if (r.living_area_sqft != null) parts.push(fmtSF(r.living_area_sqft));
+          return <span className="text-xs text-ink-muted">{parts.length ? parts.join(' · ') : '—'}</span>;
+        }
+        return <span className="text-xs text-ink-muted">{fmtSF(r.square_footage)}</span>;
+      },
     },
     {
       id: 'crime_grade',
@@ -258,9 +304,12 @@ export default function ScreeningPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-5">
-        <h1 className="text-xl font-semibold text-ink">Screening</h1>
-        <p className="text-sm text-ink-subtle mt-0.5">{data?.total ?? '…'} listings</p>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-ink">Screening</h1>
+          <p className="text-sm text-ink-subtle mt-0.5">{data?.total ?? '…'} listings</p>
+        </div>
+        <AssetClassTabs value={filters.asset_class} onChange={v => setFilter('asset_class', v)} />
       </div>
 
       <FilterBar filters={filters} onChange={setFilter} />

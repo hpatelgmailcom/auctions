@@ -12,7 +12,7 @@
  *   const data = await fetchSoldComps({ lat, lng, assetTypes, radiusMiles });
  */
 
-import { withRetry } from './retry.js';
+import { withRetry } from '../../enrichment/retry.js';
 
 const API_BASE = 'https://api.crexi.com';
 const HEADERS  = {

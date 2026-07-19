@@ -31,6 +31,10 @@ export const api = {
     seen:    (id)     => req(`/alerts/${id}/seen`, { method: 'PATCH' }),
     seenAll: ()       => req('/alerts/seen-all', { method: 'PATCH' }),
   },
+  email: {
+    fetch:  (opts = {}) => req('/email/fetch', { method: 'POST', body: JSON.stringify(opts) }),
+    status: ()          => req('/email/status'),
+  },
   scrape: (opts) => req('/scrape', { method: 'POST', body: JSON.stringify(opts) }),
   import: ()     => req('/import', { method: 'POST' }),
 };

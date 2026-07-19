@@ -1,5 +1,9 @@
 CREATE TABLE IF NOT EXISTS listings (
-  id               INTEGER PRIMARY KEY,
+  id               TEXT PRIMARY KEY,   -- "{source}:{source_id}", e.g. "crexi:1893472"
+  source           TEXT,               -- provider slug: crexi | auction_com | email-parser slug
+  source_id        TEXT,               -- provider-native id
+  asset_class      TEXT,               -- commercial | residential
+  listing_type     TEXT,               -- auction | sale
   title            TEXT,
   address          TEXT,
   city             TEXT,
@@ -27,7 +31,7 @@ CREATE TABLE IF NOT EXISTS listings (
   closing_period_days  INTEGER,
   non_contingent       INTEGER,
 
-  -- Property
+  -- Property (commercial)
   property_types   TEXT,
   sub_types        TEXT,
   square_footage   REAL,
@@ -36,6 +40,20 @@ CREATE TABLE IF NOT EXISTS listings (
   acreage          REAL,
   zoning           TEXT,
   opportunity_zone INTEGER,
+
+  -- Sale listings (email-sourced brokers)
+  asking_price_usd REAL,
+  cap_rate_pct     REAL,
+  noi_usd          REAL,
+  email_message_id TEXT,
+  received_at      TEXT,
+
+  -- Property (residential)
+  beds             REAL,
+  baths            REAL,
+  living_area_sqft REAL,
+  home_type        TEXT,
+  occupancy_status TEXT,
 
   -- Pipeline stage
   pipeline_stage   TEXT DEFAULT 'Scouted',
@@ -65,7 +83,7 @@ CREATE TABLE IF NOT EXISTS listings (
 
 CREATE TABLE IF NOT EXISTS alerts (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  listing_id  INTEGER REFERENCES listings(id),
+  listing_id  TEXT REFERENCES listings(id),
   type        TEXT NOT NULL,
   message     TEXT NOT NULL,
   severity    TEXT DEFAULT 'info',
@@ -75,8 +93,22 @@ CREATE TABLE IF NOT EXISTS alerts (
 
 CREATE TABLE IF NOT EXISTS pipeline_events (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  listing_id  INTEGER REFERENCES listings(id),
+  listing_id  TEXT REFERENCES listings(id),
   stage       TEXT NOT NULL,
   note        TEXT,
   created_at  TEXT DEFAULT (datetime('now'))
+);
+
+-- Every Gmail message we have processed (idempotency + parser health)
+CREATE TABLE IF NOT EXISTS email_messages (
+  gmail_id     TEXT PRIMARY KEY,
+  thread_id    TEXT,
+  sender       TEXT,               -- normalized from-address, lowercase
+  subject      TEXT,
+  received_at  TEXT,
+  parser_slug  TEXT,               -- registry slug, NULL if no parser matched
+  status       TEXT,               -- parsed | no_parser | no_listings | error
+  error        TEXT,
+  listing_ids  TEXT,               -- JSON array of "source:source_id"
+  processed_at TEXT DEFAULT (datetime('now'))
 );

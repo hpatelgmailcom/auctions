@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import {
   LayoutGrid, TableProperties, BarChart3, Bell, Building2,
-  RefreshCw, Database
+  RefreshCw, Database, Mail
 } from 'lucide-react';
 import { api } from './api/client.js';
 
@@ -33,12 +33,33 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
-  const [syncing, setSyncing] = useState(false);
+  const [syncing,  setSyncing]  = useState(false);
+  const [provider, setProvider] = useState('crexi');
+  const [fetchingEmail, setFetchingEmail] = useState(false);
+  const [emailStatus,   setEmailStatus]   = useState(null);
+
+  useEffect(() => {
+    api.email.status().then(setEmailStatus).catch(() => {});
+  }, []);
 
   async function handleScrape() {
     setScraping(true);
-    try { await api.scrape({ max_price: 30000000, max_listings: 50 }); }
+    try {
+      await api.scrape({ provider, max_price: 30000000, max_listings: 50, state: 'OH' });
+    }
     finally { setTimeout(() => setScraping(false), 2000); }
+  }
+
+  async function handleEmailFetch() {
+    setFetchingEmail(true);
+    try { await api.email.fetch({}); }
+    finally {
+      // The fetch runs async server-side; refresh the status line shortly after.
+      setTimeout(() => {
+        setFetchingEmail(false);
+        api.email.status().then(setEmailStatus).catch(() => {});
+      }, 5000);
+    }
   }
 
   async function handleSync() {
@@ -57,7 +78,7 @@ export default function App() {
             <Building2 size={15} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-ink leading-tight">Crexi Intel</p>
+            <p className="text-sm font-semibold text-ink leading-tight">Hammerdown</p>
             <p className="text-[10px] text-ink-subtle">Auction Intelligence</p>
           </div>
         </div>
@@ -89,6 +110,16 @@ export default function App() {
 
         {/* Actions */}
         <div className="p-3 border-t border-surface-border space-y-2">
+          <select
+            value={provider}
+            onChange={e => setProvider(e.target.value)}
+            className="input text-xs py-1.5 w-full"
+            aria-label="Scrape source"
+          >
+            <option value="crexi">Crexi (commercial)</option>
+            <option value="auction_com">Auction.com (residential)</option>
+            <option value="all">All providers</option>
+          </select>
           <button
             onClick={handleScrape}
             disabled={scraping}
@@ -97,6 +128,22 @@ export default function App() {
             <RefreshCw size={13} className={scraping ? 'animate-spin' : ''} />
             {scraping ? 'Running…' : 'Run Scraper'}
           </button>
+          <button
+            onClick={handleEmailFetch}
+            disabled={fetchingEmail}
+            className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <Mail size={13} className={fetchingEmail ? 'animate-pulse' : ''} />
+            {fetchingEmail ? 'Fetching…' : 'Fetch Emails'}
+          </button>
+          {emailStatus?.totals?.parsed != null && (
+            <p className="text-[10px] text-ink-subtle text-center leading-tight">
+              {emailStatus.by_sender.length} sender{emailStatus.by_sender.length === 1 ? '' : 's'}
+              {' · '}{emailStatus.totals.parsed} parsed
+              {emailStatus.totals.error > 0 && <span className="text-red-400">{' · '}{emailStatus.totals.error} errors</span>}
+              {emailStatus.unregistered.length > 0 && <span className="text-amber-400">{' · '}{emailStatus.unregistered.length} unmatched</span>}
+            </p>
+          )}
           <button
             onClick={handleSync}
             disabled={syncing}

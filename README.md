@@ -1,6 +1,21 @@
-# Crexi Auction Intelligence
+# Hammerdown — Auction Intelligence
 
-Scrapes commercial real estate auction listings from Crexi and enriches each one with socio-demographic, crime, and retail market data — all saved as individual JSON files named after the property address.
+Scrapes real estate auction listings from multiple providers (**Crexi** — commercial, **Auction.com** — residential/REO) into one canonical schema, enriches each with socio-demographic, crime, schools, and (for commercial) retail-market data, and surfaces them in a unified dashboard with separate **Commercial** and **Residential** sections. Each listing is saved as an individual JSON file named after the property address.
+
+## Adding a provider
+
+Each provider is a self-contained adapter under `auctions/providers/<name>/index.js` exporting:
+
+| Export | Purpose |
+|--------|---------|
+| `meta` | `{ slug, displayName, baseUrl }` — used for source labels/links |
+| `async search(opts)` | Provider API calls + pagination → array of raw bundles |
+| `normalize(raw)` | Maps a raw bundle → the canonical record in `auctions/schema.js` |
+
+Register it in the `PROVIDERS` map in `auctions/pipeline.js`. Everything downstream
+(enrichment, DB, API, dashboard) consumes only the canonical shape, so no other code changes.
+Records carry `source`, `source_id`, and `asset_class` (`commercial` | `residential`); the DB
+primary key is `"{source}:{source_id}"`, so two providers never collide.
 
 ---
 
@@ -11,14 +26,22 @@ crexi/
 ├── package.json
 ├── README.md
 └── auctions/
-    ├── scraper.js                  # Phase 1 — scrape Crexi auction listings
+    ├── pipeline.js                 # Orchestrator — runs providers → normalize → enrich → import
+    ├── schema.js                   # Canonical listing shape, validate(), shared helpers
+    ├── scraper.js                  # Back-compat shim → pipeline.js --provider crexi
+    ├── providers/
+    │   ├── crexi/
+    │   │   ├── index.js            # Crexi adapter (search + normalize)
+    │   │   └── sold_comps.js       # Crexi SoldComps (commercial-only enrichment)
+    │   └── auction_com/
+    │       └── index.js            # Auction.com adapter (graph.auction.com GraphQL)
     ├── enrichment/
-    │   ├── enrich.js               # Coordinator — enriches a single listing file
+    │   ├── enrich.js               # Coordinator — asset-class-aware step gating
     │   ├── demographics.js         # Socio-demographic data (Areavibes)
     │   ├── crime.js                # Crime statistics (Areavibes / FBI UCR)
-    │   └── retail_market.js        # Retail rent comps (CommercialCafe)
-    └── listings/                   # Output — one JSON file per listing
-        └── 4580_liberty_ave_vermilion_oh_44089.json
+    │   └── retail_market.js        # Retail rent comps (CommercialCafe, commercial-only)
+    └── listings/                   # Output — one JSON file per listing (source-prefixed)
+        └── auction_com__179_hickory_st_lower_salem_oh_45745.json
 ```
 
 ---
@@ -62,9 +85,14 @@ Each listing file contains two top-level sections:
 
 ```jsonc
 {
-  // --- Scraped from Crexi API ---
+  // --- Provenance (set by every provider adapter) ---
+  "source":      "crexi",          // provider slug: crexi | auction_com
+  "source_id":   "1893472",        // provider-native id
+  "asset_class": "commercial",     // commercial | residential
+
+  // --- Scraped from the provider API ---
   "scraped_at": "2026-06-28T…",
-  "url": "https://www.crexi.com/properties/…",
+  "url": "https://www.crexi.com/properties/…",   // provider-owned
   "listing":   { "id", "title", "address", "city", "state", "zip", "lat", "lng", "brokerage" },
   "auction":   { "status", "auction_type", "starting_bid_usd", "bidding_starts", "bidding_ends",
                  "reserve_met", "bid_increment_usd", "participation_deposit",
@@ -149,14 +177,17 @@ Pages:
 ### Scrape auction listings
 
 ```bash
-# Default: up to 10 listings under $300,001, saved to auctions/listings/
-node auctions/scraper.js
+# Crexi (commercial) — up to 10 listings, saved to auctions/listings/
+node auctions/pipeline.js --provider crexi --max-listings 10
 
-# Custom options
-node auctions/scraper.js \
-  --max-price    500000 \
-  --max-listings 50     \
-  --out-dir      ./output
+# Auction.com (residential) — filter by state
+node auctions/pipeline.js --provider auction_com --state OH --max-listings 10
+
+# All providers in one run
+node auctions/pipeline.js --provider all --max-listings 10
+
+# Options: --max-price N  --max-listings N  --state XX[,YY]  --out-dir DIR  --no-enrich  --force
+# (node auctions/scraper.js still works — it forwards to the pipeline as --provider crexi)
 ```
 
 ### Enrich a single listing

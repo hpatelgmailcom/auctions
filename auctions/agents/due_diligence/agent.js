@@ -101,6 +101,16 @@ export async function runDueDiligence(listingPath, { docs = null, noLlm = false,
   const record  = JSON.parse(fs.readFileSync(absPath, 'utf8'));
   const slug    = path.basename(absPath, '.json');
 
+  // The DD model (max bid from retail gross income) is commercial-only for now.
+  // Residential listings are skipped until an ARV/comps-based residential model
+  // is added — see plan follow-up. Leaves record.due_diligence untouched.
+  const assetClass = record.asset_class ?? 'commercial';
+  if (assetClass !== 'commercial') {
+    console.log(`\n  Due diligence: ${record.listing?.address ?? slug}`);
+    console.log(`    ↷ skipped — ${assetClass} DD model not yet supported (commercial-only).`);
+    return { slug, skipped: true, recommendation: null };
+  }
+
   const docsLocation = docs ?? path.join(AUCTIONS_DIR, 'documents', slug);
   const { source, files, skipped } = resolveDocuments(docsLocation);
 

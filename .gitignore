@@ -1,10 +1,13 @@
 .env
 node_modules/
 api/node_modules/
-api/db/crexi.db
-api/db/crexi.db-shm
-api/db/crexi.db-wal
+api/db/hammerdown.db
+api/db/hammerdown.db-shm
+api/db/hammerdown.db-wal
 dashboard/node_modules/
 dashboard/dist/
 auctions/results_test.json
 auctions/listings/
+auctions/email/credentials.json
+auctions/email/token.json
+auctions/email/samples/

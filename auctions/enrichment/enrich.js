@@ -17,7 +17,7 @@ import path from 'path';
 import { fetchDemographics } from './demographics.js';
 import { fetchCrime }        from './crime.js';
 import { fetchRetailMarket } from './retail_market.js';
-import { fetchSoldComps }    from './sold_comps.js';
+import { fetchSoldComps }    from '../providers/crexi/sold_comps.js';
 import { fetchWalkScore }    from './walk_score.js';
 import { fetchSchools }      from './schools.js';
 import { fetchFloodRisk }    from './flood_risk.js';
@@ -59,18 +59,20 @@ function countyFrom(address) {
   return m ? m[1].trim().toLowerCase() : null;
 }
 
-/** Extract city, state-abbr, county, zip, lat, lng from a listing record */
+/** Extract city, state-abbr, county, zip, lat, lng from a listing record.
+ *  city/state are required (needed for the geo-name-based enrichers). Coordinates
+ *  are optional — providers that don't expose them (e.g. auction.com today) still
+ *  get the city/state-based steps; lat/lng-dependent steps are skipped upstream. */
 function locationFrom(record) {
   const { city, state, zip, latitude, longitude, address } = record.listing ?? {};
   if (!city || !state) throw new Error('Listing is missing city or state');
-  if (!latitude || !longitude) throw new Error('Listing is missing coordinates');
   return {
     city,
     stateAbbr: stateToAbbr(state),
     county:    countyFrom(address),
     zip:       zip ?? null,
-    lat:       latitude,
-    lng:       longitude,
+    lat:       latitude  ?? null,
+    lng:       longitude ?? null,
   };
 }
 
@@ -85,9 +87,15 @@ export async function enrich(jsonPath, { radius = RADIUS, silent = false } = {})
   const record = JSON.parse(fs.readFileSync(absPath, 'utf8'));
   const { city, stateAbbr, county, zip, lat, lng } = locationFrom(record);
 
+  // Which enrichers apply depends on the asset class and whether we have coords.
+  //   - retail_market / sold_comps are commercial-only (retail rent & CRE comps).
+  //   - walk_score / flood_risk / sold_comps need latitude & longitude.
+  const isCommercial = (record.asset_class ?? 'commercial') === 'commercial';
+  const hasCoords    = lat != null && lng != null;
+
   if (!silent) {
     console.log(`\n  Enriching: ${record.listing?.address}`);
-    console.log(`    City: ${city}, ${stateAbbr.toUpperCase()}${county ? `  County: ${county}` : ''}${zip ? `  ZIP: ${zip}` : ''}  |  Radius: ${radius} mi`);
+    console.log(`    ${record.asset_class ?? 'commercial'} | City: ${city}, ${stateAbbr.toUpperCase()}${county ? `  County: ${county}` : ''}${zip ? `  ZIP: ${zip}` : ''}${hasCoords ? '' : '  (no coordinates)'}  |  Radius: ${radius} mi`);
   }
 
   const address    = record.listing?.address ?? '';
@@ -95,16 +103,17 @@ export async function enrich(jsonPath, { radius = RADIUS, silent = false } = {})
 
   const results = { radius_miles: radius, enriched_at: new Date().toISOString() };
   const steps   = [
-    ['demographics',  () => fetchDemographics({ zip, city, stateAbbr })],
-    ['crime',         () => fetchCrime({ city, stateAbbr })],
-    ['retail_market', () => fetchRetailMarket({ city, stateAbbr, county })],
-    ['sold_comps',    () => fetchSoldComps({ lat, lng, assetTypes, stateCode: stateAbbr?.toUpperCase(), radiusMiles: 25 })],
-    ['walk_score',    () => fetchWalkScore({ lat, lng, address })],
-    ['schools',       () => fetchSchools({ city, stateAbbr })],
-    ['flood_risk',    () => fetchFloodRisk({ lat, lng })],
+    ['demographics',  true,                     () => fetchDemographics({ zip, city, stateAbbr })],
+    ['crime',         true,                     () => fetchCrime({ city, stateAbbr })],
+    ['retail_market', isCommercial,             () => fetchRetailMarket({ city, stateAbbr, county })],
+    ['sold_comps',    isCommercial && hasCoords, () => fetchSoldComps({ lat, lng, assetTypes, stateCode: stateAbbr?.toUpperCase(), radiusMiles: 25 })],
+    ['walk_score',    hasCoords,                () => fetchWalkScore({ lat, lng, address })],
+    ['schools',       true,                     () => fetchSchools({ city, stateAbbr })],
+    ['flood_risk',    hasCoords,                () => fetchFloodRisk({ lat, lng })],
   ];
 
-  for (const [key, fn] of steps) {
+  for (const [key, applies, fn] of steps) {
+    if (!applies) continue;
     if (!silent) process.stdout.write(`    ${key}… `);
     try {
       results[key] = await fn();

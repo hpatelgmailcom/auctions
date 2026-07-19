@@ -10,12 +10,19 @@ const exec = promisify(execFile);
 
 export default async function pipelineRoutes(fastify) {
 
-  // POST /api/scrape — trigger a scraper run
+  // POST /api/scrape — trigger a pipeline run for one or all providers
   fastify.post('/scrape', async (req, reply) => {
-    const { max_price = 300001, max_listings = 50 } = req.body || {};
-    reply.status(202).send({ ok: true, message: 'Scrape started' });
-    const scraperPath = join(__dirname, '../../auctions/scraper.js');
-    exec('node', [scraperPath, '--max-price', String(max_price), '--max-listings', String(max_listings)])
+    const { provider = 'crexi', max_price = 300001, max_listings = 50, state = 'OH' } = req.body || {};
+    reply.status(202).send({ ok: true, message: `Scrape started (${provider})` });
+    const pipelinePath = join(__dirname, '../../auctions/pipeline.js');
+    const args = [
+      pipelinePath,
+      '--provider',     String(provider),
+      '--max-price',    String(max_price),
+      '--max-listings', String(max_listings),
+      '--state',        String(state),
+    ];
+    exec('node', args)
       .then(() => { importListings(); seedAlerts(); })
       .catch(e => console.error('Scrape failed:', e.message));
   });
@@ -32,8 +39,10 @@ export default async function pipelineRoutes(fastify) {
     const db = getDb();
     const stages = ['Scouted','Enriching','Enriched','Due Diligence','Under Review','BID','NO BID','CONDITIONAL','Auction Day','Closed'];
     const rows = db.prepare(`
-      SELECT id, title, address, city, state, starting_bid_usd, max_bid_usd,
+      SELECT id, source, asset_class, listing_type, title, address, city, state, starting_bid_usd, max_bid_usd,
+             asking_price_usd, cap_rate_pct,
              bidding_starts, bidding_ends, disposition_score, recommendation, crime_grade,
+             beds, baths, home_type,
              compliance_status, pipeline_stage, enriched_at, property_types
       FROM listings ORDER BY bidding_starts ASC NULLS LAST
     `).all();

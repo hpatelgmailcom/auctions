@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useFetch } from '../hooks/useFetch.js';
 import { api } from '../api/client.js';
-import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner } from '../components/index.js';
+import { RecommendationBadge, CrimeGradeBadge, AuctionCountdown, Spinner, SourceBadge, AssetClassTabs, SOURCE_NAMES } from '../components/index.js';
 
 const fmt$ = v => v != null ? `$${Number(v).toLocaleString()}` : '—';
 
@@ -32,36 +33,56 @@ function isLiveNow(starts, ends) {
 }
 
 function ListingCard({ listing, onClick }) {
-  const live = isLiveNow(listing.bidding_starts, listing.bidding_ends);
+  const live   = isLiveNow(listing.bidding_starts, listing.bidding_ends);
+  const isSale = listing.listing_type === 'sale';
   return (
     <div onClick={onClick}
       className="bg-surface-card border border-surface-border rounded-xl p-3.5 cursor-pointer hover:border-brand/40 hover:bg-surface-hover transition-all space-y-2">
       <div>
-        <p className="text-xs font-medium text-ink leading-tight truncate">{listing.address}</p>
-        <p className="text-[10px] text-ink-subtle">{listing.city}, {listing.state}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-xs font-medium text-ink leading-tight truncate flex-1">{listing.address}</p>
+          <SourceBadge source={listing.source} />
+        </div>
+        <p className="text-[10px] text-ink-subtle">
+          {listing.city}, {listing.state}
+          {listing.asset_class === 'residential' && (listing.beds != null || listing.baths != null) && (
+            <span className="ml-1">· {[listing.beds != null ? `${listing.beds}bd` : null, listing.baths != null ? `${listing.baths}ba` : null].filter(Boolean).join(' ')}</span>
+          )}
+        </p>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-sm font-bold font-mono text-ink">{fmt$(listing.starting_bid_usd)}</span>
+        <span className="text-sm font-bold font-mono text-ink">
+          {fmt$(isSale ? listing.asking_price_usd : listing.starting_bid_usd)}
+          {isSale ? <span className="ml-1 text-[10px] font-sans font-normal text-ink-subtle">asking</span> : null}
+        </span>
         <RecommendationBadge value={listing.recommendation} />
       </div>
       <div className="flex items-center justify-between">
         <CrimeGradeBadge grade={listing.crime_grade} />
-        <AuctionCountdown date={listing.bidding_starts} endDate={listing.bidding_ends} compact />
-      </div>
-      <div className="text-[10px] text-ink-subtle space-y-0.5 border-t border-surface-border pt-1.5">
-        {listing.bidding_starts && (
-          <div className="flex justify-between">
-            <span className="text-ink-subtle">Start</span>
-            <span className="font-mono">{fmtDate(listing.bidding_starts)}</span>
-          </div>
-        )}
-        {listing.bidding_ends && (
-          <div className="flex justify-between">
-            <span className={live ? 'text-emerald-400' : 'text-ink-subtle'}>End</span>
-            <span className={`font-mono ${live ? 'text-emerald-400 font-semibold' : ''}`}>{fmtDate(listing.bidding_ends)}</span>
-          </div>
+        {isSale ? (
+          listing.cap_rate_pct != null
+            ? <span className="text-[10px] text-ink-subtle font-mono">{listing.cap_rate_pct}% cap</span>
+            : null
+        ) : (
+          <AuctionCountdown date={listing.bidding_starts} endDate={listing.bidding_ends} compact />
         )}
       </div>
+      {isSale ? null : (
+        <div className="text-[10px] text-ink-subtle space-y-0.5 border-t border-surface-border pt-1.5">
+          {listing.bidding_starts && (
+            <div className="flex justify-between">
+              <span className="text-ink-subtle">Start</span>
+              <span className="font-mono">{fmtDate(listing.bidding_starts)}</span>
+            </div>
+          )}
+          {listing.bidding_ends && (
+            <div className="flex justify-between">
+              <span className={live ? 'text-emerald-400' : 'text-ink-subtle'}>End</span>
+              <span className={`font-mono ${live ? 'text-emerald-400 font-semibold' : ''}`}>{fmtDate(listing.bidding_ends)}</span>
+            </div>
+          )}
+        </div>
+      )}
       {listing.disposition_score != null && (
         <div className="flex items-center gap-1.5">
           <div className="flex-1 bg-surface rounded-full h-1">
@@ -76,20 +97,51 @@ function ListingCard({ listing, onClick }) {
 
 export default function PipelinePage() {
   const navigate = useNavigate();
+  const [assetClass,  setAssetClass]  = useState('');
+  const [source,      setSource]      = useState('');
+  const [listingType, setListingType] = useState('');
   const { data, loading } = useFetch(() => api.pipeline.board());
 
   if (loading) return <Spinner />;
   const { stages = [], groups = {} } = data || {};
 
+  const all = Object.values(groups).flat();
+  // Options come from the data, so new providers appear without a code change.
+  const sourceOptions = [...new Set(all.map(c => c.source).filter(Boolean))].sort();
+
+  const matches = c =>
+    (!assetClass  || (c.asset_class ?? 'commercial') === assetClass) &&
+    (!source      || c.source === source) &&
+    (!listingType || (c.listing_type ?? 'auction') === listingType);
+  const counts = all.reduce((acc, c) => {
+    const k = c.asset_class ?? 'commercial';
+    acc[k] = (acc[k] || 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <div className="p-6">
-      <div className="mb-5">
-        <h1 className="text-xl font-semibold text-ink">Pipeline</h1>
-        <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-semibold text-ink">Pipeline</h1>
+          <p className="text-sm text-ink-subtle mt-0.5">Drag listings between stages to track progress</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <select className="input text-xs py-1.5" value={source} onChange={e => setSource(e.target.value)} aria-label="Provider">
+            <option value="">All Providers</option>
+            {sourceOptions.map(s => <option key={s} value={s}>{SOURCE_NAMES[s] || s}</option>)}
+          </select>
+          <select className="input text-xs py-1.5" value={listingType} onChange={e => setListingType(e.target.value)} aria-label="Listing type">
+            <option value="">Auctions + Sales</option>
+            <option value="auction">Auctions</option>
+            <option value="sale">For Sale (email)</option>
+          </select>
+          <AssetClassTabs value={assetClass} onChange={setAssetClass} counts={counts} />
+        </div>
       </div>
       <div className="flex gap-3 overflow-x-auto pb-4" style={{ minHeight: 'calc(100vh - 140px)' }}>
         {stages.map(stage => {
-          const cards = groups[stage] || [];
+          const cards = (groups[stage] || []).filter(matches);
           return (
             <div key={stage} className="shrink-0 w-64 flex flex-col gap-2">
               {/* Column header */}
