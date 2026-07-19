@@ -62,6 +62,16 @@ Note: `parsers/cushman_wakefield.js` was authored against *synthetic* fixtures
 to prove the plumbing — re-author it from real samples after the first
 `sample.js` run.
 
+Registered senders (2026-07-18): cushman_wakefield, marcus_millichap,
+auction_com_email (archive-only — same inventory as the auction_com scraper),
+boulder_group (incl. Crexi-campaign blasts filtered by display name),
+colliers_central_valley, elevate_net_lease, kiser_group, wallet_wise (hotels),
+cbre_rcm, visintainer_group. See PROVIDERS.md for per-sender notes.
+
+Gotcha: `sample.js` slugs the dump directory from the address local part, so
+`info@cwmultifamily.com` and `info@elevatenla.ccsend.com` both land in
+`samples/info/` — pass `--out` when the local part is generic.
+
 ## Files
 
 | file | purpose |
@@ -76,12 +86,20 @@ to prove the plumbing — re-author it from real samples after the first
 | `fixtures/<slug>/` | committed normalized-message JSONs (regression tests) |
 | `samples/`, `credentials.json`, `token.json` | gitignored |
 
-## Detail enrichment (C&W)
+## Detail enrichment
 
-Email blasts are thin; the portal listing pages are public and server-rendered.
-`npm run cw:details` (`auctions/providers/cushman_wakefield/details.js`) fetches
-`multifamily.cushwake.com/Listings/<source_id>` for every C&W listing file and
-merges street address, zip, coordinates, units, property type, and the full
-description in place (`--enrich` re-runs enrichment so coords unlock
-walk-score/flood/comps; `--id <n>` for one listing). OM documents are behind a
-login + confidentiality agreement and are not fetched.
+Email blasts are thin; each provider has a detail fetcher that backfills from
+its portal (both support `--enrich` to re-run enrichment after merging and
+`--id <n>` for one listing):
+
+- **C&W** — `npm run cw:details`: `multifamily.cushwake.com/Listings/<source_id>`
+  is public, server-rendered HTML. Merges street address, zip, coordinates,
+  units, property type, description. OM documents are behind a login +
+  confidentiality agreement and are not fetched.
+- **M&M** — `npm run mm:details`: resolves each email's tracking link
+  (302 → `rimarketplace.com/auction/<rim_id>`, cached in provider_details),
+  then hits RIM's JSON API (`POST /api/authenticate` for an anonymous Bearer
+  token, `POST /api/auction {propertyId}`). Merges street/zip/county, bidding
+  start/end dates, auction type (Absolute/Reserve), bid increment, reserve,
+  buyer's premium, year built, property type, sold status; rewrites `url` to
+  the canonical RIM page.

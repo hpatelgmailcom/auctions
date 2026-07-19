@@ -6,12 +6,28 @@
  * note in auctions/email/README.md for the authoring workflow.
  */
 
-import * as cushmanWakefield from './parsers/cushman_wakefield.js';
-import * as marcusMillichap  from './parsers/marcus_millichap.js';
+import * as cushmanWakefield      from './parsers/cushman_wakefield.js';
+import * as marcusMillichap       from './parsers/marcus_millichap.js';
+import * as auctionComEmail       from './parsers/auction_com_email.js';
+import * as boulderGroup          from './parsers/boulder_group.js';
+import * as colliersCentralValley from './parsers/colliers_central_valley.js';
+import * as elevateNetLease       from './parsers/elevate_net_lease.js';
+import * as kiserGroup            from './parsers/kiser_group.js';
+import * as walletWise            from './parsers/wallet_wise.js';
+import * as cbreRcm               from './parsers/cbre_rcm.js';
+import * as visintainerGroup      from './parsers/visintainer_group.js';
 
 const PARSERS = [
   cushmanWakefield,
   marcusMillichap,
+  auctionComEmail,
+  boulderGroup,
+  colliersCentralValley,
+  elevateNetLease,
+  kiserGroup,
+  walletWise,
+  cbreRcm,
+  visintainerGroup,
 ];
 
 /** "CW Multifamily <Info@CWMultifamily.com>" → "info@cwmultifamily.com" */
